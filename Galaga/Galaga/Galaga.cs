@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Galaga
 {
-    public class Game1 : Game
+    public class Galaga : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        public Game1()
+        public Galaga()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
