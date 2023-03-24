@@ -14,17 +14,11 @@ public class PlayState : GameState
     private readonly Dictionary<PlayStates, SubPlayState> _playStates = new();
     private AudioSystem _audioSystem;
 
-    public override void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
-    {
-        base.Initialize(graphicsDevice, graphics);
-        ResetState();
-    }
-
-    private void ResetState()
+    private void InitializeState()
     {
         _playStates.Clear();
         _playStates.Add(PlayStates.Loser, new LoserState());
-        _playStates.Add(PlayStates.Play, new PlaySubPlayState());
+        _playStates.Add(PlayStates.Play, new PlaySubPlayState(Textures));
         _playStates.Add(PlayStates.Pause, new PauseSubPlayState());
        
         _currentPlayState = PlayStates.Play;
@@ -38,6 +32,10 @@ public class PlayState : GameState
         Fonts.Add("vBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
         // var song = contentManager.Load<Song>("Audio/Take Me Out to the Ball Game");
         _audioSystem = new AudioSystem(null);
+        Textures.Add("ship", new List<Texture2D>{ contentManager.Load<Texture2D>("Images/Ship") });
+        Textures.Add("playerBullet", new List<Texture2D>{ contentManager.Load<Texture2D>("Images/playerBullet") });
+        Textures.Add("enemyBullet", new List<Texture2D>{ contentManager.Load<Texture2D>("Images/enemyBullet") });
+        InitializeState();
     }
 
     public override GameStates Update(GameTime gameTime)
@@ -47,7 +45,7 @@ public class PlayState : GameState
         if (_nextPlayState != PlayStates.Finish) return GameStates.GamePlay;
         
         _audioSystem.Stop();
-        ResetState();
+        InitializeState();
         return GameStates.MainMenu;
     }
 

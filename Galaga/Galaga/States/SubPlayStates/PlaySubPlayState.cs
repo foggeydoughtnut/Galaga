@@ -15,17 +15,17 @@ public class PlaySubPlayState : SubPlayState
     private readonly HighScoreTracker _tracker;
     private readonly List<Systems.System> _systems;
 
-    public PlaySubPlayState()
+    public PlaySubPlayState(IReadOnlyDictionary<string, List<Texture2D>> textures)
     {
         _tracker = HighScoreTracker.GetTracker();
         
         _systems = new List<Systems.System>();
         var gameStats = new GameStatsSystem();
-        var bulletSystem = new BulletSystem(gameStats);
-        var playerSystem = new PlayerSystem(gameStats, bulletSystem);
+        var bulletSystem = new BulletSystem(textures["playerBullet"].First(), textures["enemyBullet"].First(), gameStats);
+        var playerSystem = new PlayerSystem(textures["ship"].First(), gameStats, bulletSystem);
         var enemySystem = new EnemySystem(playerSystem, bulletSystem);
         var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
-        _systems.Add(bulletSystem);
+        _systems.Add(playerSystem);
         _systems.Add(enemySystem);
         _systems.Add(bulletSystem);
         _systems.Add(collisionDetectionSystem);
