@@ -60,7 +60,7 @@ public class MenuState : GameState
         base.ProcessInput();
     }
 
-    public override void Render(GameTime gameTime)
+    public override void Render()
     {
         SpriteBatch.Begin();
         var font = Fonts["default"];
@@ -72,7 +72,7 @@ public class MenuState : GameState
             var optionFont = _indexOfChoice == i ? bigFont : font;
             var stringSize = optionFont.MeasureString(_options[i]);
             var diff = i - middle;
-            CreateBorderOnWords(optionFont, _options[i], new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
+            RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, _options[i], new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
         }
         SpriteBatch.End();
     }

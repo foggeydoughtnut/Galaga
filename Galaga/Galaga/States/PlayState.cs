@@ -11,14 +11,9 @@ public class PlayState : GameState
 {
     private PlayStates _currentPlayState;
     private PlayStates _nextPlayState;
-    private readonly Dictionary<PlayStates, ISubPlayState> _playStates = new();
-    private List<Systems.System> _systems;
+    private readonly Dictionary<PlayStates, SubPlayState> _playStates = new();
     private AudioSystem _audioSystem;
 
-    public PlayState()
-    {
-        _systems = new List<Systems.System>();
-    }
     public override void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
     {
         base.Initialize(graphicsDevice, graphics);
@@ -27,23 +22,13 @@ public class PlayState : GameState
 
     private void ResetState()
     {
-        _systems.Clear();
-        var gameStats = new GameStatsSystem();
-        var bulletSystem = new BulletSystem(gameStats);
-        var playerSystem = new PlayerSystem(gameStats, bulletSystem);
-        var enemySystem = new EnemySystem(playerSystem, bulletSystem);
-        var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
-        _systems.Add(bulletSystem);
-        _systems.Add(enemySystem);
-        _systems.Add(bulletSystem);
-        _systems.Add(collisionDetectionSystem);
-
         _playStates.Clear();
         _playStates.Add(PlayStates.Loser, new LoserState());
         _playStates.Add(PlayStates.Play, new PlaySubPlayState());
         _playStates.Add(PlayStates.Pause, new PauseSubPlayState());
        
         _currentPlayState = PlayStates.Play;
+        _nextPlayState = PlayStates.Play;
     } 
     
     public override void LoadContent(ContentManager contentManager)
@@ -66,10 +51,10 @@ public class PlayState : GameState
         return GameStates.MainMenu;
     }
 
-    public override void Render(GameTime gameTime)
+    public override void Render()
     {
         SpriteBatch.Begin();
-        _playStates[_currentPlayState].Render(SpriteBatch);
+        _playStates[_currentPlayState].Render(SpriteBatch, Fonts);
         SpriteBatch.End();
         _currentPlayState = _nextPlayState;
     }

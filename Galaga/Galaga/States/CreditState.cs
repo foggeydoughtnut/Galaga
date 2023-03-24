@@ -1,4 +1,5 @@
 using System;
+using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,19 +22,18 @@ public class CreditState : GameState
         return Keyboard.GetState().IsKeyDown(Keys.Escape) ? GameStates.MainMenu : GameStates.About;
     }
 
-    public override void Render(GameTime gameTime)
+    public override void Render()
     {
         SpriteBatch.Begin();
         var bigFont = Fonts["big"];
         var titleSize = bigFont.MeasureString("Credits");
-        CreateBorderOnWords(bigFont, "Credits",
+        RenderUtilities.CreateBorderOnWord(SpriteBatch, bigFont, "Credits",
             new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - titleSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 4) + 150));
 
         var font = Fonts["default"];
-        var stringSize = font.MeasureString("I Did This. Trey Crowther.");
-        CreateBorderOnWords(font, "I Did This. Trey Crowther.", new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2)));
+        var stringSize = font.MeasureString("We Did This. Trey Crowther and Jeff Anderson.");
+        RenderUtilities.CreateBorderOnWord(SpriteBatch, font, "We Did This. Trey Crowther and Jeff Anderson.", new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2)));
 
-        
         SpriteBatch.End();
     }
 

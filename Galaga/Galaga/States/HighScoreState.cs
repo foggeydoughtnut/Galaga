@@ -20,8 +20,9 @@ public class HighScoreState : GameState
 
     public override GameStates Update(GameTime gameTime)
     {
+        var nextState = IsKeyPressed(Keys.Escape) ? GameStates.MainMenu : GameStates.HighScores; 
         ProcessInput();
-        return IsKeyPressed(Keys.Escape) ? GameStates.MainMenu : GameStates.HighScores;
+        return nextState;
     }
 
     protected override void ProcessInput()
@@ -31,13 +32,13 @@ public class HighScoreState : GameState
         base.ProcessInput();
     }
 
-    public override void Render(GameTime gameTime)
+    public override void Render()
     {   
         SpriteBatch.Begin();
         // High Score Title
         var bigFont = Fonts["big"];
         var titleSize = bigFont.MeasureString("High Scores");
-        CreateBorderOnWords(bigFont, "High Scores",
+        RenderUtilities.CreateBorderOnWord(SpriteBatch, bigFont, "High Scores",
             new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - titleSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 4) + 150));
         
         // No high scores
@@ -46,7 +47,7 @@ public class HighScoreState : GameState
         if (highScoreCount == 0)
         {
             var noScoreSize = font.MeasureString("No high scores");
-            CreateBorderOnWords(font, "No high scores",
+            RenderUtilities.CreateBorderOnWord(SpriteBatch, font, "No high scores",
                 new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - noScoreSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2)));
             SpriteBatch.End();
             return;
@@ -60,12 +61,12 @@ public class HighScoreState : GameState
         {
             var stringSize = font.MeasureString(highScores[i].ToString());
             diff = i - middle;
-            CreateBorderOnWords(font, highScores[i].ToString(), new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
+            RenderUtilities.CreateBorderOnWord(SpriteBatch,font, highScores[i].ToString(), new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
         }
         
         diff = highScoreCount - middle;
         var stringSizeReset = font.MeasureString("Press F5 to Reset Scores");
-        CreateBorderOnWords(font, "Press F5 to Reset Scores", new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSizeReset.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
+        RenderUtilities.CreateBorderOnWord(SpriteBatch, font, "Press F5 to Reset Scores", new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSizeReset.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
 
         SpriteBatch.End();
     }
