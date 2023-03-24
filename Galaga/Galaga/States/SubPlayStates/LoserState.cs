@@ -1,5 +1,4 @@
-using System;
-using CS5410.Utilities;
+using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,7 +18,7 @@ public class LoserState : ISubPlayState
     {
         if (!Keyboard.GetState().IsKeyDown(Keys.Enter)) return PlayStates.Loser;
         _tracker.FinishGame();
-        return PlayStates.Startup;
+        return PlayStates.Finish;
     }
 
     public void Render(SpriteBatch spriteBatch)

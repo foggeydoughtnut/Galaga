@@ -4,7 +4,6 @@ using Galaga.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 
 namespace Galaga.States;
 
@@ -23,11 +22,12 @@ public class PlayState : GameState
     public override void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
     {
         base.Initialize(graphicsDevice, graphics);
-        RunStartup();
+        ResetState();
     }
 
-    private void RunStartup()
+    private void ResetState()
     {
+        _systems.Clear();
         var gameStats = new GameStatsSystem();
         var bulletSystem = new BulletSystem(gameStats);
         var playerSystem = new PlayerSystem(gameStats, bulletSystem);
@@ -41,10 +41,9 @@ public class PlayState : GameState
         _playStates.Clear();
         _playStates.Add(PlayStates.Loser, new LoserState());
         _playStates.Add(PlayStates.Play, new PlaySubPlayState());
-        _playStates.Add(PlayStates.Startup, new StartupSubPlayState());
         _playStates.Add(PlayStates.Pause, new PauseSubPlayState());
        
-        _currentPlayState = PlayStates.Startup;
+        _currentPlayState = PlayStates.Play;
     } 
     
     public override void LoadContent(ContentManager contentManager)
@@ -58,17 +57,13 @@ public class PlayState : GameState
 
     public override GameStates Update(GameTime gameTime)
     {
-        if (_currentPlayState == PlayStates.Startup)
-            RunStartup();
-
         ProcessInput();
         _nextPlayState = _playStates[_currentPlayState].Update(gameTime);
-        if (_nextPlayState == PlayStates.Startup)
-        {
-            _audioSystem.Stop();
-            return GameStates.MainMenu;
-        }
-        return GameStates.GamePlay;
+        if (_nextPlayState != PlayStates.Finish) return GameStates.GamePlay;
+        
+        _audioSystem.Stop();
+        ResetState();
+        return GameStates.MainMenu;
     }
 
     public override void Render(GameTime gameTime)

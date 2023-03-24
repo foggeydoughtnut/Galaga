@@ -1,4 +1,3 @@
-
 namespace Galaga.Utilities;
 
 public static class Constants

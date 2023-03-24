@@ -6,10 +6,10 @@ namespace Galaga.States.SubPlayStates;
 
 public enum PlayStates
 {
-    Startup,
     Play,
     Loser,
-    Pause
+    Pause,
+    Finish
 }
 
 public interface ISubPlayState

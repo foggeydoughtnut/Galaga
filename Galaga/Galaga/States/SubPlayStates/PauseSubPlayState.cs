@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using CS5410.Utilities;
+using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using CS5410.Utilities;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -22,7 +21,7 @@ public class HighScoreState : GameState
     public override GameStates Update(GameTime gameTime)
     {
         ProcessInput();
-        return Keyboard.GetState().IsKeyDown(Keys.Escape) ? GameStates.MainMenu : GameStates.HighScores;
+        return IsKeyPressed(Keys.Escape) ? GameStates.MainMenu : GameStates.HighScores;
     }
 
     protected override void ProcessInput()

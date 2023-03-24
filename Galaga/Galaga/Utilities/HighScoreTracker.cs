@@ -4,7 +4,7 @@ using System.IO.IsolatedStorage;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace CS5410.Utilities;
+namespace Galaga.Utilities;
 
 public class HighScoreTracker
 {
@@ -77,7 +77,7 @@ public class HighScoreTracker
                 }
             }
 
-            this._saving = false;
+            _saving = false;
         });
      }
 
@@ -119,6 +119,5 @@ public class HighScoreTracker
 
             _loading = false;
         });
-}
-     
+    }
 }
