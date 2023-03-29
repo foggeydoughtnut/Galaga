@@ -17,8 +17,8 @@ public class PlayerSystem : ObjectSystem
         _bulletSystem = bulletSystem;
         _gameStatsSystem = gameStatsSystem;
         var shipDimensions = new Point(75, 75);
-        _playerShip = new PlayerShip(new Point(Constants.BOUNDS_X / 2, Constants.BOUNDS_Y - shipDimensions.Y),
-            new Point(Constants.BOUNDS_X, Constants.BOUNDS_Y), shipDimensions, shipTexture);
+        _playerShip = new PlayerShip(new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipDimensions.Y),
+            new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y), shipDimensions, shipTexture);
     }
     
     public override void Update(GameTime gameTime)

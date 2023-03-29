@@ -36,8 +36,8 @@ public class PlaySubPlayState : SubPlayState
         Window = window;
         this.renderTarget = new RenderTarget2D(
             Graphics.GraphicsDevice,
-            720,
-            540,
+            Constants.GAMEPLAY_Y,
+            Constants.GAMEPLAY_X,
             false,
             SurfaceFormat.Color,
             DepthFormat.None,
@@ -63,6 +63,7 @@ public class PlaySubPlayState : SubPlayState
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         foreach (var system in _systems)
             system.Render(spriteBatch);
+
         // Show high score
         var font = fonts["default"];
         var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
