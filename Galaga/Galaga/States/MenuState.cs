@@ -108,21 +108,5 @@ public class MenuState : GameState
                 1f
             );
         SpriteBatch.End();
-
-
-        /*        SpriteBatch.Begin();
-                var font = Fonts["default"];
-                var bigFont = Fonts["veryBig"];
-                var middle = _options.Count / 2;
-                // Show options
-                for (var i = 0; i < _options.Count; i++)
-                {
-                    var optionFont = _indexOfChoice == i ? bigFont : font;
-                    var stringSize = optionFont.MeasureString(_options[i]);
-                    var diff = i - middle;
-                    RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, _options[i], new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
-                }
-                SpriteBatch.End();*/
-
     }
 }
