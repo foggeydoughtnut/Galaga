@@ -14,8 +14,10 @@ public class PlaySubPlayState : SubPlayState
 {
     private readonly HighScoreTracker _tracker;
     private readonly List<Systems.System> _systems;
-
-    public PlaySubPlayState(IReadOnlyDictionary<string, List<Texture2D>> textures)
+    private readonly GraphicsDeviceManager Graphics;
+    private readonly GameWindow Window;
+    private RenderTarget2D renderTarget;
+    public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, List<Texture2D>> textures)
     {
         _tracker = HighScoreTracker.GetTracker();
         
@@ -29,6 +31,19 @@ public class PlaySubPlayState : SubPlayState
         _systems.Add(enemySystem);
         _systems.Add(bulletSystem);
         _systems.Add(collisionDetectionSystem);
+
+        Graphics = graphics;
+        Window = window;
+        this.renderTarget = new RenderTarget2D(
+            Graphics.GraphicsDevice,
+            Constants.GAMEPLAY_Y,
+            Constants.GAMEPLAY_X,
+            false,
+            SurfaceFormat.Color,
+            DepthFormat.None,
+            Graphics.GraphicsDevice.PresentationParameters.MultiSampleCount,
+            RenderTargetUsage.DiscardContents
+        );
     }
     
     public override PlayStates Update(GameTime gameTime)
@@ -42,12 +57,35 @@ public class PlaySubPlayState : SubPlayState
 
     public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
     {
-        foreach(var system in _systems)
+        this.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
+        this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+        this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+        spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+        foreach (var system in _systems)
             system.Render(spriteBatch);
+
         // Show high score
         var font = fonts["default"];
         var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
         spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
-            new Vector2(Constants.BOUNDS_X - stringSize.X, 0), Color.White);
+            new Vector2(renderTarget.Width - stringSize.X / 2, 0), Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 1f);
+
+
+        spriteBatch.End();
+        Graphics.GraphicsDevice.SetRenderTarget(null);
+
+        // Render render target to screen
+        spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+        spriteBatch.Draw(
+                renderTarget,
+                new Rectangle(Window.ClientBounds.Width / 8, 0, (Window.ClientBounds.Height / 3 * 4), Window.ClientBounds.Height),
+                null,
+                Color.White,
+                0,
+                Vector2.Zero,
+                SpriteEffects.None,
+                1f
+            );
+        spriteBatch.End();
     }
 }

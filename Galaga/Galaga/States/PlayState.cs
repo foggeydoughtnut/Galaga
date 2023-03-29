@@ -17,9 +17,9 @@ public class PlayState : GameState
     private void InitializeState()
     {
         _playStates.Clear();
-        _playStates.Add(PlayStates.Loser, new LoserState());
-        _playStates.Add(PlayStates.Play, new PlaySubPlayState(Textures));
-        _playStates.Add(PlayStates.Pause, new PauseSubPlayState());
+        _playStates.Add(PlayStates.Loser, new LoserState(Graphics, Window));
+        _playStates.Add(PlayStates.Play, new PlaySubPlayState(Graphics, Window, Textures));
+        _playStates.Add(PlayStates.Pause, new PauseSubPlayState(Graphics, Window));
        
         _currentPlayState = PlayStates.Play;
         _nextPlayState = PlayStates.Play;
@@ -51,9 +51,9 @@ public class PlayState : GameState
 
     public override void Render()
     {
-        SpriteBatch.Begin();
+        //SpriteBatch.Begin();
         _playStates[_currentPlayState].Render(SpriteBatch, Fonts);
-        SpriteBatch.End();
+        //SpriteBatch.End();
         _currentPlayState = _nextPlayState;
     }
 

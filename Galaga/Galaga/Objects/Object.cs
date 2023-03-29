@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -48,7 +49,9 @@ public abstract class Object
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (Textures is null) return;
-        spriteBatch.Draw(Textures[_currentTextureIndex], Collider, Color.White);
+        Rectangle renderRect = new(new Point(Collider.X, Collider.Y), new Point(Collider.Width, Collider.Height));
+        spriteBatch.Draw(Textures[_currentTextureIndex], renderRect, Color.White);
+
     }
 
     private void UpdatePosition(TimeSpan elapsedTime)

@@ -9,10 +9,14 @@ namespace Galaga.States.SubPlayStates;
 public class LoserState : SubPlayState
 {
     private readonly HighScoreTracker _tracker;
+    private readonly GraphicsDeviceManager Graphics;
+    private readonly GameWindow Window;
 
-    public LoserState()
+    public LoserState(GraphicsDeviceManager graphics, GameWindow window)
     {
         _tracker = HighScoreTracker.GetTracker();
+        Graphics = graphics;
+        Window = window;
     }    
 
     public override PlayStates Update(GameTime gameTime)
