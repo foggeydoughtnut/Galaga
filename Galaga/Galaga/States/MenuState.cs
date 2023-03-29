@@ -28,8 +28,8 @@ public class MenuState : GameState
 
         this.renderTarget = new RenderTarget2D(
             graphicsDevice,
-            360,
-            270,
+            1440,
+            1080,
             false,
             SurfaceFormat.Color,
             DepthFormat.None,
@@ -80,7 +80,7 @@ public class MenuState : GameState
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         // Render Menu
         var font = Fonts["default"];
-        var bigFont = Fonts["veryBig"];
+        var bigFont = Fonts["big"];
         var middle = _options.Count / 2;
         // Show options
         for (int i = 0; i < _options.Count; i++)
