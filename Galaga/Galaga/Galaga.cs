@@ -20,9 +20,11 @@ namespace Galaga
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferWidth = 2130;
-            _graphics.PreferredBackBufferHeight = 1880;
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
+            Window.AllowUserResizing = true;
+
 
             _states = new Dictionary<GameStates, GameState>
             {
@@ -34,7 +36,7 @@ namespace Galaga
 
             foreach (var item in _states)
             {
-                item.Value.Initialize(GraphicsDevice, _graphics);
+                item.Value.Initialize(GraphicsDevice, _graphics, Window);
             }
 
             _currentState = _states[_nextState];

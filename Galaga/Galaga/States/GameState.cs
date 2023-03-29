@@ -13,14 +13,16 @@ public abstract class GameState
     private KeyboardState _previousKeyState;
     protected GraphicsDeviceManager Graphics;
     protected SpriteBatch SpriteBatch;
+    protected GameWindow Window;
     protected readonly Dictionary<string, List<Texture2D>> Textures = new();
     protected readonly Dictionary<string, SpriteFont> Fonts = new();
     protected readonly Dictionary<string, Song> Songs = new();
 
-    public virtual void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
+    public virtual void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, GameWindow window)
     {
         Graphics = graphics;
         SpriteBatch = new SpriteBatch(graphicsDevice);
+        Window = window;
     }
 
     public abstract void LoadContent(ContentManager contentManager);

@@ -14,8 +14,9 @@ public class MenuState : GameState
     private int _indexOfChoice;
     private List<string> _options;
     private GameStates _nextState;
+    RenderTarget2D renderTarget;
 
-    public override void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
+    public override void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, GameWindow window)
     {
         _options = new List<string>
         {
@@ -24,7 +25,18 @@ public class MenuState : GameState
             "Credits",
             "Quit"
         };
-        base.Initialize(graphicsDevice, graphics);
+
+        this.renderTarget = new RenderTarget2D(
+            graphicsDevice,
+            360,
+            270,
+            false,
+            SurfaceFormat.Color,
+            DepthFormat.None,
+            graphicsDevice.PresentationParameters.MultiSampleCount,
+            RenderTargetUsage.DiscardContents
+        );
+        base.Initialize(graphicsDevice, graphics, window);
     }
 
     public override void LoadContent(ContentManager contentManager)
@@ -62,18 +74,55 @@ public class MenuState : GameState
 
     public override void Render()
     {
-        SpriteBatch.Begin();
+        this.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
+        this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+        this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+        SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+        // Render Menu
         var font = Fonts["default"];
         var bigFont = Fonts["veryBig"];
         var middle = _options.Count / 2;
         // Show options
-        for (var i = 0; i < _options.Count; i++)
+        for (int i = 0; i < _options.Count; i++)
         {
-            var optionFont = _indexOfChoice == i ? bigFont : font;
-            var stringSize = optionFont.MeasureString(_options[i]);
-            var diff = i - middle;
-            RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, _options[i], new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
+            SpriteFont optionFont = _indexOfChoice == i ? bigFont : font;
+            Vector2 stringSize = optionFont.MeasureString(_options[i]);
+            int diff = i - middle;
+            RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, _options[i], new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) + diff * Constants.MENU_BUFFER));
         }
+
+
         SpriteBatch.End();
+        Graphics.GraphicsDevice.SetRenderTarget(null);
+
+        // Render render target to screen
+        SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+        SpriteBatch.Draw(
+                renderTarget,
+                new Rectangle(Window.ClientBounds.Width / 8, 0, (Window.ClientBounds.Height / 3 * 4), Window.ClientBounds.Height),
+                null,
+                Color.White,
+                0,
+                Vector2.Zero,
+                SpriteEffects.None,
+                1f
+            );
+        SpriteBatch.End();
+
+
+        /*        SpriteBatch.Begin();
+                var font = Fonts["default"];
+                var bigFont = Fonts["veryBig"];
+                var middle = _options.Count / 2;
+                // Show options
+                for (var i = 0; i < _options.Count; i++)
+                {
+                    var optionFont = _indexOfChoice == i ? bigFont : font;
+                    var stringSize = optionFont.MeasureString(_options[i]);
+                    var diff = i - middle;
+                    RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, _options[i], new Vector2(Convert.ToInt32(Graphics.PreferredBackBufferWidth / 2) - stringSize.X / 2, Convert.ToInt32(Graphics.PreferredBackBufferHeight / 2) + diff * Constants.MENU_BUFFER));
+                }
+                SpriteBatch.End();*/
+
     }
 }
