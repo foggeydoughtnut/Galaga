@@ -43,9 +43,7 @@ public static class RenderUtilities
         spriteBatch.DrawString(font, text, newPosition, Color.Black, 0, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
         // Main string
-        //spriteBatch.DrawString(font, text, position, Color.White);
-
-        spriteBatch.DrawString(font, text, position, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+        spriteBatch.DrawString(font, text, position, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f); // Needed to draw main string on different layer to make it so it drew on top always
     }
 
 }
