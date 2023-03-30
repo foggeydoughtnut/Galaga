@@ -13,12 +13,15 @@ public class BulletSystem : ObjectSystem
     private readonly List<Bullet> _bullets = new();
     private readonly Texture2D _playerBulletTexture;
     private readonly Texture2D _enemyBulletTexture;
-    
-    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture,GameStatsSystem statsSystem)
+    private readonly Texture2D _debugTexture;
+
+
+    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture,GameStatsSystem statsSystem, Texture2D debugTexture)
     {
         _statsSystem = statsSystem;
         _playerBulletTexture = playerBulletTexture;
         _enemyBulletTexture = enemyBulletTexture;
+        _debugTexture = debugTexture;
     }
     
     public override void Update(GameTime gameTime)
@@ -40,11 +43,11 @@ public class BulletSystem : ObjectSystem
 
     public void FirePlayerBullet(Point position)
     {
-        _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, -1500));
+        _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, -1500, _debugTexture));
     }
     
     public void FireEnemyBullet(Point position)
     {
-        _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, 1500));
+        _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, 1500, _debugTexture));
     }
 }

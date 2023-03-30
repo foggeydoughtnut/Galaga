@@ -15,13 +15,13 @@ public class PlayerSystem : ObjectSystem
 
     private float speed = 25000f;
 
-    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem)
+    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture)
     {
         _bulletSystem = bulletSystem;
         _gameStatsSystem = gameStatsSystem;
         var shipDimensions = new Point(75, 75);
         _playerShip = new PlayerShip(new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipDimensions.Y),
-            new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y), shipDimensions, shipTexture);
+            new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y), shipDimensions, shipTexture, debugTexture);
     }
     
     public override void Update(GameTime gameTime)

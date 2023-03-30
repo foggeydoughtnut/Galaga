@@ -23,8 +23,8 @@ public class PlaySubPlayState : SubPlayState
         
         _systems = new List<Systems.System>();
         var gameStats = new GameStatsSystem();
-        var bulletSystem = new BulletSystem(textures["playerBullet"].First(), textures["enemyBullet"].First(), gameStats);
-        var playerSystem = new PlayerSystem(textures["ship"].First(), gameStats, bulletSystem);
+        var bulletSystem = new BulletSystem(textures["playerBullet"].First(), textures["enemyBullet"].First(), gameStats, textures["debug"].First());
+        var playerSystem = new PlayerSystem(textures["ship"].First(), gameStats, bulletSystem, textures["debug"].First());
         var enemySystem = new EnemySystem(playerSystem, bulletSystem);
         var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
         _systems.Add(playerSystem);

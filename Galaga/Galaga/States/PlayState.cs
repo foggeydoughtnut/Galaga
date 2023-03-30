@@ -35,6 +35,8 @@ public class PlayState : GameState
         Textures.Add("ship", new List<Texture2D>{ contentManager.Load<Texture2D>("Images/Ship") });
         Textures.Add("playerBullet", new List<Texture2D>{ contentManager.Load<Texture2D>("Images/playerBullet") });
         Textures.Add("enemyBullet", new List<Texture2D>{ contentManager.Load<Texture2D>("Images/enemyBullet") });
+        Textures.Add("debug", new List<Texture2D> { contentManager.Load<Texture2D>("Images/Debug") });
+
         InitializeState();
     }
 
