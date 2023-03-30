@@ -17,9 +17,13 @@ public class PlayerShip : Object
 
     protected override void Translate(Point offset)
     {
-        if(Position.X + offset.X > 0 && Position.X + offset.X < _bounds.X - Dimensions.X)
-            Position.X += offset.X;
-        if(Position.Y + offset.Y > 0 && Position.Y + offset.Y < _bounds.Y - Dimensions.Y)
+        /*        if(Position.X + offset.X > 0 && Position.X + offset.X < _bounds.X - Dimensions.X)
+                    Position.X += offset.X;
+                if(Position.Y + offset.Y > 0 && Position.Y + offset.Y < _bounds.Y - Dimensions.Y)
+                    Position.Y += offset.Y;*/
+        //if (Position.X + offset.X > 0 && Position.X + offset.X < _bounds.X - Dimensions.X)
+        Position.X += offset.X;
+        if (Position.Y + offset.Y > 0 && Position.Y + offset.Y < _bounds.Y - Dimensions.Y)
             Position.Y += offset.Y;
     }
 
