@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,6 +19,7 @@ public class BulletSystem : ObjectSystem
 
     private bool shot = false; // THIS IS BAD SO DELETE THIS!!!!
 
+    public List<Bullet> GetBullets() { return _bullets; }
 
     public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture,GameStatsSystem statsSystem, Texture2D debugTexture)
     {
@@ -40,18 +42,19 @@ public class BulletSystem : ObjectSystem
             bullet.Render(spriteBatch);
     }
 
-    public override void ObjectHit(int id)
+    public override void ObjectHit(Guid id)
     {
+        Debug.WriteLine($"Bullet: {id} collided");
     }
 
     public void FirePlayerBullet(Point position)
     {
-        //if (!shot) // DELETE THIS
-        //{ // DELETE THIS
-      _bullets.Add(new Bullet(new Point(position.X-1, position.Y-6), new Point(_playerBulletTexture.Width, _playerBulletTexture.Height), _playerBulletTexture, -250, _debugTexture));
-            //_bullets.Add(new Bullet(new Point(position.X, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture)); // DELETE THIS
-            //shot = true; // DELETE THIS
-        //} // DELETE THIS
+        if (!shot) // DELETE THIS
+        { // DELETE THIS
+            _bullets.Add(new Bullet(new Point(position.X-1, position.Y-6), new Point(_playerBulletTexture.Width, _playerBulletTexture.Height), _playerBulletTexture, -250, _debugTexture));
+            _bullets.Add(new Bullet(new Point(position.X-1, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture)); // DELETE THIS
+            shot = true; // DELETE THIS
+        } // DELETE THIS
 
     }
     

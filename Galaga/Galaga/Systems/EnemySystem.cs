@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Galaga.Systems;
 
@@ -22,7 +23,7 @@ public class EnemySystem : ObjectSystem
     {
     }
 
-    public override void ObjectHit(int id)
+    public override void ObjectHit(Guid id)
     {
     }
 }

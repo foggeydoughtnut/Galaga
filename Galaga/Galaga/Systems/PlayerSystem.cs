@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
@@ -14,6 +16,12 @@ public class PlayerSystem : ObjectSystem
     private readonly PlayerShip _playerShip;
 
     private float speed = 7500f;
+
+
+    public PlayerShip GetPlayer()
+    {
+        return _playerShip;
+    }
 
     public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture)
     {
@@ -40,7 +48,11 @@ public class PlayerSystem : ObjectSystem
         _playerShip.Render(spriteBatch);
     }
 
-    public override void ObjectHit(int id)
+    public override void ObjectHit(Guid id)
     {
+    }
+    public void PlayerHit()
+    {
+        Debug.WriteLine("Player was hit");
     }
 }
