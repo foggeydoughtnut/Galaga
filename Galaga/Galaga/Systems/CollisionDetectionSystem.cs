@@ -51,6 +51,7 @@ public class CollisionDetectionSystem : System
             {
                 if (gameObjects[i].Item1 == gameObjects[j].Item1) continue;
                 if (_collisions.ContainsKey(gameObjects[j].Item1)) continue;
+                if (gameObjects[i].Item3 == "bullet" && gameObjects[i].Item3 == "bullet") continue; // Two bullets can't collide
                 bool intersects = gameObjects[i].Item2.Intersects(gameObjects[j].Item2);
                 if (intersects)
                 {

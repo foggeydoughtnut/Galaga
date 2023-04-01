@@ -44,7 +44,7 @@ public class BulletSystem : ObjectSystem
 
     public override void ObjectHit(Guid id)
     {
-        Debug.WriteLine($"Bullet: {id} hit");
+        Debug.WriteLine($"Bullet: {id} collided");
     }
 
     public void FirePlayerBullet(Point position)
