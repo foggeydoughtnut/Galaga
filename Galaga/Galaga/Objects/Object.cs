@@ -9,6 +9,8 @@ namespace Galaga.Objects;
 
 public abstract class Object
 {
+    const bool DEBUG_COLLIDER = false;
+
     public bool IsObstacle = true;
     public Guid Id;
     public Point Position;
@@ -18,16 +20,19 @@ public abstract class Object
     private double _totalElapsedMicrosecondsX;
     private double _totalElapsedMicrosecondsY;
     protected readonly List<Texture2D> Textures;
+    private readonly Texture2D DebugTexture;
     private int _currentTextureIndex;
     private readonly TimeSpan _animationTime;
     private TimeSpan _elapsedAnimationTime;
     public Rectangle Collider => new(Position, Dimensions);
 
-    protected Object(Point position, Point dimensions, List<Texture2D> textures, int animationTimeMilliseconds)
+    protected Object(Point position, Point dimensions, List<Texture2D> textures, int animationTimeMilliseconds, Texture2D debugTexture)
     {
         Position = position;
         Dimensions = dimensions;
         Textures = textures;
+        DebugTexture = debugTexture;
+
         _animationTime = new TimeSpan(0,0,0,0, animationTimeMilliseconds);
         Id = Guid.NewGuid();
     }
@@ -49,9 +54,17 @@ public abstract class Object
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (Textures is null) return;
-        Rectangle renderRect = new(new Point(Collider.X, Collider.Y), new Point(Collider.Width, Collider.Height));
-        spriteBatch.Draw(Textures[_currentTextureIndex], renderRect, Color.White);
+        spriteBatch.Draw(Textures[_currentTextureIndex], Collider, Color.White);
 
+        if (DEBUG_COLLIDER)
+        {
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Right, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Left, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Right, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Left, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+        }
     }
 
     private void UpdatePosition(TimeSpan elapsedTime)

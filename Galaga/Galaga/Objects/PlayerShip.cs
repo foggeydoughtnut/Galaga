@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,18 +9,22 @@ public class PlayerShip : Object
 {
     private readonly Point _bounds;
     public bool HasDuelShips = false;
-    
-    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture) 
-        : base(position, dimensions, new List<Texture2D>{ texture }, 10_000)
+    private const int RIGHT_WALL = 468;
+
+    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture) 
+        : base(position, dimensions, new List<Texture2D>{ texture }, 10_000, debugTexture)
     {
         _bounds = bounds;
     }
 
     protected override void Translate(Point offset)
     {
-        if(Position.X + offset.X > 0 && Position.X + offset.X < _bounds.X - Dimensions.X)
+        //465ish
+        if (Position.X + offset.X > 0 && Position.X + offset.X < RIGHT_WALL)
+        {
             Position.X += offset.X;
-        if(Position.Y + offset.Y > 0 && Position.Y + offset.Y < _bounds.Y - Dimensions.Y)
+        }
+        if (Position.Y + offset.Y > 0 && Position.Y + offset.Y < _bounds.Y - Dimensions.Y)
             Position.Y += offset.Y;
     }
 

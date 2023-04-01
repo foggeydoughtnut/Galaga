@@ -6,8 +6,8 @@ namespace Galaga.Objects;
 
 public class Bullet : Object
 {
-    public Bullet(Point position, Point dimensions, Texture2D texture, double velocity) 
-        : base(position, dimensions, new List<Texture2D>{ texture }, 10_000)
+    public Bullet(Point position, Point dimensions, Texture2D texture, double velocity, Texture2D debugTexture) 
+        : base(position, dimensions, new List<Texture2D>{ texture }, 10_000, debugTexture)
     {
         VelocityY = velocity;
     }
