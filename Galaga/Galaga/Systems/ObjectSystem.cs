@@ -6,5 +6,5 @@ namespace Galaga.Systems;
 public abstract class ObjectSystem : System
 {
     public List<Object> Objects;
-    public abstract void ObjectHit(int id);
+    public abstract void ObjectHit(Guid id);
 }
