@@ -46,12 +46,12 @@ public class BulletSystem : ObjectSystem
 
     public void FirePlayerBullet(Point position)
     {
-        if (!shot) // DELETE THIS
-        { // DELETE THIS
-            _bullets.Add(new Bullet(position, new Point(_playerBulletTexture.Width, _playerBulletTexture.Height), _playerBulletTexture, -250, _debugTexture));
-            _bullets.Add(new Bullet(new Point(position.X, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture)); // DELETE THIS
-            shot = true; // DELETE THIS
-        } // DELETE THIS
+        //if (!shot) // DELETE THIS
+        //{ // DELETE THIS
+      _bullets.Add(new Bullet(new Point(position.X-1, position.Y-6), new Point(_playerBulletTexture.Width, _playerBulletTexture.Height), _playerBulletTexture, -250, _debugTexture));
+            //_bullets.Add(new Bullet(new Point(position.X, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture)); // DELETE THIS
+            //shot = true; // DELETE THIS
+        //} // DELETE THIS
 
     }
     

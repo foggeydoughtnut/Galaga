@@ -9,7 +9,7 @@ namespace Galaga.Objects;
 
 public abstract class Object
 {
-    const bool DEBUG_COLLIDER = true;
+    const bool DEBUG_COLLIDER = false;
 
     public bool IsObstacle = true;
     public Guid Id;
