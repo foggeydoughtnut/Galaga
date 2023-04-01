@@ -9,10 +9,10 @@ public class PlayerShip : Object
 {
     private readonly Point _bounds;
     public bool HasDuelShips = false;
-    private const int RIGHT_WALL = 468;
+    private const int RIGHT_WALL = 210;
 
     public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture) 
-        : base(position, dimensions, new List<Texture2D>{ texture }, 10_000, debugTexture)
+        : base(position, dimensions, texture, 1, 10_000, new Point(15, 16),debugTexture)
     {
         _bounds = bounds;
     }
@@ -34,8 +34,8 @@ public class PlayerShip : Object
             base.Render(spriteBatch);
         else
         {
-            spriteBatch.Draw(Textures[0], new Rectangle(new Point(Position.X - Dimensions.X, Position.Y), Dimensions), Color.White);
-            spriteBatch.Draw(Textures[0], Collider, Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(new Point(Position.X - Dimensions.X, Position.Y), Dimensions), Color.White);
+            spriteBatch.Draw(Texture, Collider, Color.White);
         }
     }
 }

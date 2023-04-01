@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Galaga.Systems;
@@ -12,21 +11,25 @@ public class BulletSystem : ObjectSystem
 {
     private readonly GameStatsSystem _statsSystem;
     private readonly List<Bullet> _bullets = new();
-    private readonly Texture2D _playerBulletTexture;
-    private readonly Texture2D _enemyBulletTexture;
-    private readonly Texture2D _debugTexture;
+    private Texture2D _playerBulletTexture;
+    private Texture2D _enemyBulletTexture;
+    private Texture2D _debugTexture;
 
     private bool shot = false; // THIS IS BAD SO DELETE THIS!!!!
 
 
-    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture,GameStatsSystem statsSystem, Texture2D debugTexture)
+    public BulletSystem(GameStatsSystem statsSystem)
     {
         _statsSystem = statsSystem;
-        _playerBulletTexture = playerBulletTexture;
-        _enemyBulletTexture = enemyBulletTexture;
-        _debugTexture = debugTexture;
     }
-    
+
+    public override void LoadContent(ContentManager contentManager)
+    {
+        _playerBulletTexture = contentManager.Load<Texture2D>("Images/PlayerBullet");
+        _enemyBulletTexture = contentManager.Load<Texture2D>("Images/EnemyBullet");
+        _debugTexture = contentManager.Load<Texture2D>("Images/Debug");
+    }
+
     public override void Update(GameTime gameTime)
     {
         foreach (var bullet in _bullets)
@@ -57,6 +60,6 @@ public class BulletSystem : ObjectSystem
     
     public void FireEnemyBullet(Point position)
     {
-        _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, 1500, _debugTexture));
+        _bullets.Add(new Bullet(position, new Point(25,25), _enemyBulletTexture, 1500, _debugTexture));
     }
 }

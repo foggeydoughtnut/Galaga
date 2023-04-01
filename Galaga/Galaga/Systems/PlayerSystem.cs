@@ -2,6 +2,7 @@ using System;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,18 +12,26 @@ public class PlayerSystem : ObjectSystem
 {
     private readonly BulletSystem _bulletSystem;
     private readonly GameStatsSystem _gameStatsSystem;
-    private readonly PlayerShip _playerShip;
+    private PlayerShip _playerShip;
 
     private float speed = 7500f;
 
-    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture)
+    public PlayerSystem(GameStatsSystem gameStatsSystem, BulletSystem bulletSystem)
     {
         _bulletSystem = bulletSystem;
         _gameStatsSystem = gameStatsSystem;
-        _playerShip = new PlayerShip(new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipTexture.Height),
-            new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y), new Point(shipTexture.Width, shipTexture.Height), shipTexture, debugTexture);
     }
-    
+
+    public override void LoadContent(ContentManager contentManager)
+    {
+        var shipTexture = contentManager.Load<Texture2D>("Images/PlayerShip");
+        var debugTexture = contentManager.Load<Texture2D>("Images/Debug");
+        _playerShip = new PlayerShip(new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipTexture.Height),
+            new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y), 
+            new Point(shipTexture.Width, shipTexture.Height), 
+            shipTexture, debugTexture);
+    }
+
     public override void Update(GameTime gameTime)
     {
         _playerShip.Update(gameTime.ElapsedGameTime);

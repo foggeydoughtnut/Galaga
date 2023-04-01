@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using NotImplementedException = System.NotImplementedException;
 
 namespace Galaga.Systems;
 
@@ -18,7 +20,9 @@ public class AudioSystem : System
         if (!_playingMusic) return;
         MediaPlayer.Stop();
     }
-    
+
+    public override void LoadContent(ContentManager contentManager) { }
+
     public override void Update(GameTime gameTime)
     {
         if (_playingMusic) return;

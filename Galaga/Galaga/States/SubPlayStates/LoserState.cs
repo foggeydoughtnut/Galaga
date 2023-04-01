@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -17,7 +18,9 @@ public class LoserState : SubPlayState
         _tracker = HighScoreTracker.GetTracker();
         Graphics = graphics;
         Window = window;
-    }    
+    }
+
+    public override void LoadContent(ContentManager contentManager) { }
 
     public override PlayStates Update(GameTime gameTime)
     {
@@ -26,7 +29,7 @@ public class LoserState : SubPlayState
         return PlayStates.Finish;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
+    public override void Render(SpriteBatch spriteBatch)
     {
     }
 }

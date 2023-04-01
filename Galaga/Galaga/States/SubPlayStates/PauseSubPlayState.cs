@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -19,6 +20,7 @@ public class PauseSubPlayState : SubPlayState
 
     public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window)
     {
+        Fonts = new Dictionary<string, SpriteFont>();
         _options = new List<string>
         {
             "Resume",
@@ -40,6 +42,13 @@ public class PauseSubPlayState : SubPlayState
         );
     }
 
+    public override void LoadContent(ContentManager contentManager)
+    {
+        Fonts.Add("default", contentManager.Load<SpriteFont>("Fonts/DemoFont1"));
+        Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));
+        Fonts.Add("vBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
+    }
+
     public override PlayStates Update(GameTime gameTime)
     {
         if (Keyboard.GetState().IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
@@ -52,15 +61,15 @@ public class PauseSubPlayState : SubPlayState
         return PlayStates.Pause;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
+    public override void Render(SpriteBatch spriteBatch)
     {
-        this.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
-        this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-        this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+        Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
+        Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
+        Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         // Show high score
-        var font = fonts["default"];
-        var bigFont = fonts["big"];
+        var font = Fonts["default"];
+        var bigFont = Fonts["big"];
         var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
         spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
             new Vector2(renderTarget.Width - stringSize.X, 0), Color.White);

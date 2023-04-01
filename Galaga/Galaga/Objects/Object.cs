@@ -19,19 +19,24 @@ public abstract class Object
     public double VelocityY;
     private double _totalElapsedMicrosecondsX;
     private double _totalElapsedMicrosecondsY;
-    protected readonly List<Texture2D> Textures;
+    protected readonly Texture2D Texture;
+    private readonly int _numAnimations;
+    private readonly Point _subImageDimensions;
     private readonly Texture2D DebugTexture;
     private int _currentTextureIndex;
     private readonly TimeSpan _animationTime;
     private TimeSpan _elapsedAnimationTime;
     public Rectangle Collider => new(Position, Dimensions);
 
-    protected Object(Point position, Point dimensions, List<Texture2D> textures, int animationTimeMilliseconds, Texture2D debugTexture)
+    protected Object(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Point subImageDimensions,
+        Texture2D debugTexture)
     {
         Position = position;
         Dimensions = dimensions;
-        Textures = textures;
+        Texture = texture;
         DebugTexture = debugTexture;
+        _subImageDimensions = subImageDimensions;
+        _numAnimations = numAnimations;
 
         _animationTime = new TimeSpan(0,0,0,0, animationTimeMilliseconds);
         Id = Guid.NewGuid();
@@ -44,7 +49,7 @@ public abstract class Object
         {
             _elapsedAnimationTime -= _animationTime;
             _currentTextureIndex++;
-            if (_currentTextureIndex >= Textures.Count)
+            if (_currentTextureIndex >= _numAnimations)
                 _currentTextureIndex = 0;
         }
 
@@ -53,8 +58,11 @@ public abstract class Object
 
     public virtual void Render(SpriteBatch spriteBatch)
     {
-        if (Textures is null) return;
-        spriteBatch.Draw(Textures[_currentTextureIndex], Collider, Color.White);
+        if (Texture is null) return;
+        spriteBatch.Draw(Texture,
+            new Rectangle(Position.X - Dimensions.X / 2, Position.Y - Dimensions.Y / 2, Dimensions.X, Dimensions.Y),
+            new Rectangle(_currentTextureIndex * _subImageDimensions.X, 0, _subImageDimensions.X, _subImageDimensions.Y),
+            Color.White);
 
         if (DEBUG_COLLIDER)
         {
