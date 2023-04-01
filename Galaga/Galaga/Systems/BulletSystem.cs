@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Galaga.Objects;
 using Galaga.Utilities;
@@ -15,7 +16,7 @@ public class BulletSystem : ObjectSystem
     private readonly Texture2D _enemyBulletTexture;
     private readonly Texture2D _debugTexture;
 
-    private bool shot = false; // THIS IS BAD BUT SO DELETE THIS!!!!
+    private bool shot = false; // THIS IS BAD SO DELETE THIS!!!!
 
 
     public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture,GameStatsSystem statsSystem, Texture2D debugTexture)
@@ -47,7 +48,8 @@ public class BulletSystem : ObjectSystem
     {
         if (!shot) // DELETE THIS
         { // DELETE THIS
-            _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, -1500, _debugTexture));
+            _bullets.Add(new Bullet(position, new Point(_playerBulletTexture.Width, _playerBulletTexture.Height), _playerBulletTexture, -250, _debugTexture));
+            _bullets.Add(new Bullet(new Point(position.X, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture)); // DELETE THIS
             shot = true; // DELETE THIS
         } // DELETE THIS
 

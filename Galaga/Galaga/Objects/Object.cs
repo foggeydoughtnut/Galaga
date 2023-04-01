@@ -58,12 +58,12 @@ public abstract class Object
 
         if (DEBUG_COLLIDER)
         {
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Top), null, Color.White, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 1f, SpriteEffects.None, 0.25f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Bottom), null, Color.White, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 1f, SpriteEffects.None, 0.25f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Right, Collider.Top), null, Color.White, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 1f, SpriteEffects.None, 0.25f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Left, Collider.Top), null, Color.White, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 1f, SpriteEffects.None, 0.25f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Right, Collider.Bottom), null, Color.White, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 1f, SpriteEffects.None, 0.25f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Left, Collider.Bottom), null, Color.White, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 1f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Right, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Left, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Right, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
+            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Left, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.25f);
         }
     }
 
