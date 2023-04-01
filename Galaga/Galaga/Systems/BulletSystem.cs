@@ -15,6 +15,8 @@ public class BulletSystem : ObjectSystem
     private readonly Texture2D _enemyBulletTexture;
     private readonly Texture2D _debugTexture;
 
+    private bool shot = false; // THIS IS BAD BUT SO DELETE THIS!!!!
+
 
     public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture,GameStatsSystem statsSystem, Texture2D debugTexture)
     {
@@ -43,7 +45,12 @@ public class BulletSystem : ObjectSystem
 
     public void FirePlayerBullet(Point position)
     {
-        _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, -1500, _debugTexture));
+        if (!shot) // DELETE THIS
+        { // DELETE THIS
+            _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, -1500, _debugTexture));
+            shot = true; // DELETE THIS
+        } // DELETE THIS
+
     }
     
     public void FireEnemyBullet(Point position)
