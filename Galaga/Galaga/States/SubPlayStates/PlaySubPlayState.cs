@@ -22,15 +22,17 @@ public class PlaySubPlayState : SubPlayState
         _tracker = HighScoreTracker.GetTracker();
         
         _systems = new List<Systems.System>();
+        ParticleSystem particleSystem = new(textures["particle"].First());
         var gameStats = new GameStatsSystem();
         var bulletSystem = new BulletSystem(textures["playerBullet"].First(), textures["enemyBullet"].First(), gameStats, textures["debug"].First());
-        var playerSystem = new PlayerSystem(textures["ship"].First(), gameStats, bulletSystem, textures["debug"].First());
+        var playerSystem = new PlayerSystem(textures["ship"].First(), gameStats, bulletSystem, textures["debug"].First(), particleSystem);
         var enemySystem = new EnemySystem(playerSystem, bulletSystem);
         var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
         _systems.Add(playerSystem);
         _systems.Add(enemySystem);
         _systems.Add(bulletSystem);
         _systems.Add(collisionDetectionSystem);
+        _systems.Add(particleSystem);
 
         Graphics = graphics;
         Window = window;

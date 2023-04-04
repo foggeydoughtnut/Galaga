@@ -14,6 +14,7 @@ public class PlayerSystem : ObjectSystem
     private readonly BulletSystem _bulletSystem;
     private readonly GameStatsSystem _gameStatsSystem;
     private readonly PlayerShip _playerShip;
+    private readonly ParticleSystem _particleSystem;
 
     private float speed = 7500f;
 
@@ -23,12 +24,13 @@ public class PlayerSystem : ObjectSystem
         return _playerShip;
     }
 
-    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture)
+    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture, ParticleSystem particleSystem)
     {
         _bulletSystem = bulletSystem;
         _gameStatsSystem = gameStatsSystem;
         _playerShip = new PlayerShip(new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipTexture.Height),
             new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y), new Point(shipTexture.Width, shipTexture.Height), shipTexture, debugTexture);
+        _particleSystem = particleSystem;
     }
     
     public override void Update(GameTime gameTime)
@@ -53,6 +55,8 @@ public class PlayerSystem : ObjectSystem
     }
     public void PlayerHit()
     {
-        Debug.WriteLine("Player was hit");
+        _particleSystem.PlayerDeath(_playerShip.Position);
+
+        //Debug.WriteLine("Player was hit");
     }
 }
