@@ -9,7 +9,7 @@ namespace Galaga.Objects;
 
 public abstract class Object
 {
-    const bool DEBUG_COLLIDER = true;
+    const bool DEBUG_COLLIDER = false;
 
     public bool IsObstacle = true;
     public Guid Id;
@@ -26,13 +26,15 @@ public abstract class Object
     private TimeSpan _elapsedAnimationTime;
     public Rectangle Collider => new(Position, Dimensions);
 
-    protected Object(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture)
+    private int _numberOfSubImages; 
+
+    protected Object(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture, int numberOfSubImages)
     {
         Position = position;
         Dimensions = dimensions;
         ObjectTexture = textures;
         DebugTexture = debugTexture;
-
+        _numberOfSubImages = numberOfSubImages;
         _animationTime = new TimeSpan(0,0,0,0, animationTimeMilliseconds);
         Id = Guid.NewGuid();
     }
@@ -44,6 +46,10 @@ public abstract class Object
         {
             _elapsedAnimationTime -= _animationTime;
             _currentTextureIndex++;
+            if (_currentTextureIndex >= _numberOfSubImages) 
+            {
+                _currentTextureIndex = 0;
+            }
             /*if (_currentTextureIndex >= Textures.Count)
                 _currentTextureIndex = 0;*/
         }
@@ -54,7 +60,14 @@ public abstract class Object
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (ObjectTexture is null) return;
-        spriteBatch.Draw(ObjectTexture, Collider, null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+        if (_numberOfSubImages == 1)
+        {
+            spriteBatch.Draw(ObjectTexture, Collider, null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+        }
+        else
+        {
+            spriteBatch.Draw(ObjectTexture, Collider, new Rectangle(_currentTextureIndex * Dimensions.X, 0, Dimensions.X, Dimensions.Y), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+        }
 
         if (DEBUG_COLLIDER)
         {

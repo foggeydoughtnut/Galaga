@@ -17,15 +17,17 @@ public class PlaySubPlayState : SubPlayState
     private readonly GraphicsDeviceManager Graphics;
     private readonly GameWindow Window;
     private RenderTarget2D renderTarget;
-    public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, List<Texture2D>> textures)
+    public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures)
     {
         _tracker = HighScoreTracker.GetTracker();
         
         _systems = new List<Systems.System>();
-        ParticleSystem particleSystem = new(textures["particle"].First());
+        ParticleSystem particleSystem = new(textures["particle"]);
         var gameStats = new GameStatsSystem();
-        var bulletSystem = new BulletSystem(textures["playerBullet"].First(), textures["enemyBullet"].First(), gameStats, textures["debug"].First());
-        var playerSystem = new PlayerSystem(textures["ship"].First(), gameStats, bulletSystem, textures["debug"].First(), particleSystem);
+        var bulletSystem = new BulletSystem(textures["playerBullet"], textures["enemyBullet"], gameStats, textures["debug"]);
+        var playerSystem = new PlayerSystem(textures["ship"], gameStats, bulletSystem, textures["debug"], particleSystem);
+        //var playerSystem = new PlayerSystem(textures["bossGalagaHalf"], gameStats, bulletSystem, textures["debug"], particleSystem); // FOR TESTING ANIMATION DELETE
+
         var enemySystem = new EnemySystem(playerSystem, bulletSystem);
         var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
         _systems.Add(playerSystem);
