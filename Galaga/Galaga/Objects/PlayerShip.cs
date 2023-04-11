@@ -13,7 +13,7 @@ public class PlayerShip : Object
     public bool HasDuelShips = false;
 
     public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture) 
-        : base(position, dimensions, new List<Texture2D>{ texture }, 10_000, debugTexture)
+        : base(position, dimensions, texture, 10_000, debugTexture)
     {
         _bounds = bounds;
     }
@@ -24,7 +24,7 @@ public class PlayerShip : Object
         {
             Position.X += offset.X;
         }
-        if (Position.Y + offset.Y > 0 && Position.Y + offset.Y < Constants.GAMEPLAY_Y - Textures[0].Height)
+        if (Position.Y + offset.Y > 0 && Position.Y + offset.Y < Constants.GAMEPLAY_Y - ObjectTexture.Height)
             Position.Y += offset.Y;
     }
 
@@ -34,8 +34,8 @@ public class PlayerShip : Object
             base.Render(spriteBatch);
         else
         {
-            spriteBatch.Draw(Textures[0], new Rectangle(new Point(Position.X - Dimensions.X, Position.Y), Dimensions), Color.White);
-            spriteBatch.Draw(Textures[0], Collider, Color.White);
+            spriteBatch.Draw(ObjectTexture, new Rectangle(new Point(Position.X - Dimensions.X, Position.Y), Dimensions), Color.White);
+            spriteBatch.Draw(ObjectTexture, Collider, Color.White);
         }
     }
 }
