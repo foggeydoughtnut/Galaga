@@ -12,8 +12,8 @@ public class PlayerShip : Object
     private readonly Point _bounds;
     public bool HasDuelShips = false;
 
-    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture) 
-        : base(position, dimensions, texture, 10_000, debugTexture)
+    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture, int numberOfSubImages) 
+        : base(position, dimensions, texture, 10_000, debugTexture, numberOfSubImages)
     {
         _bounds = bounds;
     }

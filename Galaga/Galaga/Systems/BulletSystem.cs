@@ -51,8 +51,15 @@ public class BulletSystem : ObjectSystem
     {
         if (!shot) // DELETE THIS
         { // DELETE THIS
-            _bullets.Add(new Bullet(new Point(position.X-1, position.Y-6), new Point(_playerBulletTexture.Width, _playerBulletTexture.Height), _playerBulletTexture, -250, _debugTexture));
-            _bullets.Add(new Bullet(new Point(position.X-1, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture)); // DELETE THIS
+            _bullets.Add(new Bullet(
+                position: new Point(position.X-1, position.Y-6),
+                dimensions: new Point(_playerBulletTexture.Width, _playerBulletTexture.Height),
+                _playerBulletTexture,
+                velocity: -250,
+                _debugTexture,
+                numberOfSubImages: 1
+            ));
+            _bullets.Add(new Bullet(new Point(position.X-1, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture, 1)); // DELETE THIS
             shot = true; // DELETE THIS
         } // DELETE THIS
 
@@ -60,6 +67,13 @@ public class BulletSystem : ObjectSystem
     
     public void FireEnemyBullet(Point position)
     {
-        _bullets.Add(new Bullet(position, new Point(25,25), _playerBulletTexture, 1500, _debugTexture));
+        _bullets.Add(new Bullet(
+            position,
+            dimensions: new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height),
+            _playerBulletTexture,
+            velocity: 250,
+            _debugTexture,
+            numberOfSubImages: 1
+        ));
     }
 }
