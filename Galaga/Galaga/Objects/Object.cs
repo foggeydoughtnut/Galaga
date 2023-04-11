@@ -19,18 +19,18 @@ public abstract class Object
     public double VelocityY;
     private double _totalElapsedMicrosecondsX;
     private double _totalElapsedMicrosecondsY;
-    protected readonly List<Texture2D> Textures;
+    protected readonly Texture2D ObjectTexture;
     private readonly Texture2D DebugTexture;
     private int _currentTextureIndex;
     private readonly TimeSpan _animationTime;
     private TimeSpan _elapsedAnimationTime;
     public Rectangle Collider => new(Position, Dimensions);
 
-    protected Object(Point position, Point dimensions, List<Texture2D> textures, int animationTimeMilliseconds, Texture2D debugTexture)
+    protected Object(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture)
     {
         Position = position;
         Dimensions = dimensions;
-        Textures = textures;
+        ObjectTexture = textures;
         DebugTexture = debugTexture;
 
         _animationTime = new TimeSpan(0,0,0,0, animationTimeMilliseconds);
@@ -44,8 +44,8 @@ public abstract class Object
         {
             _elapsedAnimationTime -= _animationTime;
             _currentTextureIndex++;
-            if (_currentTextureIndex >= Textures.Count)
-                _currentTextureIndex = 0;
+            /*if (_currentTextureIndex >= Textures.Count)
+                _currentTextureIndex = 0;*/
         }
 
         UpdatePosition(elapsedTime);
@@ -53,8 +53,8 @@ public abstract class Object
 
     public virtual void Render(SpriteBatch spriteBatch)
     {
-        if (Textures is null) return;
-        spriteBatch.Draw(Textures[_currentTextureIndex], Collider, null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+        if (ObjectTexture is null) return;
+        spriteBatch.Draw(ObjectTexture, Collider, null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
 
         if (DEBUG_COLLIDER)
         {
