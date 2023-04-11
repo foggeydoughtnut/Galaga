@@ -14,7 +14,7 @@ public abstract class GameState
     protected GraphicsDeviceManager Graphics;
     protected SpriteBatch SpriteBatch;
     protected GameWindow Window;
-    protected readonly Dictionary<string, List<Texture2D>> Textures = new();
+    protected readonly Dictionary<string, Texture2D> Textures = new();
     protected readonly Dictionary<string, SpriteFont> Fonts = new();
     protected readonly Dictionary<string, Song> Songs = new();
 

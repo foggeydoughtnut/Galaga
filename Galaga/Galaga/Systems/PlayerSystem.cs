@@ -28,8 +28,14 @@ public class PlayerSystem : ObjectSystem
     {
         _bulletSystem = bulletSystem;
         _gameStatsSystem = gameStatsSystem;
-        _playerShip = new PlayerShip(new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipTexture.Height),
-            new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y), new Point(shipTexture.Width, shipTexture.Height), shipTexture, debugTexture);
+        _playerShip = new PlayerShip(
+            position: new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipTexture.Height),
+            bounds: new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y),
+            dimensions: new Point(shipTexture.Width, shipTexture.Height),
+            shipTexture,
+            debugTexture,
+            numberOfSubImages: 1
+        );
         _particleSystem = particleSystem;
     }
     
