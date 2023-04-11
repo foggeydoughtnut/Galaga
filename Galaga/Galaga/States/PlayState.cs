@@ -38,6 +38,11 @@ public class PlayState : GameState
         Textures.Add("debug", contentManager.Load<Texture2D>("Images/Debug"));
         Textures.Add("particle", contentManager.Load<Texture2D>("Images/Particle"));
         Textures.Add("bee", contentManager.Load<Texture2D>("Images/Bee"));
+        Textures.Add("butterfly", contentManager.Load<Texture2D>("Images/Butterfly"));
+        Textures.Add("bossGalagaFull", contentManager.Load<Texture2D>("Images/BossGalagaFull"));
+        Textures.Add("bossGalagaHalf", contentManager.Load<Texture2D>("Images/BossGalagaHalf"));
+
+
 
 
 

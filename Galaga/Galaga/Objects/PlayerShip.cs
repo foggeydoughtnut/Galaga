@@ -12,12 +12,18 @@ public class PlayerShip : Object
     private readonly Point _bounds;
     public bool HasDuelShips = false;
 
-    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture, int numberOfSubImages) 
-        : base(position, dimensions, texture, 10_000, debugTexture, numberOfSubImages)
+/*    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture, int numberOfSubImages)
+        : base(position, dimensions, texture, 500, debugTexture, numberOfSubImages)
+    {
+        _bounds = bounds;
+    } // DELETE THIS*/
+
+
+    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture, int numberOfSubImages)
+    : base(position, dimensions, texture, 10_000, debugTexture, numberOfSubImages)
     {
         _bounds = bounds;
     }
-
     protected override void Translate(Point offset)
     {
         if (Position.X + offset.X > 0 && Position.X + offset.X < 210)

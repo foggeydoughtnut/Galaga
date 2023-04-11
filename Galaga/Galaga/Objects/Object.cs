@@ -66,7 +66,7 @@ public abstract class Object
         }
         else
         {
-            spriteBatch.Draw(ObjectTexture, Collider, new Rectangle(_currentTextureIndex * 16, 0, 16, 16), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(ObjectTexture, Collider, new Rectangle(_currentTextureIndex * Dimensions.X, 0, Dimensions.X, Dimensions.Y), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
         }
 
         if (DEBUG_COLLIDER)
