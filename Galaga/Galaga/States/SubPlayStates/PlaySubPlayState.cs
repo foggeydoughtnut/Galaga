@@ -26,7 +26,7 @@ public class PlaySubPlayState : SubPlayState
         var gameStats = new GameStatsSystem();
         var bulletSystem = new BulletSystem(gameStats);
         var playerSystem = new PlayerSystem(gameStats, bulletSystem);
-        var enemySystem = new EnemySystem(playerSystem, bulletSystem);
+        var enemySystem = new EnemySystem(playerSystem, bulletSystem, window);
         var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
         _systems.Add(playerSystem);
         _systems.Add(enemySystem);
@@ -37,8 +37,8 @@ public class PlaySubPlayState : SubPlayState
         _window = window;
         _renderTarget = new RenderTarget2D(
             _graphics.GraphicsDevice,
-            Constants.GAMEPLAY_Y,
             Constants.GAMEPLAY_X,
+            Constants.GAMEPLAY_Y,
             false,
             SurfaceFormat.Color,
             DepthFormat.None,
@@ -69,7 +69,7 @@ public class PlaySubPlayState : SubPlayState
     public override void Render(SpriteBatch spriteBatch)
     {
         _graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
-        _graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+        _graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
         _graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         foreach (var system in _systems)
@@ -79,7 +79,7 @@ public class PlaySubPlayState : SubPlayState
         var font = Fonts["default"];
         var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
         spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
-            new Vector2(_renderTarget.Width - stringSize.X / 2, 0), Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 1f);
+            new Vector2(_renderTarget.Width - stringSize.X, 0), Color.White);
 
 
         spriteBatch.End();
@@ -89,7 +89,7 @@ public class PlaySubPlayState : SubPlayState
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         spriteBatch.Draw(
                 _renderTarget,
-                new Rectangle(_window.ClientBounds.Width / 8, 0, (_window.ClientBounds.Height / 3 * 4), _window.ClientBounds.Height),
+                new Rectangle(_window.ClientBounds.Width / 8, 0, 3 * _window.ClientBounds.Width / 4, _window.ClientBounds.Height),
                 null,
                 Color.White,
                 0,

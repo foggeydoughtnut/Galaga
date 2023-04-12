@@ -9,7 +9,6 @@ public class PlayerShip : Object
 {
     private readonly Point _bounds;
     public bool HasDuelShips = false;
-    private const int RIGHT_WALL = 210;
 
     public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture) 
         : base(position, dimensions, texture, 1, 10_000, new Point(15, 16),debugTexture)
@@ -20,7 +19,7 @@ public class PlayerShip : Object
     protected override void Translate(Point offset)
     {
         //465ish
-        if (Position.X + offset.X > 0 && Position.X + offset.X < RIGHT_WALL)
+        if (Position.X + offset.X > 0 && Position.X + Dimensions.X + offset.X < _bounds.X)
         {
             Position.X += offset.X;
         }

@@ -15,7 +15,7 @@ public class PauseSubPlayState : SubPlayState
     private readonly HighScoreTracker _tracker;
     private readonly GraphicsDeviceManager Graphics;
     private readonly GameWindow Window;
-    private RenderTarget2D renderTarget;
+    private RenderTarget2D _renderTarget;
 
 
     public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window)
@@ -30,10 +30,10 @@ public class PauseSubPlayState : SubPlayState
 
         Graphics = graphics;
         Window = window;
-        this.renderTarget = new RenderTarget2D(
+        _renderTarget = new RenderTarget2D(
             Graphics.GraphicsDevice,
-            1440,
-            1080,
+            Constants.GAMEPLAY_X,
+            Constants.GAMEPLAY_Y,
             false,
             SurfaceFormat.Color,
             DepthFormat.None,
@@ -63,7 +63,7 @@ public class PauseSubPlayState : SubPlayState
 
     public override void Render(SpriteBatch spriteBatch)
     {
-        Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
+        Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
         Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
         Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
@@ -72,15 +72,15 @@ public class PauseSubPlayState : SubPlayState
         var bigFont = Fonts["big"];
         var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
         spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
-            new Vector2(renderTarget.Width - stringSize.X, 0), Color.White);
+            new Vector2(_renderTarget.Width - stringSize.X, 0), Color.White);
 
         // Show options
         var optionFont = _indexOfChoice == 0 ? bigFont : font;
         stringSize = optionFont.MeasureString(_options[0]);
-        RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[0], new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) - stringSize.Y));
+        RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[0], new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(_renderTarget.Height / 2) - stringSize.Y));
         optionFont = _indexOfChoice == 1 ? bigFont : font;
         stringSize = optionFont.MeasureString(_options[1]);
-        RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[1], new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) + stringSize.Y));
+        RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[1], new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(_renderTarget.Height / 2) + stringSize.Y));
 
         spriteBatch.End();
         Graphics.GraphicsDevice.SetRenderTarget(null);
@@ -88,8 +88,8 @@ public class PauseSubPlayState : SubPlayState
         // Render render target to screen
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         spriteBatch.Draw(
-                renderTarget,
-                new Rectangle(Window.ClientBounds.Width / 8, 0, (Window.ClientBounds.Height / 3 * 4), Window.ClientBounds.Height),
+                _renderTarget,
+                new Rectangle(Window.ClientBounds.Width / 8, 0, 3 * Window.ClientBounds.Width / 4, Window.ClientBounds.Height),
                 null,
                 Color.White,
                 0,

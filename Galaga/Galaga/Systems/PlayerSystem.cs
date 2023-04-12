@@ -1,4 +1,3 @@
-using System;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
@@ -26,9 +25,9 @@ public class PlayerSystem : ObjectSystem
     {
         var shipTexture = contentManager.Load<Texture2D>("Images/PlayerShip");
         var debugTexture = contentManager.Load<Texture2D>("Images/Debug");
-        _playerShip = new PlayerShip(new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipTexture.Height),
+        _playerShip = new PlayerShip(new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS),
             new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y), 
-            new Point(shipTexture.Width, shipTexture.Height), 
+            new Point(Constants.CHARACTER_DIMENSIONS), 
             shipTexture, debugTexture);
     }
 

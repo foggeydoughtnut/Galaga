@@ -56,13 +56,25 @@ public abstract class Object
         UpdatePosition(elapsedTime);
     }
 
+    public double DetermineHeading()
+    {
+        if (VelocityX == 0 && VelocityY == 0)
+            return 0;
+        var heading = Math.Atan2(VelocityY, VelocityX);
+        return heading  + Constants.PI_OVER_TWO;
+    }
+    
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (Texture is null) return;
         spriteBatch.Draw(Texture,
-            new Rectangle(Position.X - Dimensions.X / 2, Position.Y - Dimensions.Y / 2, Dimensions.X, Dimensions.Y),
+            new Rectangle(Position.X + Dimensions.X / 2, Position.Y + Dimensions.Y / 2, Dimensions.X, Dimensions.Y),
             new Rectangle(_currentTextureIndex * _subImageDimensions.X, 0, _subImageDimensions.X, _subImageDimensions.Y),
-            Color.White);
+            Color.White,
+            (float)DetermineHeading(),
+            new Vector2(_subImageDimensions.X / 2, _subImageDimensions.Y / 2),
+            SpriteEffects.None,
+            0);
 
         if (DEBUG_COLLIDER)
         {
