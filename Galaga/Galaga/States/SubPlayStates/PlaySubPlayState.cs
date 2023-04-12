@@ -17,6 +17,8 @@ public class PlaySubPlayState : SubPlayState
     private readonly GraphicsDeviceManager Graphics;
     private readonly GameWindow Window;
     private RenderTarget2D renderTarget;
+    private readonly IReadOnlyDictionary<string, Texture2D> _textures;
+
     public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures)
     {
         _tracker = HighScoreTracker.GetTracker();
@@ -48,6 +50,7 @@ public class PlaySubPlayState : SubPlayState
             Graphics.GraphicsDevice.PresentationParameters.MultiSampleCount,
             RenderTargetUsage.DiscardContents
         );
+        _textures = textures;
     }
     
     public override PlayStates Update(GameTime gameTime)
@@ -63,8 +66,10 @@ public class PlaySubPlayState : SubPlayState
     {
         this.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
         this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-        this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+        this.Graphics.GraphicsDevice.Clear(Color.Transparent);
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+        spriteBatch.Draw(_textures["background"], new Rectangle(0, 0, renderTarget.Width, renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
+
         foreach (var system in _systems)
             system.Render(spriteBatch);
 
