@@ -15,6 +15,7 @@ public class PauseSubPlayState : SubPlayState
     private readonly GraphicsDeviceManager Graphics;
     private readonly GameWindow Window;
     private RenderTarget2D renderTarget;
+    KeyboardState previousKeyboardState;
 
 
     public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window)
@@ -38,17 +39,24 @@ public class PauseSubPlayState : SubPlayState
             Graphics.GraphicsDevice.PresentationParameters.MultiSampleCount,
             RenderTargetUsage.DiscardContents
         );
+        previousKeyboardState = Keyboard.GetState();
+
     }
 
     public override PlayStates Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
+        KeyboardState currentKeyboardState = Keyboard.GetState();
+
+        if (currentKeyboardState.IsKeyUp(Keys.Up) && previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
             _indexOfChoice -= 1;
-        if (Keyboard.GetState().IsKeyDown(Keys.Down) && _indexOfChoice + 1 <= 1)
+
+        if (currentKeyboardState.IsKeyUp(Keys.Down) && previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _options.Count)
             _indexOfChoice += 1;
-        if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+        if (currentKeyboardState.IsKeyUp(Keys.Enter) && previousKeyboardState.IsKeyDown(Keys.Enter))
             return _indexOfChoice == 0 ? PlayStates.Play : PlayStates.Finish;
-        
+
+        previousKeyboardState = currentKeyboardState;
+
         return PlayStates.Pause;
     }
 
