@@ -37,7 +37,7 @@ public class EnemySystem : ObjectSystem
         _debugTexture = debugTexture;
         _enemies = new List<Enemy>();
         _window = window;
-        _nextPos = new Vector2(50, 50);
+        _nextPos = new Vector2(50.0f, 50.0f);
         _points = new List<Vector2> { new(200, 0) };
         var rand = new Random();
         var randX = rand.Next() % (Constants.GAMEPLAY_X / 2) + Constants.GAMEPLAY_X / 4;
