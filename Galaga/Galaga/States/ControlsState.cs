@@ -123,6 +123,7 @@ namespace Galaga.States
                     // Write that value to be the new input for the specific command
                     string json = JsonConvert.SerializeObject(controls);
                     File.WriteAllText("controls.json", json);
+                    Controls.ChangeInControls = true;
                 }
             }
             previousKeyboardState = currentKeyboardState;

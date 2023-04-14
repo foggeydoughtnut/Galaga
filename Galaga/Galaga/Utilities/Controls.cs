@@ -9,6 +9,7 @@ namespace Galaga.Utilities
 {
     public class Controls
     {
+        public static bool ChangeInControls { get; set; }
         public Keys Left { get; set; }
         public Keys Right { get; set; }
         public Keys Fire { get; set; }

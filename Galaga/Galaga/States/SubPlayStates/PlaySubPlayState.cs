@@ -23,6 +23,7 @@ public class PlaySubPlayState : SubPlayState
     private readonly IReadOnlyDictionary<string, Texture2D> _textures;
     KeyboardState previousKeyboardState;
 
+
     public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures)
     {
         _tracker = HighScoreTracker.GetTracker();

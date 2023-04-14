@@ -29,15 +29,22 @@ public class PlayerSystem : ObjectSystem
 
     public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture, ParticleSystem particleSystem)
     {
-        if (!File.Exists("controls.json"))
+        if (Controls.ChangeInControls)
         {
-            Controls newControls = new Controls { Left = Keys.Left, Right = Keys.Right, Fire = Keys.Space };
-            string json = JsonConvert.SerializeObject(newControls);
-            File.WriteAllText("controls.json", json);
-        }
+            if (!File.Exists("controls.json"))
+            {
+                Controls newControls = new Controls { Left = Keys.Left, Right = Keys.Right, Fire = Keys.Space };
+                string json = JsonConvert.SerializeObject(newControls);
+                File.WriteAllText("controls.json", json);
+            }
 
-        string controlsFileData = File.ReadAllText("controls.json");
-        controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
+            string controlsFileData = File.ReadAllText("controls.json");
+            controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
+        }
+        else
+        {
+            Controls.ChangeInControls = false;
+        }
 
         _bulletSystem = bulletSystem;
         _gameStatsSystem = gameStatsSystem;
