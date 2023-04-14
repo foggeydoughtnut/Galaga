@@ -12,7 +12,7 @@ public abstract class Enemy : Object
     public Vector2? Destination;
     public double VelocityVector = 250;
     
-    public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Point subImageDimensions, Texture2D debugTexture) : base(position, dimensions, texture, numAnimations, animationTimeMilliseconds, subImageDimensions, debugTexture)
+    public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
     {
         EntrancePath = new List<Vector2>();
     }

@@ -10,17 +10,16 @@ namespace Galaga.States.SubPlayStates;
 public class LoserState : SubPlayState
 {
     private readonly HighScoreTracker _tracker;
-    private readonly GraphicsDeviceManager Graphics;
-    private readonly GameWindow Window;
+    private readonly GraphicsDeviceManager _graphics;
+    private readonly GameWindow _window;
 
     public LoserState(GraphicsDeviceManager graphics, GameWindow window)
     {
         _tracker = HighScoreTracker.GetTracker();
-        Graphics = graphics;
-        Window = window;
+        _graphics = graphics;
+        _window = window;
     }
 
-    public override void LoadContent(ContentManager contentManager) { }
 
     public override PlayStates Update(GameTime gameTime)
     {
@@ -29,7 +28,7 @@ public class LoserState : SubPlayState
         return PlayStates.Finish;
     }
 
-    public override void Render(SpriteBatch spriteBatch)
+    public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
     {
     }
 }

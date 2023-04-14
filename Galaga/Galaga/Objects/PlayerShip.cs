@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection.Metadata;
+using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,12 +12,18 @@ public class PlayerShip : Object
     private readonly Point _bounds;
     public bool HasDuelShips = false;
 
-    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture) 
-        : base(position, dimensions, texture, 1, 10_000, new Point(15, 16),debugTexture)
+/*    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture, int numberOfSubImages)
+        : base(position, dimensions, texture, 500, debugTexture, numberOfSubImages)
+    {
+        _bounds = bounds;
+    } // DELETE THIS*/
+
+
+    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture, int numberOfSubImages)
+    : base(position, dimensions, texture, 10_000, debugTexture, numberOfSubImages)
     {
         _bounds = bounds;
     }
-
     protected override void Translate(Point offset)
     {
         //465ish
@@ -23,7 +31,7 @@ public class PlayerShip : Object
         {
             Position.X += offset.X;
         }
-        if (Position.Y + offset.Y > 0 && Position.Y + offset.Y < _bounds.Y - Dimensions.Y)
+        if (Position.Y + offset.Y > 0 && Position.Y + offset.Y < Constants.GAMEPLAY_Y - ObjectTexture.Height)
             Position.Y += offset.Y;
     }
 
@@ -33,8 +41,8 @@ public class PlayerShip : Object
             base.Render(spriteBatch);
         else
         {
-            spriteBatch.Draw(Texture, new Rectangle(new Point(Position.X - Dimensions.X, Position.Y), Dimensions), Color.White);
-            spriteBatch.Draw(Texture, Collider, Color.White);
+            spriteBatch.Draw(ObjectTexture, new Rectangle(new Point(Position.X - Dimensions.X, Position.Y), Dimensions), Color.White);
+            spriteBatch.Draw(ObjectTexture, Collider, Color.White);
         }
     }
 }

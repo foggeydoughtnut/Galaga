@@ -9,5 +9,5 @@ public static class Constants
     public const int MENU_BUFFER = 120;
     public const double PI = 3.14159;
     public const double PI_OVER_TWO = PI / 2;
-    public const int CHARACTER_DIMENSIONS = (int)(GAMEPLAY_X * .07);
+    public const int CHARACTER_DIMENSIONS = (int)(GAMEPLAY_X * .03);
 }

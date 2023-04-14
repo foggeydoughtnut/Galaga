@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -15,6 +16,7 @@ public class MenuState : GameState
     private List<string> _options;
     private GameStates _nextState;
     RenderTarget2D renderTarget;
+    KeyboardState previousKeyboardState;
 
     public override void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, GameWindow window)
     {
@@ -23,6 +25,7 @@ public class MenuState : GameState
             "Play Game",
             "High Scores",
             "Credits",
+            "Controls",
             "Quit"
         };
 
@@ -36,8 +39,11 @@ public class MenuState : GameState
             graphicsDevice.PresentationParameters.MultiSampleCount,
             RenderTargetUsage.DiscardContents
         );
+        previousKeyboardState = Keyboard.GetState();
+
         base.Initialize(graphicsDevice, graphics, window);
     }
+
 
     public override void LoadContent(ContentManager contentManager)
     {
@@ -54,21 +60,31 @@ public class MenuState : GameState
     }
     protected override void ProcessInput()
     {
-        if (IsKeyPressed(Keys.Up) && _indexOfChoice - 1 >= 0)
+        KeyboardState currentKeyboardState = Keyboard.GetState();
+
+
+
+        if (currentKeyboardState.IsKeyUp(Keys.Up) && previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
             _indexOfChoice -= 1;
 
-        if (IsKeyPressed(Keys.Down) && _indexOfChoice + 1 < _options.Count)
+        if (currentKeyboardState.IsKeyUp(Keys.Down) && previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _options.Count)
             _indexOfChoice += 1;
-        
-        if (IsKeyPressed(Keys.Enter))
-            _nextState =  _indexOfChoice switch
-                { 
-                    0=> GameStates.GamePlay,
-                    1=> GameStates.HighScores,
-                    2=> GameStates.About,
-                    3=> GameStates.Exit,
-                    _ => throw new ArgumentOutOfRangeException()
-                }; 
+
+        if (currentKeyboardState.IsKeyUp(Keys.Enter) && previousKeyboardState.IsKeyDown(Keys.Enter))
+        {
+            _nextState = _indexOfChoice switch
+            {
+                0 => GameStates.GamePlay,
+                1 => GameStates.HighScores,
+                2 => GameStates.About,
+                3 => GameStates.Controls,
+                4 => GameStates.Exit,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            // Handle enter key released
+        }
+        previousKeyboardState = currentKeyboardState;
+
         base.ProcessInput();
     }
 

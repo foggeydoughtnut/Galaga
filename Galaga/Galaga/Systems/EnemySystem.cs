@@ -6,7 +6,6 @@ using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Object = Galaga.Objects.Object;
 
 namespace Galaga.Systems;
 
@@ -14,22 +13,28 @@ public class EnemySystem : ObjectSystem
 {
     private readonly PlayerSystem _playerSystem;
     private readonly BulletSystem _bulletSystem;
+    private readonly ParticleSystem _particleSystem;
     private readonly List<Enemy> _enemies;
     private readonly GameWindow _window;
     private const int EntranceCircleRadius = 150;
     private Vector2 _nextPos;
     private List<Vector2> _points;
-    private bool _sentCircle;
-    private readonly TimeSpan _entranceDelay = new(0,0,0,0,200);
+    private readonly TimeSpan _entranceDelay = new(0,0,0,0,500);
     private TimeSpan _elapsedTime = TimeSpan.Zero;
-    private Texture2D _beeTexture;
-    private Texture2D _debugTexture;
-    
+    private readonly Texture2D _beeTexture;
+    private readonly Texture2D _debugTexture;
+    private readonly int _maxEnemies = 10;
+    private int _createdEnemies;
 
-    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, GameWindow window)
+    public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
+
+    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture)
     {
         _playerSystem = playerSystem;
         _bulletSystem = bulletSystem;
+        _particleSystem = particleSystem;
+        _beeTexture = beeTexture;
+        _debugTexture = debugTexture;
         _enemies = new List<Enemy>();
         _window = window;
         _nextPos = new Vector2(50, 50);
@@ -40,18 +45,12 @@ public class EnemySystem : ObjectSystem
         _points.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(randX, randY, EntranceCircleRadius));
     }
 
-    public override void LoadContent(ContentManager contentManager)
-    {
-        _beeTexture = contentManager.Load<Texture2D>("Images/Bee");
-        _debugTexture = contentManager.Load<Texture2D>("Images/Debug");
-        _enemies.Add(new EnemyBee(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),_beeTexture, 1000, _debugTexture));
-    }
-
     public override void Update(GameTime gameTime)
     {
         _elapsedTime += gameTime.ElapsedGameTime;
-        if (_elapsedTime > _entranceDelay)
+        if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemies)
         {
+            _createdEnemies++;
             var newBee = new EnemyBee(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
                 _beeTexture, 1000, _debugTexture)
             {
@@ -78,7 +77,10 @@ public class EnemySystem : ObjectSystem
             enemy.Render(spriteBatch);
     }
 
-    public override void ObjectHit(int id)
+    public override void ObjectHit(Guid id)
     {
+        var deadEnemy = _enemies.First(e => e.Id == id);
+        _particleSystem.EnemyDeath(deadEnemy.Position);
+        _enemies.Remove(deadEnemy);
     }
 }

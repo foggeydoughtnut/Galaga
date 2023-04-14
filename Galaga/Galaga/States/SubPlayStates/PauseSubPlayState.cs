@@ -15,12 +15,12 @@ public class PauseSubPlayState : SubPlayState
     private readonly HighScoreTracker _tracker;
     private readonly GraphicsDeviceManager Graphics;
     private readonly GameWindow Window;
-    private RenderTarget2D _renderTarget;
+    private readonly RenderTarget2D _renderTarget;
+    private KeyboardState _previousKeyboardState;
 
 
     public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window)
     {
-        Fonts = new Dictionary<string, SpriteFont>();
         _options = new List<string>
         {
             "Resume",
@@ -40,36 +40,45 @@ public class PauseSubPlayState : SubPlayState
             Graphics.GraphicsDevice.PresentationParameters.MultiSampleCount,
             RenderTargetUsage.DiscardContents
         );
-    }
+        _previousKeyboardState = Keyboard.GetState();
 
-    public override void LoadContent(ContentManager contentManager)
-    {
-        Fonts.Add("default", contentManager.Load<SpriteFont>("Fonts/DemoFont1"));
-        Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));
-        Fonts.Add("vBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
     }
 
     public override PlayStates Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
+        KeyboardState currentKeyboardState = Keyboard.GetState();
+
+        if (currentKeyboardState.IsKeyUp(Keys.Up) && _previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
             _indexOfChoice -= 1;
-        if (Keyboard.GetState().IsKeyDown(Keys.Down) && _indexOfChoice + 1 <= 1)
+
+        if (currentKeyboardState.IsKeyUp(Keys.Down) && _previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _options.Count)
             _indexOfChoice += 1;
-        if (Keyboard.GetState().IsKeyDown(Keys.Enter))
-            return _indexOfChoice == 0 ? PlayStates.Play : PlayStates.Finish;
-        
+        if (currentKeyboardState.IsKeyUp(Keys.Enter) && _previousKeyboardState.IsKeyDown(Keys.Enter))
+            if (_indexOfChoice == 0)
+            {
+                _previousKeyboardState = currentKeyboardState;
+                return PlayStates.Play;
+            }
+            else
+            {
+                _previousKeyboardState = currentKeyboardState;
+                return PlayStates.Finish;
+            }
+
+        _previousKeyboardState = currentKeyboardState;
+
         return PlayStates.Pause;
     }
 
-    public override void Render(SpriteBatch spriteBatch)
+    public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
     {
         Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
         Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
         Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         // Show high score
-        var font = Fonts["default"];
-        var bigFont = Fonts["big"];
+        var font = fonts["default"];
+        var bigFont = fonts["big"];
         var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
         spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
             new Vector2(_renderTarget.Width - stringSize.X, 0), Color.White);

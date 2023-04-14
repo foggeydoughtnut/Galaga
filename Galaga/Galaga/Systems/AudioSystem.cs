@@ -21,8 +21,6 @@ public class AudioSystem : System
         MediaPlayer.Stop();
     }
 
-    public override void LoadContent(ContentManager contentManager) { }
-
     public override void Update(GameTime gameTime)
     {
         if (_playingMusic) return;

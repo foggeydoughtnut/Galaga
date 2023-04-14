@@ -16,8 +16,6 @@ public enum PlayStates
 
 public abstract class SubPlayState
 {
-    protected Dictionary<string, SpriteFont> Fonts;
-    public abstract void LoadContent(ContentManager contentManager);
     public abstract PlayStates Update(GameTime gameTime);
-    public abstract void Render(SpriteBatch spriteBatch);
+    public abstract void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts);
 }
