@@ -20,20 +20,20 @@ public abstract class Object
     private double _totalElapsedMicrosecondsX;
     private double _totalElapsedMicrosecondsY;
     protected readonly Texture2D ObjectTexture;
-    private readonly Texture2D DebugTexture;
+    private readonly Texture2D _debugTexture;
     private int _currentTextureIndex;
     private readonly TimeSpan _animationTime;
     private TimeSpan _elapsedAnimationTime;
     public Rectangle Collider => new(Position, Dimensions);
-
-    private int _numberOfSubImages; 
+    private readonly int _numberOfSubImages;
+    private const int SubImageDimension = 18;
 
     protected Object(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture, int numberOfSubImages)
     {
         Position = position;
         Dimensions = dimensions;
         ObjectTexture = textures;
-        DebugTexture = debugTexture;
+        _debugTexture = debugTexture;
         _numberOfSubImages = numberOfSubImages;
         _animationTime = new TimeSpan(0,0,0,0, animationTimeMilliseconds);
         Id = Guid.NewGuid();
@@ -50,33 +50,39 @@ public abstract class Object
             {
                 _currentTextureIndex = 0;
             }
-            /*if (_currentTextureIndex >= Textures.Count)
-                _currentTextureIndex = 0;*/
         }
 
         UpdatePosition(elapsedTime);
     }
 
+    public double DetermineHeading()
+    {
+        if (VelocityX == 0 && VelocityY == 0)
+            return 0;
+        var heading = Math.Atan2(VelocityY, VelocityX);
+        return heading  + Constants.PI_OVER_TWO;
+    }
+    
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (ObjectTexture is null) return;
         if (_numberOfSubImages == 1)
         {
-            spriteBatch.Draw(ObjectTexture, Collider, null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(ObjectTexture, Collider, null, Color.White, (float)DetermineHeading(), Vector2.Zero, SpriteEffects.None, 1f);
         }
         else
         {
-            spriteBatch.Draw(ObjectTexture, Collider, new Rectangle(_currentTextureIndex * Dimensions.X, 0, Dimensions.X, Dimensions.Y), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(ObjectTexture, Collider, new Rectangle(_currentTextureIndex * SubImageDimension, 0, SubImageDimension, SubImageDimension), Color.White, (float)DetermineHeading(), Vector2.Zero, SpriteEffects.None, 1f);
         }
 
         if (DEBUG_COLLIDER)
         {
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Right, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Left, Collider.Top), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Right, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(DebugTexture, new Vector2(Collider.Left, Collider.Bottom), null, Color.Green, 0f, new Vector2(DebugTexture.Width / 2, DebugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(_debugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Top), null, Color.Green, 0f, new Vector2(_debugTexture.Width / 2, _debugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(_debugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Bottom), null, Color.Green, 0f, new Vector2(_debugTexture.Width / 2, _debugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(_debugTexture, new Vector2(Collider.Right, Collider.Top), null, Color.Green, 0f, new Vector2(_debugTexture.Width / 2, _debugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(_debugTexture, new Vector2(Collider.Left, Collider.Top), null, Color.Green, 0f, new Vector2(_debugTexture.Width / 2, _debugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(_debugTexture, new Vector2(Collider.Right, Collider.Bottom), null, Color.Green, 0f, new Vector2(_debugTexture.Width / 2, _debugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(_debugTexture, new Vector2(Collider.Left, Collider.Bottom), null, Color.Green, 0f, new Vector2(_debugTexture.Width / 2, _debugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
         }
     }
 

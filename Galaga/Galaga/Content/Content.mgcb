@@ -45,7 +45,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/Background.png
-
 #begin Images/Bee.png
 /importer:TextureImporter
 /processor:TextureProcessor

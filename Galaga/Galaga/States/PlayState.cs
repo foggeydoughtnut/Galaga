@@ -42,18 +42,11 @@ public class PlayState : GameState
         Textures.Add("bossGalagaFull", contentManager.Load<Texture2D>("Images/BossGalagaFull"));
         Textures.Add("bossGalagaHalf", contentManager.Load<Texture2D>("Images/BossGalagaHalf"));
         Textures.Add("background", contentManager.Load<Texture2D>("Images/Background"));
-
-
-
-
-
-
         InitializeState();
     }
 
     public override GameStates Update(GameTime gameTime)
     {
-        ProcessInput();
         _nextPlayState = _playStates[_currentPlayState].Update(gameTime);
         if (_nextPlayState != PlayStates.Finish) return GameStates.GamePlay;
         
@@ -68,10 +61,5 @@ public class PlayState : GameState
         _playStates[_currentPlayState].Render(SpriteBatch, Fonts);
         //SpriteBatch.End();
         _currentPlayState = _nextPlayState;
-    }
-
-    protected override void ProcessInput()
-    {
-        base.ProcessInput();
     }
 }

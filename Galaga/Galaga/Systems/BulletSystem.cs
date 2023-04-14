@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Galaga.Systems;
@@ -21,14 +21,14 @@ public class BulletSystem : ObjectSystem
 
     public List<Bullet> GetBullets() { return _bullets; }
 
-    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture,GameStatsSystem statsSystem, Texture2D debugTexture)
+    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture, GameStatsSystem statsSystem, Texture2D debugTexture)
     {
         _statsSystem = statsSystem;
         _playerBulletTexture = playerBulletTexture;
         _enemyBulletTexture = enemyBulletTexture;
         _debugTexture = debugTexture;
     }
-    
+
     public override void Update(GameTime gameTime)
     {
         foreach (var bullet in _bullets)
@@ -44,6 +44,7 @@ public class BulletSystem : ObjectSystem
 
     public override void ObjectHit(Guid id)
     {
+        _bullets.RemoveAll(e => e.Id == id);
         //Debug.WriteLine($"Bullet: {id} collided");
     }
 

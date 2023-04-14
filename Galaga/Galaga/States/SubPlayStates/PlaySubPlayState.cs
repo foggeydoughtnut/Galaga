@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using Galaga.Systems;
 using Galaga.Utilities;
-using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
@@ -17,12 +17,11 @@ public class PlaySubPlayState : SubPlayState
 {
     private readonly HighScoreTracker _tracker;
     private readonly List<Systems.System> _systems;
-    private readonly GraphicsDeviceManager Graphics;
-    private readonly GameWindow Window;
-    private RenderTarget2D renderTarget;
+    private readonly GraphicsDeviceManager _graphics;
+    private readonly GameWindow _window;
+    private readonly RenderTarget2D _renderTarget;
     private readonly IReadOnlyDictionary<string, Texture2D> _textures;
-    KeyboardState previousKeyboardState;
-
+    private KeyboardState _previousKeyboardState;
 
     public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures)
     {
@@ -35,7 +34,7 @@ public class PlaySubPlayState : SubPlayState
         var playerSystem = new PlayerSystem(textures["ship"], gameStats, bulletSystem, textures["debug"], particleSystem);
         //var playerSystem = new PlayerSystem(textures["bossGalagaHalf"], gameStats, bulletSystem, textures["debug"], particleSystem); // FOR TESTING ANIMATION DELETE
 
-        var enemySystem = new EnemySystem(playerSystem, bulletSystem);
+        var enemySystem = new EnemySystem(playerSystem, bulletSystem, particleSystem, window, textures["bee"], textures["debug"]);
         var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
         _systems.Add(playerSystem);
         _systems.Add(enemySystem);
@@ -43,20 +42,20 @@ public class PlaySubPlayState : SubPlayState
         _systems.Add(collisionDetectionSystem);
         _systems.Add(particleSystem);
 
-        Graphics = graphics;
-        Window = window;
-        this.renderTarget = new RenderTarget2D(
-            Graphics.GraphicsDevice,
-            Constants.GAMEPLAY_Y,
+        _graphics = graphics;
+        _window = window;
+        _renderTarget = new RenderTarget2D(
+            _graphics.GraphicsDevice,
             Constants.GAMEPLAY_X,
+            Constants.GAMEPLAY_Y,
             false,
             SurfaceFormat.Color,
             DepthFormat.None,
-            Graphics.GraphicsDevice.PresentationParameters.MultiSampleCount,
+            _graphics.GraphicsDevice.PresentationParameters.MultiSampleCount,
             RenderTargetUsage.DiscardContents
         );
         _textures = textures;
-        previousKeyboardState = Keyboard.GetState();
+        _previousKeyboardState = Keyboard.GetState();
 
     }
 
@@ -65,24 +64,24 @@ public class PlaySubPlayState : SubPlayState
         KeyboardState currentKeyboardState = Keyboard.GetState();
         foreach (var system in _systems)
             system.Update(gameTime);
-        if (currentKeyboardState.IsKeyUp(Keys.Escape) && previousKeyboardState.IsKeyDown(Keys.Escape))
+        if (currentKeyboardState.IsKeyUp(Keys.Escape) && _previousKeyboardState.IsKeyDown(Keys.Escape))
         {
-            previousKeyboardState = currentKeyboardState;
+            _previousKeyboardState = currentKeyboardState;
             return PlayStates.Pause;
         }
 
-        previousKeyboardState = currentKeyboardState;
+        _previousKeyboardState = currentKeyboardState;
         return PlayStates.Play;
 
     }
 
     public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
     {
-        this.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
-        this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-        this.Graphics.GraphicsDevice.Clear(Color.Transparent);
+        _graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
+        _graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
+        _graphics.GraphicsDevice.Clear(Color.Transparent);
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
-        spriteBatch.Draw(_textures["background"], new Rectangle(0, 0, renderTarget.Width, renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
+        spriteBatch.Draw(_textures["background"], new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
 
         foreach (var system in _systems)
             system.Render(spriteBatch);
@@ -91,17 +90,17 @@ public class PlaySubPlayState : SubPlayState
         var font = fonts["default"];
         var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
         spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
-            new Vector2(renderTarget.Width - stringSize.X / 2, 0), Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 1f);
+            new Vector2(_renderTarget.Width - stringSize.X, 0), Color.White);
 
 
         spriteBatch.End();
-        Graphics.GraphicsDevice.SetRenderTarget(null);
+        _graphics.GraphicsDevice.SetRenderTarget(null);
 
         // Render render target to screen
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         spriteBatch.Draw(
-                renderTarget,
-                new Rectangle(Window.ClientBounds.Width / 8, 0, (Window.ClientBounds.Height / 3 * 4), Window.ClientBounds.Height),
+                _renderTarget,
+                new Rectangle(_window.ClientBounds.Width / 8, 0, 3 * _window.ClientBounds.Width / 4, _window.ClientBounds.Height),
                 null,
                 Color.White,
                 0,

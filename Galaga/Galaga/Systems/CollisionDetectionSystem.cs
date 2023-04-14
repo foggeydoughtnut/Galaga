@@ -1,5 +1,6 @@
 using Galaga.Objects;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ public class CollisionDetectionSystem : System
         _collisions = new();
         gameObjects = new();
     }
-    
+
     public override void Update(GameTime gameTime)
     {
         // Get all of the objects' colliders in each of the systems
@@ -36,14 +37,14 @@ public class CollisionDetectionSystem : System
         gameObjects.Add(new (playerShip.Id, playerShip.Collider, "player"));
 
         List<Bullet> bullets = _bulletSystem.GetBullets();
-        for (int i = 0; i < bullets.Count; i++)
+        foreach (var bullet in bullets)
         {
-            gameObjects.Add(new (bullets[i].Id, bullets[i].Collider, "bullet"));
+            gameObjects.Add(new (bullet.Id, bullet.Collider, "bullet"));
         }
 
-        // TODO: Add enemies to the gameObjects too
-
-
+        foreach(var enemy in _enemySystem.GetEnemies())
+            gameObjects.Add(new Tuple<Guid, Rectangle, string>(enemy.Id, enemy.Collider, "enemy"));
+        
         for (int i = 0; i < gameObjects.Count; i++)
         {
             if (_collisions.ContainsKey(gameObjects[i].Item1)) continue;
@@ -51,7 +52,8 @@ public class CollisionDetectionSystem : System
             {
                 if (gameObjects[i].Item1 == gameObjects[j].Item1) continue;
                 if (_collisions.ContainsKey(gameObjects[j].Item1)) continue;
-                if (gameObjects[i].Item3 == "bullet" && gameObjects[i].Item3 == "bullet") continue; // Two bullets can't collide
+                if (gameObjects[i].Item3 == "bullet" && gameObjects[j].Item3 == "bullet") continue; // Two bullets can't collide
+                if (gameObjects[i].Item3 == "enemy" && gameObjects[j].Item3 == "enemy") continue; // Two enemies can't collide
                 bool intersects = gameObjects[i].Item2.Intersects(gameObjects[j].Item2);
                 if (intersects)
                 {
@@ -63,9 +65,8 @@ public class CollisionDetectionSystem : System
         }
 
         // Go through each collision and notify the system that it had a collision
-        foreach (KeyValuePair<Guid, string> collision in _collisions)
+        foreach (var collision in _collisions)
         {
-
             if (collision.Value == "player")
             {
                 _playerSystem.PlayerHit();
@@ -76,7 +77,7 @@ public class CollisionDetectionSystem : System
             }
             else if (collision.Value == "enemy")
             {
-                //TODO notify enemy that it was hit
+                _enemySystem.ObjectHit(collision.Key);
             }
         }
     }

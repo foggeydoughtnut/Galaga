@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -14,8 +15,8 @@ public class PauseSubPlayState : SubPlayState
     private readonly HighScoreTracker _tracker;
     private readonly GraphicsDeviceManager Graphics;
     private readonly GameWindow Window;
-    private RenderTarget2D renderTarget;
-    KeyboardState previousKeyboardState;
+    private readonly RenderTarget2D _renderTarget;
+    private KeyboardState _previousKeyboardState;
 
 
     public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window)
@@ -29,17 +30,17 @@ public class PauseSubPlayState : SubPlayState
 
         Graphics = graphics;
         Window = window;
-        this.renderTarget = new RenderTarget2D(
+        _renderTarget = new RenderTarget2D(
             Graphics.GraphicsDevice,
-            1440,
-            1080,
+            Constants.GAMEPLAY_X,
+            Constants.GAMEPLAY_Y,
             false,
             SurfaceFormat.Color,
             DepthFormat.None,
             Graphics.GraphicsDevice.PresentationParameters.MultiSampleCount,
             RenderTargetUsage.DiscardContents
         );
-        previousKeyboardState = Keyboard.GetState();
+        _previousKeyboardState = Keyboard.GetState();
 
     }
 
@@ -47,48 +48,48 @@ public class PauseSubPlayState : SubPlayState
     {
         KeyboardState currentKeyboardState = Keyboard.GetState();
 
-        if (currentKeyboardState.IsKeyUp(Keys.Up) && previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
+        if (currentKeyboardState.IsKeyUp(Keys.Up) && _previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
             _indexOfChoice -= 1;
 
-        if (currentKeyboardState.IsKeyUp(Keys.Down) && previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _options.Count)
+        if (currentKeyboardState.IsKeyUp(Keys.Down) && _previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _options.Count)
             _indexOfChoice += 1;
-        if (currentKeyboardState.IsKeyUp(Keys.Enter) && previousKeyboardState.IsKeyDown(Keys.Enter))
+        if (currentKeyboardState.IsKeyUp(Keys.Enter) && _previousKeyboardState.IsKeyDown(Keys.Enter))
             if (_indexOfChoice == 0)
             {
-                previousKeyboardState = currentKeyboardState;
+                _previousKeyboardState = currentKeyboardState;
                 return PlayStates.Play;
             }
             else
             {
-                previousKeyboardState = currentKeyboardState;
+                _previousKeyboardState = currentKeyboardState;
                 return PlayStates.Finish;
             }
 
-        previousKeyboardState = currentKeyboardState;
+        _previousKeyboardState = currentKeyboardState;
 
         return PlayStates.Pause;
     }
 
     public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
     {
-        this.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
-        this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-        this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+        Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
+        Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
+        Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         // Show high score
         var font = fonts["default"];
         var bigFont = fonts["big"];
         var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
         spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
-            new Vector2(renderTarget.Width - stringSize.X, 0), Color.White);
+            new Vector2(_renderTarget.Width - stringSize.X, 0), Color.White);
 
         // Show options
         var optionFont = _indexOfChoice == 0 ? bigFont : font;
         stringSize = optionFont.MeasureString(_options[0]);
-        RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[0], new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) - stringSize.Y));
+        RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[0], new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(_renderTarget.Height / 2) - stringSize.Y));
         optionFont = _indexOfChoice == 1 ? bigFont : font;
         stringSize = optionFont.MeasureString(_options[1]);
-        RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[1], new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) + stringSize.Y));
+        RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[1], new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(_renderTarget.Height / 2) + stringSize.Y));
 
         spriteBatch.End();
         Graphics.GraphicsDevice.SetRenderTarget(null);
@@ -96,8 +97,8 @@ public class PauseSubPlayState : SubPlayState
         // Render render target to screen
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         spriteBatch.Draw(
-                renderTarget,
-                new Rectangle(Window.ClientBounds.Width / 8, 0, (Window.ClientBounds.Height / 3 * 4), Window.ClientBounds.Height),
+                _renderTarget,
+                new Rectangle(Window.ClientBounds.Width / 8, 0, 3 * Window.ClientBounds.Width / 4, Window.ClientBounds.Height),
                 null,
                 Color.White,
                 0,

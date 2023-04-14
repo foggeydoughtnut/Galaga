@@ -26,7 +26,8 @@ public class PlayerShip : Object
     }
     protected override void Translate(Point offset)
     {
-        if (Position.X + offset.X > 0 && Position.X + offset.X < 210)
+        //465ish
+        if (Position.X + offset.X > 0 && Position.X + Dimensions.X + offset.X < _bounds.X)
         {
             Position.X += offset.X;
         }

@@ -5,6 +5,7 @@ using System.IO;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
@@ -17,10 +18,9 @@ public class PlayerSystem : ObjectSystem
     private readonly GameStatsSystem _gameStatsSystem;
     private readonly PlayerShip _playerShip;
     private readonly ParticleSystem _particleSystem;
-    private Controls controls;
+    private Controls _controls;
 
     private float speed = 7500f;
-
 
     public PlayerShip GetPlayer()
     {
@@ -39,7 +39,7 @@ public class PlayerSystem : ObjectSystem
             }
 
             string controlsFileData = File.ReadAllText("controls.json");
-            controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
+            _controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
         }
         else
         {
@@ -52,9 +52,9 @@ public class PlayerSystem : ObjectSystem
 
 
         _playerShip = new PlayerShip(
-            position: new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - shipTexture.Height),
+            position: new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS),
             bounds: new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y),
-            dimensions: new Point(shipTexture.Width, shipTexture.Height),
+            dimensions: new Point(Constants.CHARACTER_DIMENSIONS),
             shipTexture,
             debugTexture,
             numberOfSubImages: 1
@@ -71,19 +71,19 @@ public class PlayerSystem : ObjectSystem
                 );*/
 
     }
-    
+
     public override void Update(GameTime gameTime)
     {
-        string controlsFileData = File.ReadAllText("controls.json");
-        controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
+        var controlsFileData = File.ReadAllText("controls.json");
+        _controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
         //Debug.WriteLine(controls.Right.ToString());
         _playerShip.Update(gameTime.ElapsedGameTime);
         _playerShip.VelocityX = 0;
-        if (Keyboard.GetState().IsKeyDown(controls.Right))
+        if (Keyboard.GetState().IsKeyDown(_controls.Right))
             _playerShip.VelocityX = speed * gameTime.ElapsedGameTime.TotalSeconds;
-        if (Keyboard.GetState().IsKeyDown(controls.Left))
+        if (Keyboard.GetState().IsKeyDown(_controls.Left))
             _playerShip.VelocityX = -speed * gameTime.ElapsedGameTime.TotalSeconds;
-        if (Keyboard.GetState().IsKeyDown(controls.Fire))
+        if (Keyboard.GetState().IsKeyDown(_controls.Fire))
             _bulletSystem.FirePlayerBullet(new Point(_playerShip.Position.X + _playerShip.Dimensions.X / 2, _playerShip.Position.Y));
     }
 
