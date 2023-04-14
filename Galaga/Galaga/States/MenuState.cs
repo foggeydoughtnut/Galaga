@@ -23,6 +23,7 @@ public class MenuState : GameState
             "Play Game",
             "High Scores",
             "Credits",
+            "Controls",
             "Quit"
         };
 
@@ -66,7 +67,8 @@ public class MenuState : GameState
                     0=> GameStates.GamePlay,
                     1=> GameStates.HighScores,
                     2=> GameStates.About,
-                    3=> GameStates.Exit,
+                    3=> GameStates.Controls,
+                    4=> GameStates.Exit,
                     _ => throw new ArgumentOutOfRangeException()
                 }; 
         base.ProcessInput();
