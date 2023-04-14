@@ -65,8 +65,6 @@ public class PlaySubPlayState : SubPlayState
         KeyboardState currentKeyboardState = Keyboard.GetState();
         foreach (var system in _systems)
             system.Update(gameTime);
-        //Debug.WriteLine($"Key up: {currentKeyboardState.IsKeyUp(Keys.Escape)} Key down: {previousKeyboardState.IsKeyDown(Keys.Escape)}");
-
         if (currentKeyboardState.IsKeyUp(Keys.Escape) && previousKeyboardState.IsKeyDown(Keys.Escape))
         {
             previousKeyboardState = currentKeyboardState;

@@ -53,7 +53,16 @@ public class PauseSubPlayState : SubPlayState
         if (currentKeyboardState.IsKeyUp(Keys.Down) && previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _options.Count)
             _indexOfChoice += 1;
         if (currentKeyboardState.IsKeyUp(Keys.Enter) && previousKeyboardState.IsKeyDown(Keys.Enter))
-            return _indexOfChoice == 0 ? PlayStates.Play : PlayStates.Finish;
+            if (_indexOfChoice == 0)
+            {
+                previousKeyboardState = currentKeyboardState;
+                return PlayStates.Play;
+            }
+            else
+            {
+                previousKeyboardState = currentKeyboardState;
+                return PlayStates.Finish;
+            }
 
         previousKeyboardState = currentKeyboardState;
 
