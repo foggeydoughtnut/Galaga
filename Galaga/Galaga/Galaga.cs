@@ -32,6 +32,7 @@ namespace Galaga
                 { GameStates.GamePlay, new PlayState() },
                 { GameStates.HighScores, new HighScoreState() },
                 { GameStates.About, new CreditState() },
+                { GameStates.Controls, new ControlsState() },
             };
 
             foreach (var item in _states)

@@ -6,5 +6,6 @@ public enum GameStates
     GamePlay,
     HighScores,
     About,
+    Controls,
     Exit
 }

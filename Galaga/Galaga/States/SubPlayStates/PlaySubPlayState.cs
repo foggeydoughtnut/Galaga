@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Galaga.Systems;
 using Galaga.Utilities;
@@ -7,6 +9,7 @@ using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
 
 namespace Galaga.States.SubPlayStates;
 
@@ -18,6 +21,8 @@ public class PlaySubPlayState : SubPlayState
     private readonly GameWindow Window;
     private RenderTarget2D renderTarget;
     private readonly IReadOnlyDictionary<string, Texture2D> _textures;
+    KeyboardState previousKeyboardState;
+
 
     public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures)
     {
@@ -51,15 +56,24 @@ public class PlaySubPlayState : SubPlayState
             RenderTargetUsage.DiscardContents
         );
         _textures = textures;
+        previousKeyboardState = Keyboard.GetState();
+
     }
-    
+
     public override PlayStates Update(GameTime gameTime)
     {
-        foreach(var system in _systems)
+        KeyboardState currentKeyboardState = Keyboard.GetState();
+        foreach (var system in _systems)
             system.Update(gameTime);
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+        if (currentKeyboardState.IsKeyUp(Keys.Escape) && previousKeyboardState.IsKeyDown(Keys.Escape))
+        {
+            previousKeyboardState = currentKeyboardState;
             return PlayStates.Pause;
+        }
+
+        previousKeyboardState = currentKeyboardState;
         return PlayStates.Play;
+
     }
 
     public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
