@@ -26,7 +26,7 @@ public abstract class Object
     private TimeSpan _elapsedAnimationTime;
     public Rectangle Collider => new(Position, Dimensions);
     private readonly int _numberOfSubImages;
-    private const int SubImageDimension = 18;
+    private const int SubImageDimension = 16;
 
     protected Object(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture, int numberOfSubImages)
     {
