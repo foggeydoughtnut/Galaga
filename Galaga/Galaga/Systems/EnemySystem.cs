@@ -16,7 +16,7 @@ public class EnemySystem : ObjectSystem
     private readonly ParticleSystem _particleSystem;
     private readonly List<Enemy> _enemies;
     private readonly GameWindow _window;
-    private const int EntranceCircleRadius = 150;
+    private const int EntranceCircleRadius = Constants.GAMEPLAY_X / 8;
     private Vector2 _nextPos;
     private List<Vector2> _points;
     private readonly TimeSpan _entranceDelay = new(0,0,0,0,500);
