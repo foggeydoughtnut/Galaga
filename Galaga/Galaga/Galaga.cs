@@ -35,7 +35,7 @@ namespace Galaga
                 { GameStates.Controls, new ControlsState() },
             };
 
-            foreach (var item in _states)
+            foreach (KeyValuePair<GameStates, GameState> item in _states)
             {
                 item.Value.Initialize(GraphicsDevice, _graphics, Window);
             }
@@ -46,7 +46,7 @@ namespace Galaga
 
         protected override void LoadContent()
         {
-            foreach (var item in _states)
+            foreach (KeyValuePair<GameStates, GameState> item in _states)
             {
                 item.Value.LoadContent(Content);
             }

@@ -31,14 +31,14 @@ public class BulletSystem : ObjectSystem
 
     public override void Update(GameTime gameTime)
     {
-        foreach (var bullet in _bullets)
+        foreach (Bullet bullet in _bullets)
             bullet.Update(gameTime.ElapsedGameTime);
         _bullets.RemoveAll(b => b.Position.Y is <= 0 or > Constants.BOUNDS_Y);
     }
 
     public override void Render(SpriteBatch spriteBatch)
     {
-        foreach(var bullet in _bullets)
+        foreach(Bullet bullet in _bullets)
             bullet.Render(spriteBatch);
     }
 

@@ -29,12 +29,12 @@ public class PlaySubPlayState : SubPlayState
         
         _systems = new List<Systems.System>();
         ParticleSystem particleSystem = new(textures["particle"]);
-        var gameStats = new GameStatsSystem();
-        var bulletSystem = new BulletSystem(textures["playerBullet"], textures["enemyBullet"], gameStats, textures["debug"]);
-        var playerSystem = new PlayerSystem(textures["ship"], gameStats, bulletSystem, textures["debug"], particleSystem);
+        GameStatsSystem gameStats = new();
+        BulletSystem bulletSystem = new(textures["playerBullet"], textures["enemyBullet"], gameStats, textures["debug"]);
+        PlayerSystem playerSystem = new(textures["ship"], gameStats, bulletSystem, textures["debug"], particleSystem);
 
-        var enemySystem = new EnemySystem(playerSystem, bulletSystem, particleSystem, window, textures["bee"], textures["debug"]);
-        var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
+        EnemySystem enemySystem = new(playerSystem, bulletSystem, particleSystem, window, textures["bee"], textures["debug"]);
+        CollisionDetectionSystem collisionDetectionSystem = new(playerSystem, enemySystem, bulletSystem);
         _systems.Add(playerSystem);
         _systems.Add(enemySystem);
         _systems.Add(bulletSystem);
@@ -61,7 +61,7 @@ public class PlaySubPlayState : SubPlayState
     public override PlayStates Update(GameTime gameTime)
     {
         KeyboardState currentKeyboardState = Keyboard.GetState();
-        foreach (var system in _systems)
+        foreach (Systems.System system in _systems)
             system.Update(gameTime);
         if (currentKeyboardState.IsKeyUp(Keys.Escape) && _previousKeyboardState.IsKeyDown(Keys.Escape))
         {
@@ -82,12 +82,12 @@ public class PlaySubPlayState : SubPlayState
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         spriteBatch.Draw(_textures["background"], new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
 
-        foreach (var system in _systems)
+        foreach (Systems.System system in _systems)
             system.Render(spriteBatch);
 
         // Show high score
-        var font = fonts["default"];
-        var stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
+        SpriteFont font = fonts["default"];
+        Vector2 stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
         spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
             new Vector2(_renderTarget.Width - stringSize.X, 0), Color.White);
 

@@ -38,7 +38,7 @@ public abstract class GameState
 
     private bool IsKeyPressed(IEnumerable<Keys> keys)
     {
-        var currentState = Keyboard.GetState();
+        KeyboardState currentState = Keyboard.GetState();
         return keys.Any(key => _previousKeyState.IsKeyUp(key) && currentState.IsKeyDown(key));
     }
 

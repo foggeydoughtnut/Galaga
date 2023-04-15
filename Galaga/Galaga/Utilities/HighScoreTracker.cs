@@ -61,13 +61,13 @@ public class HighScoreTracker
      {
         await Task.Run(() =>
         {
-            using (var storage = IsolatedStorageFile.GetUserStoreForApplication())
+            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
                 try
                 {
-                    using var fs = storage.OpenFile("HighScores.xml", FileMode.Create);
+                    using IsolatedStorageFileStream fs = storage.OpenFile("HighScores.xml", FileMode.Create);
                     {
-                        var mySerializer = new XmlSerializer(typeof(List<int>));
+                        XmlSerializer mySerializer = new XmlSerializer(typeof(List<int>));
                         mySerializer.Serialize(fs, state);
                     }
                 }
@@ -98,15 +98,15 @@ public class HighScoreTracker
     {
         await Task.Run(() =>
         {
-            using (var storage = IsolatedStorageFile.GetUserStoreForApplication())
+            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
                 try
                 {
                     if (storage.FileExists("HighScores.xml"))
                     {
-                        using var fs = storage.OpenFile("HighScores.xml", FileMode.Open);
+                        using IsolatedStorageFileStream fs = storage.OpenFile("HighScores.xml", FileMode.Open);
                         {
-                            var mySerializer = new XmlSerializer(typeof(List<int>));
+                            XmlSerializer mySerializer = new XmlSerializer(typeof(List<int>));
                             HighScores = (List<int>)mySerializer.Deserialize(fs);
                         }
                     }
