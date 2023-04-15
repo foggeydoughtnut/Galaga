@@ -32,8 +32,8 @@ public class PauseSubPlayState : SubPlayState
         Window = window;
         _renderTarget = new RenderTarget2D(
             Graphics.GraphicsDevice,
-            Constants.GAMEPLAY_X,
-            Constants.GAMEPLAY_Y,
+            1440, // This is the size of all of the menues
+            1080,
             false,
             SurfaceFormat.Color,
             DepthFormat.None,
@@ -98,7 +98,7 @@ public class PauseSubPlayState : SubPlayState
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         spriteBatch.Draw(
                 _renderTarget,
-                new Rectangle(Window.ClientBounds.Width / 8, 0, 3 * Window.ClientBounds.Width / 4, Window.ClientBounds.Height),
+                new Rectangle(Window.ClientBounds.Width / 8, 0, 4 * Window.ClientBounds.Height / 3, Window.ClientBounds.Height),
                 null,
                 Color.White,
                 0,

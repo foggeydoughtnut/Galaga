@@ -37,12 +37,12 @@ public class CollisionDetectionSystem : System
         gameObjects.Add(new (playerShip.Id, playerShip.Collider, "player"));
 
         List<Bullet> bullets = _bulletSystem.GetBullets();
-        foreach (var bullet in bullets)
+        for (int i = 0; i < bullets.Count; i++)
         {
-            gameObjects.Add(new (bullet.Id, bullet.Collider, "bullet"));
+            gameObjects.Add(new(bullets[i].Id, bullets[i].Collider, "bullet"));
         }
 
-        foreach(var enemy in _enemySystem.GetEnemies())
+        foreach(Enemy enemy in _enemySystem.GetEnemies())
             gameObjects.Add(new Tuple<Guid, Rectangle, string>(enemy.Id, enemy.Collider, "enemy"));
         
         for (int i = 0; i < gameObjects.Count; i++)
@@ -65,7 +65,7 @@ public class CollisionDetectionSystem : System
         }
 
         // Go through each collision and notify the system that it had a collision
-        foreach (var collision in _collisions)
+        foreach (KeyValuePair<Guid, string> collision in _collisions)
         {
             if (collision.Value == "player")
             {

@@ -32,7 +32,6 @@ public class PlaySubPlayState : SubPlayState
         var gameStats = new GameStatsSystem();
         var bulletSystem = new BulletSystem(textures["playerBullet"], textures["enemyBullet"], gameStats, textures["debug"]);
         var playerSystem = new PlayerSystem(textures["ship"], gameStats, bulletSystem, textures["debug"], particleSystem);
-        //var playerSystem = new PlayerSystem(textures["bossGalagaHalf"], gameStats, bulletSystem, textures["debug"], particleSystem); // FOR TESTING ANIMATION DELETE
 
         var enemySystem = new EnemySystem(playerSystem, bulletSystem, particleSystem, window, textures["bee"], textures["debug"]);
         var collisionDetectionSystem = new CollisionDetectionSystem(playerSystem, enemySystem, bulletSystem);
@@ -100,7 +99,7 @@ public class PlaySubPlayState : SubPlayState
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         spriteBatch.Draw(
                 _renderTarget,
-                new Rectangle(_window.ClientBounds.Width / 8, 0, 3 * _window.ClientBounds.Width / 4, _window.ClientBounds.Height),
+                new Rectangle(_window.ClientBounds.Width / 8, 0, 4 * _window.ClientBounds.Height / 3, _window.ClientBounds.Height),
                 null,
                 Color.White,
                 0,
