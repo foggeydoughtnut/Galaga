@@ -26,7 +26,7 @@ public abstract class Object
     private TimeSpan _elapsedAnimationTime;
     public Rectangle Collider => new(Position, Dimensions);
     private readonly int _numberOfSubImages;
-    private const int SubImageDimension = 18;
+    private const int SubImageDimension = 16;
 
     protected Object(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture, int numberOfSubImages)
     {
@@ -59,7 +59,7 @@ public abstract class Object
     {
         if (VelocityX == 0 && VelocityY == 0)
             return 0;
-        var heading = Math.Atan2(VelocityY, VelocityX);
+        double heading = Math.Atan2(VelocityY, VelocityX);
         return heading  + Constants.PI_OVER_TWO;
     }
     
@@ -88,14 +88,14 @@ public abstract class Object
 
     private void UpdatePosition(TimeSpan elapsedTime)
     {
-        var movementX = 0;
-        var movementY = 0;
+        int movementX = 0;
+        int movementY = 0;
 
         if (VelocityX != 0)
         {
             _totalElapsedMicrosecondsX += elapsedTime.Milliseconds * 1000;
-            var microsecondsToMoveX = Convert.ToInt32(1_000_000 / Math.Abs(VelocityX));
-            var pixelsToMoveX = Convert.ToInt32(Math.Floor(_totalElapsedMicrosecondsX / microsecondsToMoveX));
+            int microsecondsToMoveX = Convert.ToInt32(1_000_000 / Math.Abs(VelocityX));
+            int pixelsToMoveX = Convert.ToInt32(Math.Floor(_totalElapsedMicrosecondsX / microsecondsToMoveX));
             _totalElapsedMicrosecondsX -= pixelsToMoveX * microsecondsToMoveX;
             movementX = pixelsToMoveX * (VelocityX < 0 ? -1 : 1);
         }
@@ -103,8 +103,8 @@ public abstract class Object
         if (VelocityY != 0)
         {
             _totalElapsedMicrosecondsY += elapsedTime.Milliseconds * 1000;
-            var microsecondsToMoveY = Convert.ToInt32(1_000_000 / Math.Abs(VelocityY));
-            var pixelsToMoveY = Convert.ToInt32(Math.Floor(_totalElapsedMicrosecondsY / microsecondsToMoveY));
+            int microsecondsToMoveY = Convert.ToInt32(1_000_000 / Math.Abs(VelocityY));
+            int pixelsToMoveY = Convert.ToInt32(Math.Floor(_totalElapsedMicrosecondsY / microsecondsToMoveY));
             _totalElapsedMicrosecondsY -= pixelsToMoveY * microsecondsToMoveY;
             movementY = pixelsToMoveY * (VelocityY < 0 ? -1 : 1);
         }

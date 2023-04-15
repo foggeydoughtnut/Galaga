@@ -1,3 +1,3 @@
 ﻿
-using var game = new Galaga.Galaga();
+using Galaga.Galaga game = new();
 game.Run();

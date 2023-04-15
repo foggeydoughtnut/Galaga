@@ -16,7 +16,7 @@ public class EnemySystem : ObjectSystem
     private readonly ParticleSystem _particleSystem;
     private readonly List<Enemy> _enemies;
     private readonly GameWindow _window;
-    private const int EntranceCircleRadius = 150;
+    private const int EntranceCircleRadius = Constants.GAMEPLAY_X / 8;
     private Vector2 _nextPos;
     private List<Vector2> _points;
     private readonly TimeSpan _entranceDelay = new(0,0,0,0,500);
@@ -39,9 +39,9 @@ public class EnemySystem : ObjectSystem
         _window = window;
         _nextPos = new Vector2(50.0f, 50.0f);
         _points = new List<Vector2> { new(200, 0) };
-        var rand = new Random();
-        var randX = rand.Next() % (Constants.GAMEPLAY_X / 2) + Constants.GAMEPLAY_X / 4;
-        var randY = rand.Next() % (Constants.GAMEPLAY_Y / 4) + Constants.GAMEPLAY_Y / 2;
+        Random rand = new();
+        int randX = rand.Next() % (Constants.GAMEPLAY_X / 2) + Constants.GAMEPLAY_X / 4;
+        int randY = rand.Next() % (Constants.GAMEPLAY_Y / 4) + Constants.GAMEPLAY_Y / 2;
         _points.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(randX, randY, EntranceCircleRadius));
     }
 
@@ -51,7 +51,7 @@ public class EnemySystem : ObjectSystem
         if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemies)
         {
             _createdEnemies++;
-            var newBee = new EnemyBee(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+            EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
                 _beeTexture, 1000, _debugTexture)
             {
                 EntrancePath = _points.ToList(),
@@ -67,19 +67,19 @@ public class EnemySystem : ObjectSystem
             }
         }
         
-        foreach(var enemy in _enemies)
+        foreach(Enemy enemy in _enemies)
             enemy.Update(gameTime.ElapsedGameTime);
     }
 
     public override void Render(SpriteBatch spriteBatch)
     {
-        foreach(var enemy in _enemies)
+        foreach(Enemy enemy in _enemies)
             enemy.Render(spriteBatch);
     }
 
     public override void ObjectHit(Guid id)
     {
-        var deadEnemy = _enemies.First(e => e.Id == id);
+        Enemy deadEnemy = _enemies.First(e => e.Id == id);
         _particleSystem.EnemyDeath(deadEnemy.Position);
         _enemies.Remove(deadEnemy);
     }

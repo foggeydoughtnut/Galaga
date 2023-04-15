@@ -165,7 +165,7 @@ namespace Galaga.States
             SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
             SpriteBatch.Draw(
                     renderTarget,
-                    new Rectangle(Window.ClientBounds.Width / 8, 0, (Window.ClientBounds.Height / 3 * 4), Window.ClientBounds.Height),
+                    new Rectangle(Window.ClientBounds.Width / 8, 0, 4 * Window.ClientBounds.Height / 3, Window.ClientBounds.Height),
                     null,
                     Color.White,
                     0,

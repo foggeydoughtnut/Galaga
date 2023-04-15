@@ -47,13 +47,13 @@ public class CreditState : GameState
         this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
 
-        var bigFont = Fonts["big"];
-        var titleSize = bigFont.MeasureString("Credits");
+        SpriteFont bigFont = Fonts["big"];
+        Vector2 titleSize = bigFont.MeasureString("Credits");
         RenderUtilities.CreateBorderOnWord(SpriteBatch, bigFont, "Credits",
             new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 4)));
 
-        var font = Fonts["default"];
-        var stringSize = font.MeasureString("We Did This. Trey Crowther and Jeff Anderson.");
+        SpriteFont font = Fonts["default"];
+        Vector2 stringSize = font.MeasureString("We Did This. Trey Crowther and Jeff Anderson.");
         RenderUtilities.CreateBorderOnWord(SpriteBatch, font, "We Did This. Trey Crowther and Jeff Anderson.", new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2)));
 
         SpriteBatch.End();
@@ -63,7 +63,7 @@ public class CreditState : GameState
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         SpriteBatch.Draw(
                 renderTarget,
-                new Rectangle(Window.ClientBounds.Width / 8, 0, 3 * Window.ClientBounds.Width / 4, Window.ClientBounds.Height),
+                new Rectangle(Window.ClientBounds.Width / 8, 0, 4 * Window.ClientBounds.Height / 3, Window.ClientBounds.Height),
                 null,
                 Color.White,
                 0,

@@ -10,7 +10,7 @@ public abstract class Enemy : Object
 {
     public List<Vector2> EntrancePath;
     public Vector2? Destination;
-    public double VelocityVector = 250;
+    public double VelocityVector = 150;
     
     public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
     {
@@ -39,14 +39,14 @@ public abstract class Enemy : Object
     
     private void CalculateNewVelocityForEntrancePath()
     {
-        var nextPoint = EntrancePath.First();
-        var xDistance = nextPoint.X - Position.X;
-        var xDistanceSquared = xDistance * xDistance;
-        var yDistance = nextPoint.Y - Position.Y;
-        var yDistanceSquared = yDistance * yDistance;
+        Vector2 nextPoint = EntrancePath.First();
+        float xDistance = nextPoint.X - Position.X;
+        float xDistanceSquared = xDistance * xDistance;
+        float yDistance = nextPoint.Y - Position.Y;
+        float yDistanceSquared = yDistance * yDistance;
         if (xDistanceSquared + yDistanceSquared < 50)
             EntrancePath.RemoveAt(0);
-        var totalDistance = Math.Sqrt(xDistanceSquared + yDistanceSquared);
+        double totalDistance = Math.Sqrt(xDistanceSquared + yDistanceSquared);
         VelocityX = VelocityVector * xDistance / totalDistance;
         VelocityY = VelocityVector * yDistance / totalDistance;
     }
@@ -55,12 +55,12 @@ public abstract class Enemy : Object
     {
         if (Destination is null)
             return;
-        var nextPoint = Destination.Value;
-        var xDistance = nextPoint.X - Position.X;
-        var xDistanceSquared = xDistance * xDistance;
-        var yDistance = nextPoint.Y - Position.Y;
-        var yDistanceSquared = yDistance * yDistance;
-        var totalDistance = Math.Sqrt(xDistanceSquared + yDistanceSquared);
+        Vector2 nextPoint = Destination.Value;
+        float xDistance = nextPoint.X - Position.X;
+        float xDistanceSquared = xDistance * xDistance;
+        float yDistance = nextPoint.Y - Position.Y;
+        float yDistanceSquared = yDistance * yDistance;
+        double totalDistance = Math.Sqrt(xDistanceSquared + yDistanceSquared);
         if (xDistanceSquared + yDistanceSquared < 50)
             Destination = null;
         VelocityX = VelocityVector * xDistance / totalDistance;

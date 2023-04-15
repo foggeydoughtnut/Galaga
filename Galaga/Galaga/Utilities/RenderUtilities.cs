@@ -8,7 +8,7 @@ public static class RenderUtilities
     public static void CreateBorderOnWord(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 position)
     {
         const int offset = 4;
-        var newPosition = new Vector2(position.X, position.Y);
+        Vector2 newPosition = new Vector2(position.X, position.Y);
         // Move left and up
         newPosition.X = position.X - offset;
         newPosition.Y = position.Y - offset;

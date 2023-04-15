@@ -4,6 +4,7 @@ using Galaga.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 
 namespace Galaga.States;
 
@@ -30,7 +31,7 @@ public class PlayState : GameState
         Fonts.Add("default", contentManager.Load<SpriteFont>("Fonts/DemoFont1"));
         Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));
         Fonts.Add("vBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
-        // var song = contentManager.Load<Song>("Audio/Take Me Out to the Ball Game");
+        //Song song = contentManager.Load<Song>("Audio/Take Me Out to the Ball Game");
         _audioSystem = new AudioSystem(null);
         Textures.Add("ship", contentManager.Load<Texture2D>("Images/PlayerShip"));
         Textures.Add("playerBullet", contentManager.Load<Texture2D>("Images/PlayerBullet"));

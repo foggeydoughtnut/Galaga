@@ -95,9 +95,9 @@ public class MenuState : GameState
         this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         // Render Menu
-        var font = Fonts["default"];
-        var bigFont = Fonts["big"];
-        var middle = _options.Count / 2;
+        SpriteFont font = Fonts["default"];
+        SpriteFont bigFont = Fonts["big"];
+        int middle = _options.Count / 2;
         // Show options
         for (int i = 0; i < _options.Count; i++)
         {
@@ -115,7 +115,7 @@ public class MenuState : GameState
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         SpriteBatch.Draw(
                 renderTarget,
-                new Rectangle(Window.ClientBounds.Width / 8, 0, 3 * Window.ClientBounds.Width / 4, Window.ClientBounds.Height),
+                new Rectangle(Window.ClientBounds.Width / 8, 0, 4 * Window.ClientBounds.Height / 3, Window.ClientBounds.Height),
                 null,
                 Color.White,
                 0,
