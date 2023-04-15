@@ -17,7 +17,8 @@ public class BulletSystem : ObjectSystem
     private readonly Texture2D _enemyBulletTexture;
     private readonly Texture2D _debugTexture;
 
-    private bool shot = false; // THIS IS BAD SO DELETE THIS!!!!
+    private int _numberOfPlayerBulletsOut; // In the game you can only have two player bullets out on the field at once. 
+
 
     public List<Bullet> GetBullets() { return _bullets; }
 
@@ -27,13 +28,25 @@ public class BulletSystem : ObjectSystem
         _playerBulletTexture = playerBulletTexture;
         _enemyBulletTexture = enemyBulletTexture;
         _debugTexture = debugTexture;
+        _numberOfPlayerBulletsOut = 0;
     }
 
     public override void Update(GameTime gameTime)
     {
         foreach (Bullet bullet in _bullets)
             bullet.Update(gameTime.ElapsedGameTime);
-        _bullets.RemoveAll(b => b.Position.Y is <= 0 or > Constants.BOUNDS_Y);
+        _bullets.RemoveAll(delegate (Bullet b)
+        {
+            if (b.Position.Y is <= 0 or > Constants.BOUNDS_Y)
+            {
+                if (b.VelocityY < 0) // Player bullets are always negative velocity and enemies are positive
+                {
+                    _numberOfPlayerBulletsOut--;
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     public override void Render(SpriteBatch spriteBatch)
@@ -44,14 +57,25 @@ public class BulletSystem : ObjectSystem
 
     public override void ObjectHit(Guid id)
     {
-        _bullets.RemoveAll(e => e.Id == id);
-        //Debug.WriteLine($"Bullet: {id} collided");
+        _bullets.RemoveAll(delegate(Bullet e) 
+        {
+            if (e.Id == id)
+            {
+                if (e.VelocityY < 0) // Player bullets are always negative velocity and enemies are positive
+                {
+                    _numberOfPlayerBulletsOut--;
+                }
+                return true;
+            }
+            return false;
+        });
+
     }
 
     public void FirePlayerBullet(Point position)
     {
-        if (!shot) // DELETE THIS
-        { // DELETE THIS
+        if (_numberOfPlayerBulletsOut < 2) // In the game you could only have two bullets out at a time for added difficulty
+        {
             _bullets.Add(new Bullet(
                 position: new Point(position.X-1, position.Y-6),
                 dimensions: new Point(_playerBulletTexture.Width, _playerBulletTexture.Height),
@@ -60,9 +84,9 @@ public class BulletSystem : ObjectSystem
                 _debugTexture,
                 numberOfSubImages: 1
             ));
-            _bullets.Add(new Bullet(new Point(position.X-1, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture, 1)); // DELETE THIS
-            shot = true; // DELETE THIS
-        } // DELETE THIS
+            _numberOfPlayerBulletsOut++;
+        }
+        //_bullets.Add(new Bullet(new Point(position.X-1, 0), new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height), _enemyBulletTexture, 250, _debugTexture, 1)); // DELETE THIS
 
     }
     

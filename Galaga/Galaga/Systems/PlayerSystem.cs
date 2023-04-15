@@ -19,6 +19,8 @@ public class PlayerSystem : ObjectSystem
     private readonly PlayerShip _playerShip;
     private readonly ParticleSystem _particleSystem;
     private Controls _controls;
+    private TimeSpan _playerLastShotTime;
+    private TimeSpan _playerShotDelay = TimeSpan.FromSeconds(0.25);
 
     private float speed = 7500f;
 
@@ -73,8 +75,11 @@ public class PlayerSystem : ObjectSystem
             _playerShip.VelocityX = speed * gameTime.ElapsedGameTime.TotalSeconds;
         if (Keyboard.GetState().IsKeyDown(_controls.Left))
             _playerShip.VelocityX = -speed * gameTime.ElapsedGameTime.TotalSeconds;
-        if (Keyboard.GetState().IsKeyDown(_controls.Fire))
+        if (Keyboard.GetState().IsKeyDown(_controls.Fire) && _playerLastShotTime + _playerShotDelay < gameTime.TotalGameTime)
+        {
             _bulletSystem.FirePlayerBullet(new Point(_playerShip.Position.X + _playerShip.Dimensions.X / 2, _playerShip.Position.Y));
+            _playerLastShotTime = gameTime.TotalGameTime;
+        }
     }
 
     public override void Render(SpriteBatch spriteBatch)
