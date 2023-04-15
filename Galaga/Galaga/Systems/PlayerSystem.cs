@@ -74,7 +74,7 @@ public class PlayerSystem : ObjectSystem
 
     public override void Update(GameTime gameTime)
     {
-        var controlsFileData = File.ReadAllText("controls.json");
+        string controlsFileData = File.ReadAllText("controls.json");
         _controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
         //Debug.WriteLine(controls.Right.ToString());
         _playerShip.Update(gameTime.ElapsedGameTime);
