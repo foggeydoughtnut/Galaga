@@ -82,7 +82,8 @@ public class BulletSystem : ObjectSystem
                 _playerBulletTexture,
                 velocity: -250,
                 _debugTexture,
-                numberOfSubImages: 1
+                numberOfSubImages: 1,
+                "player"
             ));
             _numberOfPlayerBulletsOut++;
         }
@@ -98,7 +99,8 @@ public class BulletSystem : ObjectSystem
             _playerBulletTexture,
             velocity: 250,
             _debugTexture,
-            numberOfSubImages: 1
+            numberOfSubImages: 1,
+            "enemy"
         ));
     }
 }

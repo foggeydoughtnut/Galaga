@@ -16,7 +16,8 @@ public class CollisionDetectionSystem : System
     //public List<Tuple<Guid, string>> _collisions { get; private set; } // List of tuples that keeps track of which objects had collisions
     private Dictionary<Guid, string> _collisions; // List of tuples that keeps track of which objects had collisions
 
-    private List<Tuple<Guid, Rectangle, string>> gameObjects;
+    private List<Tuple<Guid, Rectangle, string, string>> gameObjects;
+    // ID, Collider, Type of object, Player's or Enemy's
     
     public CollisionDetectionSystem(PlayerSystem playerSystem, EnemySystem enemySystem, BulletSystem bulletSystem)
     {
@@ -34,16 +35,23 @@ public class CollisionDetectionSystem : System
         _collisions.Clear();
 
         PlayerShip playerShip = _playerSystem.GetPlayer();
-        gameObjects.Add(new (playerShip.Id, playerShip.Collider, "player"));
+        gameObjects.Add(new (playerShip.Id, playerShip.Collider, "player", "player"));
 
         List<Bullet> bullets = _bulletSystem.GetBullets();
         for (int i = 0; i < bullets.Count; i++)
         {
-            gameObjects.Add(new(bullets[i].Id, bullets[i].Collider, "bullet"));
+            if (bullets[i].Type == "player")
+            {
+                gameObjects.Add(new(bullets[i].Id, bullets[i].Collider, "bullet", "player"));
+            }
+            else
+            {
+                gameObjects.Add(new(bullets[i].Id, bullets[i].Collider, "bullet", "enemy"));
+            }
         }
 
         foreach(Enemy enemy in _enemySystem.GetEnemies())
-            gameObjects.Add(new Tuple<Guid, Rectangle, string>(enemy.Id, enemy.Collider, "enemy"));
+            gameObjects.Add(new Tuple<Guid, Rectangle, string, string>(enemy.Id, enemy.Collider, "enemy", "enemy"));
         
         for (int i = 0; i < gameObjects.Count; i++)
         {
@@ -54,6 +62,9 @@ public class CollisionDetectionSystem : System
                 if (_collisions.ContainsKey(gameObjects[j].Item1)) continue;
                 if (gameObjects[i].Item3 == "bullet" && gameObjects[j].Item3 == "bullet") continue; // Two bullets can't collide
                 if (gameObjects[i].Item3 == "enemy" && gameObjects[j].Item3 == "enemy") continue; // Two enemies can't collide
+                if (gameObjects[i].Item3 == "bullet" && gameObjects[j].Item3 == "enemy" && gameObjects[i].Item4 == "enemy") continue; // Enemy bullets can't collide with other enemies
+                if (gameObjects[j].Item3 == "bullet" && gameObjects[i].Item3 == "enemy" && gameObjects[j].Item4 == "enemy") continue; // Enemy bullets can't collide with other enemies
+
                 bool intersects = gameObjects[i].Item2.Intersects(gameObjects[j].Item2);
                 if (intersects)
                 {
