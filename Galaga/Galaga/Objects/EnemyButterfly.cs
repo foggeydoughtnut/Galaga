@@ -65,6 +65,7 @@ namespace Galaga.Objects
                 VelocityX = VelocityVector * xDistance / totalDistance;
                 VelocityY = VelocityVector * yDistance / totalDistance;
             }
+            // If the butterfly hits the bottom of the stage, then wrap
             if (Position.Y > Constants.GAMEPLAY_Y)
             {
                 _rotatedPath.Clear();
@@ -74,6 +75,7 @@ namespace Galaga.Objects
                 Position.Y = _startAttackPos.Y - 150;
                 VelocityY = VelocityVector;
             }
+            // Set the velocity to be straight down after the butterfly hits the bottom of the stage and it teleported up.
             if (Position.Y >= _startAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)
             {
                 VelocityY = 0;
