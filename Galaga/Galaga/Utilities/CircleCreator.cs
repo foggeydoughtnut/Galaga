@@ -35,6 +35,29 @@ public static class CircleCreator {
         return fullCircle;
     }
 
+    public static IEnumerable<Vector2> CreateSinWavePath(float amplitude, float frequency, float phaseShift, float startX, float endX, float yOffset)
+    {
+        return CreateSinWavePoints(amplitude, frequency, phaseShift, startX, endX, yOffset).ToList();
+    }
+
+    public static List<Vector2> RotatePath(List<Vector2> points, float radians, float rotationCenterX, float rotationCenterY)
+    {
+        Matrix rotationMatrix = Matrix.CreateRotationZ(radians);
+        for (int i = 0; i < points.Count; i++)
+        {
+            Vector2 point = points[i];
+            Vector2 roatedPoint = Vector2.Transform(point - new Vector2(rotationCenterX, rotationCenterY), rotationMatrix) + new Vector2(rotationCenterX, rotationCenterY);
+            points[i] = roatedPoint;
+        }
+        return points;
+    }
+
+    public static float GetAngleRadians(Vector2 start, Vector2 end)
+    {
+        return (float)Math.Atan2(end.Y - start.Y, end.X - start.X);
+    }
+
+
     private static IEnumerable<Vector2> CreateCounterClockwiseCirclePoints(float centerX, float centerY, float radius, int numPoints)
     {
         List<Vector2> points = new();
@@ -66,4 +89,17 @@ public static class CircleCreator {
     
         return points;
     }
+
+    private static IEnumerable<Vector2> CreateSinWavePoints(float amplitude, float frequency, float phaseShift, float startX, float endX, float yOffset)
+    {
+        List<Vector2> points = new();
+        for (float x = startX; x <= endX; x += 2f) 
+        {
+            float y = (amplitude * (float)Math.Sin(frequency * (x + phaseShift))) + yOffset; // It is + yOffset since larger values make it go down
+            points.Add(new Vector2(x, y));
+        }
+
+        return points;
+    }
+
 }
