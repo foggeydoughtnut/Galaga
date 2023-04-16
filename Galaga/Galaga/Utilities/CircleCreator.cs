@@ -50,15 +50,6 @@ public static class CircleCreator {
             points[i] = roatedPoint;
         }
         return points;
-
-/*        float cos = (float)Math.Cos(radians);
-        float sin = (float)Math.Sin(radians);
-
-        return new Vector2(
-            vector.X * cos - vector.Y * sin,
-            vector.X * sin + vector.Y * cos
-        );*/
-
     }
 
     public static float GetAngleRadians(Vector2 start, Vector2 end)
