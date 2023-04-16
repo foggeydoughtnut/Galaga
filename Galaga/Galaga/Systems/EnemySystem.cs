@@ -59,7 +59,7 @@ public class EnemySystem : ObjectSystem
         {
             _createdEnemies++;
             EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer())
+                _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
             {
                 EntrancePath = _points.ToList(),
                 Destination = _beeNextPos
@@ -75,7 +75,7 @@ public class EnemySystem : ObjectSystem
 
             _createdEnemies++;
             EnemyButterfly newButterfly = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer())
+            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
                     {
                         EntrancePath = _points.ToList(),
                         Destination = _butterflyNextPos

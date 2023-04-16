@@ -41,6 +41,7 @@ public abstract class Object
 
     public virtual void Update(TimeSpan elapsedTime)
     {
+        #region Animation
         _elapsedAnimationTime += elapsedTime;
         if (_elapsedAnimationTime > _animationTime)
         {
@@ -51,6 +52,7 @@ public abstract class Object
                 _currentTextureIndex = 0;
             }
         }
+        #endregion
 
         UpdatePosition(elapsedTime);
     }

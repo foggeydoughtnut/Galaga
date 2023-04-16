@@ -1,4 +1,5 @@
-﻿using Galaga.Utilities;
+﻿using Galaga.Systems;
+using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -24,8 +25,8 @@ namespace Galaga.Objects
         private Point _startAttackPos;
 
 
-        public EnemyButterfly(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player)
-        : base(position, dimensions, texture, 2, animationTimeMilliseconds, debugTexture, player)
+        public EnemyButterfly(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem)
+        : base(position, dimensions, texture, 2, animationTimeMilliseconds, debugTexture, player, bulletSystem)
         {
             _path = new();
             _rotatedPath = new();
@@ -36,7 +37,7 @@ namespace Galaga.Objects
         {
             _playerPosition = Player.Position;
             _startAttackPos = Position;
-            _path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 0f, Position.X, 400f, Position.Y));
+            _path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 0f, Position.X, 600f, Position.Y));
             float angleInRadians = CircleCreator.GetAngleRadians(new(Position.X, Position.Y), new(_playerPosition.X, _playerPosition.Y));
             _rotatedPath = CircleCreator.RotatePath(_path, angleInRadians, Position.X, Position.Y);
             base.Attack();
@@ -73,7 +74,7 @@ namespace Galaga.Objects
                 ResetVelocity();
                 Position.X = _startAttackPos.X;
                 Position.Y = _startAttackPos.Y - 150;
-                VelocityY = VelocityVector;
+                VelocityY = VelocityVector/2;
             }
             // Set the velocity to be straight down after the butterfly hits the bottom of the stage and it teleported up.
             if (Position.Y >= _startAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)

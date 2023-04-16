@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Galaga.Systems;
+using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -14,23 +16,32 @@ public abstract class Enemy : Object
     public double VelocityVector = 150;
     public bool ReachedEndOfEntrancePath;
 
-    private float timer = 0f;
-    private float delay; // Delay until enemy attacks once it reaches the start position
-    private bool startTimer = false;
+    private float attackTimer = 0f;
+    private float attackDelay; // Delay until enemy attacks once it reaches the start position
+    private bool startAttackTimer = false;
+
+    private float shootTimer = 0f;
+    private float shootDelay = 0.25f; // Delay until enemy shoots
+    private bool startShootTimer = false;
+    private bool doneShooting = false;
+    private int numberOfShotsFired = 0;
 
     private bool attack = false;
 
     public PlayerShip Player;
     private readonly Random rnd;
 
-    public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
+    private BulletSystem _bulletSystem;
+
+    public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
     {
         EntrancePath = new List<Vector2>();
         ReachedEndOfEntrancePath = false;
         Player = player;
         rnd = new();
+        _bulletSystem = bulletSystem;
         
-        delay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
+        attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
     }
 
     public override void Update(TimeSpan elapsedTime)
@@ -40,21 +51,40 @@ public abstract class Enemy : Object
         if (attack)
         {
             CalculateAttackPath();
+
+            // Start timer for when it will shoot
+            startShootTimer = true;
+            if (startShootTimer && !doneShooting)
+            {
+                shootTimer += (float)elapsedTime.TotalSeconds;
+                if (shootTimer >= shootDelay)
+                {
+                    _bulletSystem.FireEnemyBullet(new Point(Position.X, Position.Y+Constants.CHARACTER_DIMENSIONS));
+                    numberOfShotsFired++;
+                    shootTimer -= 0.2f;
+                }
+                if (numberOfShotsFired > 1)
+                {
+                    doneShooting = true;
+                    startShootTimer = false;
+                }
+            }
+
             return;
         }
 
         if (!EntrancePath.Any() && Destination == null)
         {
             ReachedEndOfEntrancePath = true;
-            startTimer = true;
-            if (startTimer && !attack)
+            startAttackTimer = true;
+            if (startAttackTimer && !attack)
             {
-                timer += (float)elapsedTime.TotalSeconds;
+                attackTimer += (float)elapsedTime.TotalSeconds;
 
-                if (timer >= delay)
+                if (attackTimer >= attackDelay)
                 {
                     Attack();
-                    startTimer = false;
+                    startAttackTimer = false;
                 }
 
             }
@@ -72,8 +102,13 @@ public abstract class Enemy : Object
     public void ResetAttackTimer()
     {
         attack = false;
-        startTimer = true;
-        timer = 0f;
+        startAttackTimer = true;
+        attackTimer = 0f;
+
+        doneShooting = false;
+        startShootTimer = true;
+        shootTimer= 0f;
+        numberOfShotsFired = 0;
     }
 
     protected virtual void Attack()
