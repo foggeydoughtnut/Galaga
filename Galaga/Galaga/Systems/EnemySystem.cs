@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Galaga.Objects;
 using Galaga.Utilities;
@@ -22,19 +24,21 @@ public class EnemySystem : ObjectSystem
     private readonly TimeSpan _entranceDelay = new(0,0,0,0,500);
     private TimeSpan _elapsedTime = TimeSpan.Zero;
     private readonly Texture2D _beeTexture;
+    private readonly Texture2D _butterflyTexture;
     private readonly Texture2D _debugTexture;
     private readonly int _maxEnemies = 10;
     private int _createdEnemies;
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
-    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture)
+    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture)
     {
         _playerSystem = playerSystem;
         _bulletSystem = bulletSystem;
         _particleSystem = particleSystem;
         _beeTexture = beeTexture;
         _debugTexture = debugTexture;
+        _butterflyTexture = butterflyTexture;
         _enemies = new List<Enemy>();
         _window = window;
         _nextPos = new Vector2(50.0f, 50.0f);
@@ -51,13 +55,20 @@ public class EnemySystem : ObjectSystem
         if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemies)
         {
             _createdEnemies++;
-            EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+/*            EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
                 _beeTexture, 1000, _debugTexture)
             {
                 EntrancePath = _points.ToList(),
                 Destination = _nextPos
             };
-            _enemies.Add(newBee);
+            _enemies.Add(newBee);*/
+            EnemyButterfly newButterfly = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer())
+                    {
+                        EntrancePath = _points.ToList(),
+                        Destination = _nextPos
+                    };
+            _enemies.Add(newButterfly);
             _elapsedTime -= _entranceDelay;
             _nextPos.X += Constants.CHARACTER_DIMENSIONS;
             if (_nextPos.X > Constants.GAMEPLAY_X)
@@ -68,7 +79,10 @@ public class EnemySystem : ObjectSystem
         }
         
         foreach(Enemy enemy in _enemies)
+        {
             enemy.Update(gameTime.ElapsedGameTime);
+            break;
+        }
     }
 
     public override void Render(SpriteBatch spriteBatch)

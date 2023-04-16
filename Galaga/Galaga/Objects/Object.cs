@@ -9,7 +9,7 @@ namespace Galaga.Objects;
 
 public abstract class Object
 {
-    const bool DEBUG_COLLIDER = false;
+    public const bool DEBUG = true;
 
     public bool IsObstacle = true;
     public Guid Id;
@@ -20,7 +20,7 @@ public abstract class Object
     private double _totalElapsedMicrosecondsX;
     private double _totalElapsedMicrosecondsY;
     protected readonly Texture2D ObjectTexture;
-    private readonly Texture2D _debugTexture;
+    public readonly Texture2D _debugTexture;
     private int _currentTextureIndex;
     private readonly TimeSpan _animationTime;
     private TimeSpan _elapsedAnimationTime;
@@ -75,7 +75,7 @@ public abstract class Object
             spriteBatch.Draw(ObjectTexture, Collider, new Rectangle(_currentTextureIndex * SubImageDimension, 0, SubImageDimension, SubImageDimension), Color.White, (float)DetermineHeading(), Vector2.Zero, SpriteEffects.None, 1f);
         }
 
-        if (DEBUG_COLLIDER)
+        if (DEBUG)
         {
             spriteBatch.Draw(_debugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Top), null, Color.Green, 0f, new Vector2(_debugTexture.Width / 2, _debugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);
             spriteBatch.Draw(_debugTexture, new Vector2(Collider.X + Collider.Width/2, Collider.Bottom), null, Color.Green, 0f, new Vector2(_debugTexture.Width / 2, _debugTexture.Height / 2), 0.5f, SpriteEffects.None, 0.5f);

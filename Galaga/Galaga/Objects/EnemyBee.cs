@@ -6,8 +6,8 @@ namespace Galaga.Objects;
 
 public class EnemyBee : Enemy
 {
-    public EnemyBee(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture) 
-        : base(position, dimensions, texture, 2, animationTimeMilliseconds, debugTexture)
+    public EnemyBee(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player) 
+        : base(position, dimensions, texture, 2, animationTimeMilliseconds, debugTexture, player)
     {
     }
 }
