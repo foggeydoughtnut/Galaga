@@ -58,6 +58,9 @@ public class CollisionDetectionSystem : System
                 if (intersects)
                 {
                     // If they do, mark that both of add to the collisions dictionary and mark that both collided
+                    if (_collisions.ContainsKey(gameObjects[i].Item1)) continue;
+                    if (_collisions.ContainsKey(gameObjects[j].Item1)) continue;
+
                     _collisions.Add(gameObjects[i].Item1, gameObjects[i].Item3);
                     _collisions.Add(gameObjects[j].Item1, gameObjects[j].Item3);
                 }

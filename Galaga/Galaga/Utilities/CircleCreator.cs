@@ -61,6 +61,11 @@ public static class CircleCreator {
 
     }
 
+    public static float GetAngleRadians(Vector2 start, Vector2 end)
+    {
+        return (float)Math.Atan2(end.Y - start.Y, end.X - start.X);
+    }
+
 
     private static IEnumerable<Vector2> CreateCounterClockwiseCirclePoints(float centerX, float centerY, float radius, int numPoints)
     {

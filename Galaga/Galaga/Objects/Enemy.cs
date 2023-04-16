@@ -15,18 +15,22 @@ public abstract class Enemy : Object
     public bool ReachedEndOfEntrancePath;
 
     private float timer = 0f;
-    private const float delay = 5f;
+    private float delay; // Delay until enemy attacks once it reaches the start position
     private bool startTimer = false;
 
     private bool attack = false;
 
     public PlayerShip Player;
+    private readonly Random rnd;
 
     public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
     {
         EntrancePath = new List<Vector2>();
         ReachedEndOfEntrancePath = false;
         Player = player;
+        rnd = new();
+        
+        delay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
     }
 
     public override void Update(TimeSpan elapsedTime)
@@ -63,8 +67,13 @@ public abstract class Enemy : Object
         else if(EntrancePath.Any())
             CalculateNewVelocityForEntrancePath();
 
-        
+    }
 
+    public void ResetAttackTimer()
+    {
+        attack = false;
+        startTimer = true;
+        timer = 0f;
     }
 
     protected virtual void Attack()

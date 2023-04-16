@@ -21,6 +21,8 @@ namespace Galaga.Objects
 
         private List<Vector2> _rotatedPath;
 
+        private Point _startAttackPos;
+
 
         public EnemyButterfly(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player)
         : base(position, dimensions, texture, 2, animationTimeMilliseconds, debugTexture, player)
@@ -33,18 +35,18 @@ namespace Galaga.Objects
         protected override void Attack()
         {
             _playerPosition = Player.Position;
+            _startAttackPos = Position;
             _path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 0f, Position.X, 400f, Position.Y));
-            float angleInRadians = GetAngleRadians(new(Position.X, Position.Y), new(_playerPosition.X, _playerPosition.Y));
+            float angleInRadians = CircleCreator.GetAngleRadians(new(Position.X, Position.Y), new(_playerPosition.X, _playerPosition.Y));
             _rotatedPath = CircleCreator.RotatePath(_path, angleInRadians, Position.X, Position.Y);
-
             base.Attack();
         }
-
-        private float GetAngleRadians(Vector2 start, Vector2 end)
+        
+        private void ResetVelocity()
         {
-            return (float)Math.Atan2(end.Y - start.Y, end.X - start.X);
+            VelocityX = 0;
+            VelocityY = 0;
         }
-
         public override void CalculateAttackPath()
         {
             // Set the velocity x and y to be for the path of attack
@@ -62,6 +64,21 @@ namespace Galaga.Objects
                 double totalDistance = Math.Sqrt(xDistanceSquared + yDistanceSquared);
                 VelocityX = VelocityVector * xDistance / totalDistance;
                 VelocityY = VelocityVector * yDistance / totalDistance;
+            }
+            if (Position.Y > Constants.GAMEPLAY_Y)
+            {
+                _rotatedPath.Clear();
+                _path.Clear();
+                ResetVelocity();
+                Position.X = _startAttackPos.X;
+                Position.Y = _startAttackPos.Y - 150;
+                VelocityY = VelocityVector;
+            }
+            if (Position.Y >= _startAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)
+            {
+                VelocityY = 0;
+                Position.Y = _startAttackPos.Y;
+                ResetAttackTimer();
             }
         }
 

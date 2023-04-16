@@ -19,14 +19,15 @@ public class EnemySystem : ObjectSystem
     private readonly List<Enemy> _enemies;
     private readonly GameWindow _window;
     private const int EntranceCircleRadius = Constants.GAMEPLAY_X / 8;
-    private Vector2 _nextPos;
+    private Vector2 _butterflyNextPos;
+    private Vector2 _beeNextPos;
     private List<Vector2> _points;
-    private readonly TimeSpan _entranceDelay = new(0,0,0,0,500);
+    private readonly TimeSpan _entranceDelay = new(0,0,0,0,150);
     private TimeSpan _elapsedTime = TimeSpan.Zero;
     private readonly Texture2D _beeTexture;
     private readonly Texture2D _butterflyTexture;
     private readonly Texture2D _debugTexture;
-    private readonly int _maxEnemies = 10;
+    private readonly int _maxEnemies = 20;
     private int _createdEnemies;
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
@@ -41,7 +42,9 @@ public class EnemySystem : ObjectSystem
         _butterflyTexture = butterflyTexture;
         _enemies = new List<Enemy>();
         _window = window;
-        _nextPos = new Vector2(50.0f, 50.0f);
+        _butterflyNextPos = new Vector2(50.0f, 50.0f);
+        _beeNextPos = new Vector2(50.0f, 82.0f);
+
         _points = new List<Vector2> { new(200, 0) };
         Random rand = new();
         int randX = rand.Next() % (Constants.GAMEPLAY_X / 2) + Constants.GAMEPLAY_X / 4;
@@ -55,33 +58,41 @@ public class EnemySystem : ObjectSystem
         if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemies)
         {
             _createdEnemies++;
-/*            EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                _beeTexture, 1000, _debugTexture)
+            EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer())
             {
                 EntrancePath = _points.ToList(),
-                Destination = _nextPos
+                Destination = _beeNextPos
             };
-            _enemies.Add(newBee);*/
+            _enemies.Add(newBee);
+
+            _beeNextPos.X += Constants.CHARACTER_DIMENSIONS;
+            if (_beeNextPos.X > Constants.GAMEPLAY_X)
+            {
+                _beeNextPos.X = 50;
+                _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+            }
+
+            _createdEnemies++;
             EnemyButterfly newButterfly = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
             _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer())
                     {
                         EntrancePath = _points.ToList(),
-                        Destination = _nextPos
-                    };
+                        Destination = _butterflyNextPos
+            };
             _enemies.Add(newButterfly);
             _elapsedTime -= _entranceDelay;
-            _nextPos.X += Constants.CHARACTER_DIMENSIONS;
-            if (_nextPos.X > Constants.GAMEPLAY_X)
+            _butterflyNextPos.X += Constants.CHARACTER_DIMENSIONS;
+            if (_butterflyNextPos.X > Constants.GAMEPLAY_X)
             {
-                _nextPos.X = 50;
-                _nextPos.Y += Constants.CHARACTER_DIMENSIONS;
+                _butterflyNextPos.X = 50;
+                _butterflyNextPos.Y += Constants.CHARACTER_DIMENSIONS;
             }
         }
         
         foreach(Enemy enemy in _enemies)
         {
             enemy.Update(gameTime.ElapsedGameTime);
-            break;
         }
     }
 
