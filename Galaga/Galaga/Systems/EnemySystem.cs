@@ -27,7 +27,7 @@ public class EnemySystem : ObjectSystem
     private TimeSpan _elapsedTime = TimeSpan.Zero;
     private readonly Texture2D _beeTexture;
     private readonly Texture2D _butterflyTexture;
-    private readonly Texture2D _bossGalagaTexture;
+    private readonly List<Texture2D> _bossGalagaTextures;
 
     private readonly Texture2D _debugTexture;
     private readonly int _maxEnemies = 10;
@@ -35,7 +35,7 @@ public class EnemySystem : ObjectSystem
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
-    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, Texture2D bossGalagaTexture)
+    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures)
     {
         _playerSystem = playerSystem;
         _bulletSystem = bulletSystem;
@@ -43,7 +43,7 @@ public class EnemySystem : ObjectSystem
         _beeTexture = beeTexture;
         _debugTexture = debugTexture;
         _butterflyTexture = butterflyTexture;
-        _bossGalagaTexture = bossGalagaTexture;
+        _bossGalagaTextures = bossGalagaTextures;
 
         _enemies = new List<Enemy>();
         _window = window;
@@ -65,7 +65,7 @@ public class EnemySystem : ObjectSystem
         {
             _createdEnemies++;
             EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                _bossGalagaTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+                _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
             {
                 EntrancePath = _points.ToList(),
                 Destination = _bossGalagaNextPos
@@ -81,21 +81,21 @@ public class EnemySystem : ObjectSystem
 
 
 
-            /*            _createdEnemies++;
-                        EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                            _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
-                        {
-                            EntrancePath = _points.ToList(),
-                            Destination = _beeNextPos
-                        };
-                        _enemies.Add(newBee);
+/*            _createdEnemies++;
+            EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+            {
+                EntrancePath = _points.ToList(),
+                Destination = _beeNextPos
+            };
+            _enemies.Add(newBee);
 
-                        _beeNextPos.X += Constants.CHARACTER_DIMENSIONS;
-                        if (_beeNextPos.X > Constants.GAMEPLAY_X)
-                        {
-                            _beeNextPos.X = 50;
-                            _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
-                        }*/
+            _beeNextPos.X += Constants.CHARACTER_DIMENSIONS;
+            if (_beeNextPos.X > Constants.GAMEPLAY_X)
+            {
+                _beeNextPos.X = 50;
+                _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+            }*/
 
             /*            _createdEnemies++;
                         EnemyButterfly newButterfly = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
@@ -111,7 +111,7 @@ public class EnemySystem : ObjectSystem
                             _butterflyNextPos.X = 50;
                             _butterflyNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }*/
-                        _elapsedTime -= _entranceDelay;
+            _elapsedTime -= _entranceDelay;
         }
 
         foreach (Enemy enemy in _enemies)
@@ -128,8 +128,12 @@ public class EnemySystem : ObjectSystem
 
     public override void ObjectHit(Guid id)
     {
-        Enemy deadEnemy = _enemies.First(e => e.Id == id);
-        _particleSystem.EnemyDeath(deadEnemy.Position);
-        _enemies.Remove(deadEnemy);
+        Enemy hitEnemy = _enemies.First(e => e.Id == id);
+        hitEnemy.health--;
+        if (hitEnemy.health <= 0 )
+        {
+            _particleSystem.EnemyDeath(hitEnemy.Position);
+            _enemies.Remove(hitEnemy);
+        }
     }
 }

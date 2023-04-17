@@ -25,13 +25,17 @@ namespace Galaga.Objects
 
         private bool isStartingOnLeft;
 
+        private List<Texture2D> _textures;
 
-        public EnemyBossGalaga(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem)
-        : base(position, dimensions, texture, 2, animationTimeMilliseconds, debugTexture, player, bulletSystem)
+
+        public EnemyBossGalaga(Point position, Point dimensions, List<Texture2D> textures, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem)
+        : base(position, dimensions, textures, 2, animationTimeMilliseconds, debugTexture, player, bulletSystem)
         {
             _path = new();
             _rotatedPath = new();
             isStartingOnLeft = true;
+            health = 2;
+            _textures = textures;
         }
 
         protected override void Attack()
@@ -110,6 +114,15 @@ namespace Galaga.Objects
                 VelocityY = 0;
                 Position.Y = _startAttackPos.Y;
                 ResetAttackTimer();
+            }
+        }
+
+        public override void Update(TimeSpan elapsedTime)
+        {
+            base.Update(elapsedTime);
+            if (health <= 1)
+            {
+                ObjectTexture = _textures[1];   
             }
         }
 
