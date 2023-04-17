@@ -21,18 +21,21 @@ public class EnemySystem : ObjectSystem
     private const int EntranceCircleRadius = Constants.GAMEPLAY_X / 8;
     private Vector2 _butterflyNextPos;
     private Vector2 _beeNextPos;
+    private Vector2 _bossGalagaNextPos;
     private List<Vector2> _points;
     private readonly TimeSpan _entranceDelay = new(0,0,0,0,150);
     private TimeSpan _elapsedTime = TimeSpan.Zero;
     private readonly Texture2D _beeTexture;
     private readonly Texture2D _butterflyTexture;
+    private readonly List<Texture2D> _bossGalagaTextures;
+
     private readonly Texture2D _debugTexture;
-    private readonly int _maxEnemies = 20;
+    private readonly int _maxEnemies = 10;
     private int _createdEnemies;
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
-    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture)
+    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures)
     {
         _playerSystem = playerSystem;
         _bulletSystem = bulletSystem;
@@ -40,8 +43,11 @@ public class EnemySystem : ObjectSystem
         _beeTexture = beeTexture;
         _debugTexture = debugTexture;
         _butterflyTexture = butterflyTexture;
+        _bossGalagaTextures = bossGalagaTextures;
+
         _enemies = new List<Enemy>();
         _window = window;
+        _bossGalagaNextPos = new Vector2(50.0f, 18.0f);
         _butterflyNextPos = new Vector2(50.0f, 50.0f);
         _beeNextPos = new Vector2(50.0f, 82.0f);
 
@@ -58,6 +64,24 @@ public class EnemySystem : ObjectSystem
         if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemies)
         {
             _createdEnemies++;
+            EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+            {
+                EntrancePath = _points.ToList(),
+                Destination = _bossGalagaNextPos
+            };
+            _enemies.Add(newBossGalaga);
+
+            _bossGalagaNextPos.X += Constants.CHARACTER_DIMENSIONS;
+            if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X)
+            {
+                _bossGalagaNextPos.X = 50;
+                _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+            }
+
+
+
+/*            _createdEnemies++;
             EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
                 _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
             {
@@ -71,26 +95,26 @@ public class EnemySystem : ObjectSystem
             {
                 _beeNextPos.X = 50;
                 _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
-            }
+            }*/
 
-            _createdEnemies++;
-            EnemyButterfly newButterfly = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
-                    {
-                        EntrancePath = _points.ToList(),
-                        Destination = _butterflyNextPos
-            };
-            _enemies.Add(newButterfly);
+            /*            _createdEnemies++;
+                        EnemyButterfly newButterfly = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                        _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+                        {
+                            EntrancePath = _points.ToList(),
+                            Destination = _butterflyNextPos
+                        };
+                        _enemies.Add(newButterfly);
+                        _butterflyNextPos.X += Constants.CHARACTER_DIMENSIONS;
+                        if (_butterflyNextPos.X > Constants.GAMEPLAY_X)
+                        {
+                            _butterflyNextPos.X = 50;
+                            _butterflyNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+                        }*/
             _elapsedTime -= _entranceDelay;
-            _butterflyNextPos.X += Constants.CHARACTER_DIMENSIONS;
-            if (_butterflyNextPos.X > Constants.GAMEPLAY_X)
-            {
-                _butterflyNextPos.X = 50;
-                _butterflyNextPos.Y += Constants.CHARACTER_DIMENSIONS;
-            }
         }
-        
-        foreach(Enemy enemy in _enemies)
+
+        foreach (Enemy enemy in _enemies)
         {
             enemy.Update(gameTime.ElapsedGameTime);
         }
@@ -104,8 +128,12 @@ public class EnemySystem : ObjectSystem
 
     public override void ObjectHit(Guid id)
     {
-        Enemy deadEnemy = _enemies.First(e => e.Id == id);
-        _particleSystem.EnemyDeath(deadEnemy.Position);
-        _enemies.Remove(deadEnemy);
+        Enemy hitEnemy = _enemies.First(e => e.Id == id);
+        hitEnemy.health--;
+        if (hitEnemy.health <= 0 )
+        {
+            _particleSystem.EnemyDeath(hitEnemy.Position);
+            _enemies.Remove(hitEnemy);
+        }
     }
 }

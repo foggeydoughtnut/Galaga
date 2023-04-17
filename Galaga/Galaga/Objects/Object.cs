@@ -9,7 +9,7 @@ namespace Galaga.Objects;
 
 public abstract class Object
 {
-    public const bool DEBUG = true;
+    public const bool DEBUG = false;
 
     public bool IsObstacle = true;
     public Guid Id;
@@ -19,7 +19,7 @@ public abstract class Object
     public double VelocityY;
     private double _totalElapsedMicrosecondsX;
     private double _totalElapsedMicrosecondsY;
-    protected readonly Texture2D ObjectTexture;
+    protected Texture2D ObjectTexture;
     public readonly Texture2D _debugTexture;
     private int _currentTextureIndex;
     private readonly TimeSpan _animationTime;
@@ -28,11 +28,11 @@ public abstract class Object
     private readonly int _numberOfSubImages;
     private const int SubImageDimension = 16;
 
-    protected Object(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture, int numberOfSubImages)
+    protected Object(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture, int numberOfSubImages)
     {
         Position = position;
         Dimensions = dimensions;
-        ObjectTexture = textures;
+        ObjectTexture = texture;
         _debugTexture = debugTexture;
         _numberOfSubImages = numberOfSubImages;
         _animationTime = new TimeSpan(0,0,0,0, animationTimeMilliseconds);

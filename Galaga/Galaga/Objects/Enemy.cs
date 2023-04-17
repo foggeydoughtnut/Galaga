@@ -26,6 +26,8 @@ public abstract class Enemy : Object
     private bool doneShooting = false;
     private int numberOfShotsFired = 0;
 
+    public int health { get; set; } = 1;
+
     private bool attack = false;
 
     public PlayerShip Player;
@@ -41,6 +43,18 @@ public abstract class Enemy : Object
         rnd = new();
         _bulletSystem = bulletSystem;
         
+        attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
+    }
+
+    // This one is for boss Galaga since it has more than 1 texture
+    public Enemy(Point position, Point dimensions, List<Texture2D> textures, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem) : base(position, dimensions, textures[0], animationTimeMilliseconds, debugTexture, numAnimations)
+    {
+        EntrancePath = new List<Vector2>();
+        ReachedEndOfEntrancePath = false;
+        Player = player;
+        rnd = new();
+        _bulletSystem = bulletSystem;
+
         attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
     }
 
