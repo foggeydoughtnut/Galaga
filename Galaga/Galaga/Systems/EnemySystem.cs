@@ -34,13 +34,15 @@ public class EnemySystem : ObjectSystem
     private int _createdEnemies;
 
     private bool _isBonusRound;
+
+    private readonly Texture2D _dragonflyTexture;
     private List<Vector2> _dragonflyPathOdd;
     private List<Vector2> _dragonflyPathEven;
 
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
-    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures)
+    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures, Texture2D dragonflyTexture)
     {
         _playerSystem = playerSystem;
         _bulletSystem = bulletSystem;
@@ -49,6 +51,7 @@ public class EnemySystem : ObjectSystem
         _debugTexture = debugTexture;
         _butterflyTexture = butterflyTexture;
         _bossGalagaTextures = bossGalagaTextures;
+        _dragonflyTexture = dragonflyTexture;
         _dragonflyPathOdd = new();
         _dragonflyPathEven = new();
 
@@ -113,10 +116,10 @@ public class EnemySystem : ObjectSystem
                 #region Dragonfly
                 if (_dragonflyPathOdd.Count > 0 && _dragonflyPathEven.Count > 0) // Potentially alternate the ways by checking if the dragonfly count is odd or even
                 {
-                    if (_createdEnemies % 2 == 0 && false)
+                    if (_createdEnemies % 2 == 0)
                     {
                         EnemyDragonfly newDragonfly = new(new Point(Constants.GAMEPLAY_X / 2, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem) // change this so its not a butterfly
+                            _dragonflyTexture, 99999, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem) // change this so its not a butterfly
                         {
                             EntrancePath = _dragonflyPathEven.ToList(), // If it is odd it should have different path then when its even
                             Destination = new Vector2(_dragonflyPathEven[_dragonflyPathEven.Count - 1].X, _dragonflyPathEven[_dragonflyPathEven.Count - 1].Y - Constants.GAMEPLAY_Y)
@@ -126,7 +129,7 @@ public class EnemySystem : ObjectSystem
                     else
                     {
                         EnemyDragonfly newDragonfly = new(new Point(Constants.GAMEPLAY_X/2, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem) // change this so its not a butterfly
+                            _dragonflyTexture, 99999, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem) // change this so its not a butterfly
                         {
                             EntrancePath = _dragonflyPathOdd.ToList(), // If it is odd it should have different path then when its even
                             Destination = new Vector2(_dragonflyPathOdd[_dragonflyPathOdd.Count-1].X, _dragonflyPathOdd[_dragonflyPathOdd.Count - 1].Y - Constants.GAMEPLAY_Y)
