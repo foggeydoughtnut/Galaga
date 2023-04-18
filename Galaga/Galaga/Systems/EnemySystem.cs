@@ -68,7 +68,7 @@ public class EnemySystem : ObjectSystem
         int randY = rand.Next() % (Constants.GAMEPLAY_Y / 4) + Constants.GAMEPLAY_Y / 4;
         _points.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(randX, randY, EntranceCircleRadius));
 
-        _isBonusRound = true;
+        _isBonusRound = false;
     }
 
     private void GenerateDragonflyPath(bool oddEnemy)
@@ -96,21 +96,21 @@ public class EnemySystem : ObjectSystem
         if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemies)
         {
             _createdEnemies++;
-            /*            EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                            _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
-                        {
-                            EntrancePath = _points.ToList(),
-                            Destination = _bossGalagaNextPos
-                        };
-                        _enemies.Add(newBossGalaga);
+            EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+            {
+                EntrancePath = _points.ToList(),
+                Destination = _bossGalagaNextPos
+            };
+            _enemies.Add(newBossGalaga);
 
-                        _bossGalagaNextPos.X += Constants.CHARACTER_DIMENSIONS;
-                        if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X)
-                        {
-                            _bossGalagaNextPos.X = 50;
-                            _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
-                        }
-            */
+            _bossGalagaNextPos.X += Constants.CHARACTER_DIMENSIONS;
+            if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X)
+            {
+                _bossGalagaNextPos.X = 50;
+                _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+            }
+
             if (_isBonusRound)
             {
                 #region Dragonfly
