@@ -33,6 +33,11 @@ public class EnemySystem : ObjectSystem
     private readonly int _maxEnemies = 10;
     private int _createdEnemies;
 
+    private bool _isBonusRound;
+    private List<Vector2> _dragonflyPathOdd;
+    private List<Vector2> _dragonflyPathEven;
+
+
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
     public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures)
@@ -44,6 +49,9 @@ public class EnemySystem : ObjectSystem
         _debugTexture = debugTexture;
         _butterflyTexture = butterflyTexture;
         _bossGalagaTextures = bossGalagaTextures;
+        _dragonflyPathOdd = new();
+        _dragonflyPathEven = new();
+
 
         _enemies = new List<Enemy>();
         _window = window;
@@ -54,8 +62,29 @@ public class EnemySystem : ObjectSystem
         _points = new List<Vector2> { new(200, 0) };
         Random rand = new();
         int randX = rand.Next() % (Constants.GAMEPLAY_X / 2) + Constants.GAMEPLAY_X / 4;
-        int randY = rand.Next() % (Constants.GAMEPLAY_Y / 4) + Constants.GAMEPLAY_Y / 2;
+        int randY = rand.Next() % (Constants.GAMEPLAY_Y / 4) + Constants.GAMEPLAY_Y / 4;
         _points.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(randX, randY, EntranceCircleRadius));
+
+        _isBonusRound = true;
+    }
+
+    private void GenerateDragonflyPath(bool oddEnemy)
+    {
+        if (oddEnemy)
+        {
+            _dragonflyPathOdd.Add(new(Constants.GAMEPLAY_X/2, Constants.GAMEPLAY_Y/2));
+            _dragonflyPathOdd.Add(new(Constants.GAMEPLAY_X / 5, 3 * Constants.GAMEPLAY_Y / 5));
+            _dragonflyPathOdd.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2));
+            _dragonflyPathOdd.Add(new(Constants.GAMEPLAY_X / 2, 0));
+        }
+        else
+        {
+            _dragonflyPathEven.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2));
+            _dragonflyPathEven.Add(new(4 * Constants.GAMEPLAY_X / 5, 3 * Constants.GAMEPLAY_Y / 5));
+            _dragonflyPathEven.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2));
+            _dragonflyPathEven.Add(new(Constants.GAMEPLAY_X / 2, 0));
+        }
+
     }
 
     public override void Update(GameTime gameTime)
@@ -64,38 +93,72 @@ public class EnemySystem : ObjectSystem
         if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemies)
         {
             _createdEnemies++;
-            EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
-            {
-                EntrancePath = _points.ToList(),
-                Destination = _bossGalagaNextPos
-            };
-            _enemies.Add(newBossGalaga);
+            /*            EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                            _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+                        {
+                            EntrancePath = _points.ToList(),
+                            Destination = _bossGalagaNextPos
+                        };
+                        _enemies.Add(newBossGalaga);
 
-            _bossGalagaNextPos.X += Constants.CHARACTER_DIMENSIONS;
-            if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X)
+                        _bossGalagaNextPos.X += Constants.CHARACTER_DIMENSIONS;
+                        if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X)
+                        {
+                            _bossGalagaNextPos.X = 50;
+                            _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+                        }
+            */
+            if (_isBonusRound)
             {
-                _bossGalagaNextPos.X = 50;
-                _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+                #region Dragonfly
+                if (_dragonflyPathOdd.Count > 0 && _dragonflyPathEven.Count > 0) // Potentially alternate the ways by checking if the dragonfly count is odd or even
+                {
+                    if (_createdEnemies % 2 == 0 && false)
+                    {
+                        EnemyDragonfly newDragonfly = new(new Point(Constants.GAMEPLAY_X / 2, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem) // change this so its not a butterfly
+                        {
+                            EntrancePath = _dragonflyPathEven.ToList(), // If it is odd it should have different path then when its even
+                            Destination = new Vector2(_dragonflyPathEven[_dragonflyPathEven.Count - 1].X, _dragonflyPathEven[_dragonflyPathEven.Count - 1].Y - Constants.GAMEPLAY_Y)
+                        };
+                        _enemies.Add(newDragonfly);
+                    }
+                    else
+                    {
+                        EnemyDragonfly newDragonfly = new(new Point(Constants.GAMEPLAY_X/2, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem) // change this so its not a butterfly
+                        {
+                            EntrancePath = _dragonflyPathOdd.ToList(), // If it is odd it should have different path then when its even
+                            Destination = new Vector2(_dragonflyPathOdd[_dragonflyPathOdd.Count-1].X, _dragonflyPathOdd[_dragonflyPathOdd.Count - 1].Y - Constants.GAMEPLAY_Y)
+                        };
+                        _enemies.Add(newDragonfly);
+                    }
+                }
+                else
+                {
+                    GenerateDragonflyPath(false);
+                    GenerateDragonflyPath(true);
+                }
+                #endregion
             }
 
 
 
-/*            _createdEnemies++;
-            EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
-            {
-                EntrancePath = _points.ToList(),
-                Destination = _beeNextPos
-            };
-            _enemies.Add(newBee);
+            /*            _createdEnemies++;
+                        EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                            _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+                        {
+                            EntrancePath = _points.ToList(),
+                            Destination = _beeNextPos
+                        };
+                        _enemies.Add(newBee);
 
-            _beeNextPos.X += Constants.CHARACTER_DIMENSIONS;
-            if (_beeNextPos.X > Constants.GAMEPLAY_X)
-            {
-                _beeNextPos.X = 50;
-                _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
-            }*/
+                        _beeNextPos.X += Constants.CHARACTER_DIMENSIONS;
+                        if (_beeNextPos.X > Constants.GAMEPLAY_X)
+                        {
+                            _beeNextPos.X = 50;
+                            _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+                        }*/
 
             /*            _createdEnemies++;
                         EnemyButterfly newButterfly = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
