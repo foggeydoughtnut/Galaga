@@ -74,7 +74,7 @@ public class BulletSystem : ObjectSystem
 
     public void FirePlayerBullet(Point position)
     {
-        if (_numberOfPlayerBulletsOut < 2) // In the game you could only have two bullets out at a time for added difficulty
+        if (_numberOfPlayerBulletsOut < 999) // In the game you could only have two bullets out at a time for added difficulty but this one he said he wanted it not to be limited
         {
             _bullets.Add(new Bullet(
                 position: new Point(position.X-1, position.Y-6),
