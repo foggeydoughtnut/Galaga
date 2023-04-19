@@ -43,6 +43,7 @@ public class PlayState : GameState
         Textures.Add("bossGalagaFull", contentManager.Load<Texture2D>("Images/BossGalagaFull"));
         Textures.Add("bossGalagaHalf", contentManager.Load<Texture2D>("Images/BossGalagaHalf"));
         Textures.Add("dragonfly", contentManager.Load<Texture2D>("Images/Dragonfly"));
+        Textures.Add("satellite", contentManager.Load<Texture2D>("Images/Satellite"));
 
         Textures.Add("background", contentManager.Load<Texture2D>("Images/Background"));
         InitializeState();

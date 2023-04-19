@@ -30,7 +30,7 @@ namespace Galaga.Objects
         {
             _path = new();
             _rotatedPath = new();
-
+            health = 1;
         }
 
         protected override void Attack()
