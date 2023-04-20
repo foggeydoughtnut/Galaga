@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -15,8 +16,10 @@ public class MenuState : GameState
     private int _indexOfChoice;
     private List<string> _options;
     private GameStates _nextState;
+    private Dictionary<int, Tuple<int, int>> _optionPositions;
     RenderTarget2D renderTarget;
     KeyboardState previousKeyboardState;
+    private MouseState _previousMouseState;
 
     public override void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, GameWindow window)
     {
@@ -40,6 +43,7 @@ public class MenuState : GameState
             RenderTargetUsage.DiscardContents
         );
         previousKeyboardState = Keyboard.GetState();
+        _optionPositions = new Dictionary<int, Tuple<int, int>>();
 
         base.Initialize(graphicsDevice, graphics, window);
     }
@@ -62,15 +66,23 @@ public class MenuState : GameState
     {
         KeyboardState currentKeyboardState = Keyboard.GetState();
 
-
-
         if (currentKeyboardState.IsKeyUp(Keys.Up) && previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
             _indexOfChoice -= 1;
 
         if (currentKeyboardState.IsKeyUp(Keys.Down) && previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _options.Count)
             _indexOfChoice += 1;
 
-        if (currentKeyboardState.IsKeyUp(Keys.Enter) && previousKeyboardState.IsKeyDown(Keys.Enter))
+        if (!_optionPositions.Any())
+            _optionPositions = MouseMenu.DefineOptionPositions(Fonts, _options.Count, renderTarget);
+        var currentMouseState = Mouse.GetState();
+        if (currentMouseState.Position != _previousMouseState.Position)
+            _indexOfChoice = MouseMenu.UpdateIndexBasedOnMouse(currentMouseState, Window, _optionPositions, _indexOfChoice);
+        
+        if (currentKeyboardState.IsKeyUp(Keys.Enter) && previousKeyboardState.IsKeyDown(Keys.Enter) 
+            || currentMouseState.LeftButton == ButtonState.Released 
+            && _previousMouseState.LeftButton == ButtonState.Pressed 
+            && currentMouseState.X < Window.ClientBounds.Width
+            && currentMouseState.X > 0)
         {
             _nextState = _indexOfChoice switch
             {
@@ -84,6 +96,7 @@ public class MenuState : GameState
             // Handle enter key released
         }
         previousKeyboardState = currentKeyboardState;
+        _previousMouseState = currentMouseState;
 
         base.ProcessInput();
     }
