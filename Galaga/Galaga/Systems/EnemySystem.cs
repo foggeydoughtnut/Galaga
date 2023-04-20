@@ -11,6 +11,22 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Galaga.Systems;
 
+
+public class WaveEnemy
+{
+    public string Type;
+    public List<Vector2> Path;
+    public Point StartPos;
+
+
+    public WaveEnemy(string type, List<Vector2> path, Point startPos)
+    {
+        Type = type;
+        Path = path;
+        StartPos = startPos;
+    }
+}
+
 public class EnemySystem : ObjectSystem
 {
     private readonly PlayerSystem _playerSystem;
@@ -30,10 +46,9 @@ public class EnemySystem : ObjectSystem
     private readonly List<Texture2D> _bossGalagaTextures;
 
     private readonly Texture2D _debugTexture;
-    private readonly int _maxEnemies = 10;
+    private readonly int _maxEnemiesPerRound = 40;
     private int _createdEnemies;
 
-    private bool _isBonusRound;
 
     private readonly Texture2D _dragonflyTexture;
     private List<Vector2> _dragonflyPathOdd;
@@ -41,6 +56,24 @@ public class EnemySystem : ObjectSystem
 
     private readonly Texture2D _satelliteTexture;
     private List<Vector2> _satellitePath;
+
+    #region Rounds
+    private bool _isBonusRound;
+    private int _waveNumber;
+    private int _roundCount;
+    List<List<WaveEnemy>> _roundOneEnemies; // This holds a list of lists of tuples (sorry haha) They are a list of enemy groups. Each enemy group has a list of tuples with enemy type, their entrance path, and start pos
+    List<List<Tuple<string, List<Vector2>, Point>>> _roundTwoEnemies;
+    List<List<Tuple<string, List<Vector2>, Point>>> _bonusRoundOneEnemies;
+    private int _numOfGroupsPerStage = 5;
+    private int _numberOfEnemiesPerSubGroup = 4; // There are two subgroups per wave
+    private int _groupIndex;
+    private int _enemyIndex;
+    private bool _roundFinished;
+
+    private float _groupTimer;
+    private bool _groupTimerActive;
+    private float _groupDelay;
+    #endregion
 
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
@@ -73,9 +106,93 @@ public class EnemySystem : ObjectSystem
         int randY = rand.Next() % (Constants.GAMEPLAY_Y / 4) + Constants.GAMEPLAY_Y / 4;
         _points.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(randX, randY, EntranceCircleRadius));
 
+
+        #region Rounds Initialization
         _isBonusRound = false;
+        _roundOneEnemies = new();
+        AddRoundOne();
+        _roundTwoEnemies = new();
+        _bonusRoundOneEnemies = new();
+        _groupIndex = 0;
+        _enemyIndex = 0;
+        _roundFinished = false;
+
+        _groupTimer = 0f;
+        _groupTimerActive = false;
+        _groupDelay = 3f;
+
+        #endregion
     }
 
+    private void AddRoundOne()
+    {
+        for (int i = 0; i < _numOfGroupsPerStage; i++)
+        {
+            List<WaveEnemy> group = new();
+            for (int firstGroup = 0; firstGroup < _numberOfEnemiesPerSubGroup; firstGroup++) // Create first subgroup of enemies
+            {
+                WaveEnemy enemy;
+                if (i == 0) // First group
+                {
+                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X/2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X/2, 0));
+                    group.Add(enemy);
+                }
+                else if (i == 1)
+                {
+                    enemy = new("bossGalaga", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+                else if (i == 2)
+                {
+                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+                else if (i == 3)
+                {
+                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+                else
+                {
+                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+                
+            }
+            for (int secondGroup = 0; secondGroup < _numberOfEnemiesPerSubGroup; secondGroup++) // Second subgroup of enemies
+            {
+                WaveEnemy enemy;
+                if (i == 0) // First group
+                {
+                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+                else if (i == 1)
+                {
+                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+                else if (i == 2)
+                {
+                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+                else if (i == 3)
+                {
+                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+                else
+                {
+                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    group.Add(enemy);
+                }
+            }
+            _roundOneEnemies.Add(group);
+        }
+    }
+
+    #region Bonus Round Paths
     private void GenerateDragonflyPath(bool oddEnemy)
     {
         if (oddEnemy)
@@ -103,14 +220,127 @@ public class EnemySystem : ObjectSystem
         _satellitePath.AddRange(CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2, 16));
         _satellitePath.Add(new(-50, Constants.GAMEPLAY_Y/2));
     }
-    
+    #endregion
+
     public override void Update(GameTime gameTime)
     {
-        _elapsedTime += gameTime.ElapsedGameTime;
-        if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemies)
+        if (_groupTimerActive)
         {
-            _createdEnemies++;
-            EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+            _groupTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (_groupTimer >= _groupDelay)
+            {
+                _groupTimerActive = false;
+                _groupTimer = 0;
+                _enemyIndex = 0;
+                
+            }
+        }
+ /*       foreach (List<WaveEnemy> group in _roundOneEnemies)
+        {*/
+        if (!_roundFinished && !_groupTimerActive && _groupIndex < _roundOneEnemies.Count)
+        {
+            _elapsedTime += gameTime.ElapsedGameTime;
+            List<WaveEnemy> group = _roundOneEnemies[_groupIndex];
+            if (_enemyIndex < group.Count)
+            {
+                if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemiesPerRound)
+                {
+                    WaveEnemy enemy = group[_enemyIndex];
+                    _createdEnemies++;
+                    _enemyIndex++;
+                    if (enemy.Type == "bee")
+                    {
+                        EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                            _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+                            {
+                                EntrancePath = _points.ToList(),
+                                Destination = _beeNextPos
+                            };
+                        _enemies.Add(newBee);
+
+                        _beeNextPos.X += Constants.CHARACTER_DIMENSIONS;
+                        if (_beeNextPos.X > Constants.GAMEPLAY_X)
+                        {
+                            _beeNextPos.X = 50;
+                            _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+                        }
+                        // Spawn bee
+                    }
+                    else if (enemy.Type == "butterfly")
+                    {
+                        // Spawn butterfly
+                        EnemyButterfly newButterfly = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                            _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+                            {
+                                EntrancePath = _points.ToList(),
+                                Destination = _butterflyNextPos
+                            };
+                        _enemies.Add(newButterfly);
+                        _butterflyNextPos.X += Constants.CHARACTER_DIMENSIONS;
+                        if (_butterflyNextPos.X > Constants.GAMEPLAY_X)
+                        {
+                            _butterflyNextPos.X = 50;
+                            _butterflyNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+                        }
+
+                    }
+                    else
+                    {
+                        // Spawn boss galaga
+                        EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
+                            _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
+                            {
+                                EntrancePath = _points.ToList(),
+                                Destination = _bossGalagaNextPos
+                            };
+                        _enemies.Add(newBossGalaga);
+
+                        _bossGalagaNextPos.X += Constants.CHARACTER_DIMENSIONS;
+                        if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X)
+                        {
+                            _bossGalagaNextPos.X = 50;
+                            _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
+                        }
+
+                    }
+                    _elapsedTime -= _entranceDelay;
+
+                }
+            }
+            else
+            {
+                _groupTimerActive = true;
+                _groupIndex++;
+            }
+            /*foreach(WaveEnemy enemy in group)
+            {
+                if (_elapsedTime > _entranceDelay && _createdEnemies < _maxEnemiesPerRound)
+                {
+
+                    _createdEnemies++;
+                    if (enemy.Type == "bee")
+                    {
+                        Debug.WriteLine("Spawn bee");
+                        // Spawn bee
+                    }
+                    else if (enemy.Type == "butterfly")
+                    {
+                        // Spawn butterfly
+                        Debug.WriteLine("Spawn butterfly");
+
+                    }
+                    else
+                    {
+                        // Spawn boss galaga
+                        Debug.WriteLine("Spawn boss galaga");
+
+                    }
+                }
+            }*/
+        }
+
+        //}
+/*            EnemyBossGalaga newBossGalaga = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
                 _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
             {
                 EntrancePath = _points.ToList(),
@@ -123,7 +353,7 @@ public class EnemySystem : ObjectSystem
             {
                 _bossGalagaNextPos.X = 50;
                 _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
-            }
+            }*/
 
             if (_isBonusRound)
             {
@@ -210,8 +440,7 @@ public class EnemySystem : ObjectSystem
                             _butterflyNextPos.X = 50;
                             _butterflyNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }*/
-            _elapsedTime -= _entranceDelay;
-        }
+        
 
         foreach (Enemy enemy in _enemies)
         {
