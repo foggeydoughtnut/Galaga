@@ -28,8 +28,8 @@ namespace Galaga.Objects
         private List<Texture2D> _textures;
 
 
-        public EnemyBossGalaga(Point position, Point dimensions, List<Texture2D> textures, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem)
-        : base(position, dimensions, textures, 2, animationTimeMilliseconds, debugTexture, player, bulletSystem)
+        public EnemyBossGalaga(Point position, Point dimensions, List<Texture2D> textures, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack)
+        : base(position, dimensions, textures, 2, animationTimeMilliseconds, debugTexture, player, bulletSystem, canAttack)
         {
             _path = new();
             _rotatedPath = new();
