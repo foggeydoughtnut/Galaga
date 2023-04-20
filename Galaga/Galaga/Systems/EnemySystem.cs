@@ -60,7 +60,7 @@ public class EnemySystem : ObjectSystem
 
     #region Rounds
     private bool _isBonusRound;
-    List<List<WaveEnemy>> _roundOneEnemies; // This holds a list of lists of tuples (sorry haha) They are a list of enemy groups. Each enemy group has a list of tuples with enemy type, their entrance path, and start pos
+    List<List<WaveEnemy>> _roundOneEnemies;
     List<List<WaveEnemy>> _roundTwoEnemies;
     List<List<WaveEnemy>> _bonusRoundOneEnemies;
     private List<List<List<WaveEnemy>>> _rounds;
@@ -449,6 +449,7 @@ public class EnemySystem : ObjectSystem
                     _enemyIndex++;
                     if (enemy.Type == "bee")
                     {
+                        // Spawn bee
                         EnemyBee newBee = new(new Point(210, 0), new Point(Constants.CHARACTER_DIMENSIONS),
                             _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem, !_isBonusRound)
                             {
@@ -463,7 +464,6 @@ public class EnemySystem : ObjectSystem
                             _beeNextPos.X = 50;
                             _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }
-                        // Spawn bee
                     }
                     else if (enemy.Type == "butterfly")
                     {
@@ -510,6 +510,11 @@ public class EnemySystem : ObjectSystem
             {
                 _groupTimerActive = true;
                 _groupIndex++;
+            }
+            if (_groupIndex >= _numOfGroupsPerStage && _isBonusRound)
+            {
+                _roundFinished = true;
+                _roundTimerActive = true;
             }
         }
 
