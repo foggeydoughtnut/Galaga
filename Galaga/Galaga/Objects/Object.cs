@@ -25,6 +25,7 @@ public abstract class Object
     private readonly TimeSpan _animationTime;
     private TimeSpan _elapsedAnimationTime;
     public Rectangle Collider => new(Position, Dimensions);
+    protected bool CannotRotate;
     private readonly int _numberOfSubImages;
     private const int SubImageDimension = 16;
 
@@ -59,7 +60,7 @@ public abstract class Object
 
     public double DetermineHeading()
     {
-        if (VelocityX == 0 && VelocityY == 0)
+        if ((VelocityX == 0 && VelocityY == 0) || CannotRotate)
             return 0;
         double heading = Math.Atan2(VelocityY, VelocityX);
         return heading  + Constants.PI_OVER_TWO;

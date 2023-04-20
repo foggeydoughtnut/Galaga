@@ -23,6 +23,8 @@ namespace Galaga.States
         private List<string> _controls;
         private bool _listening;
         KeyboardState previousKeyboardState;
+        private MouseState _previousMouseState;
+        private Dictionary<int, Tuple<int, int>> _optionPositions;
         Keys pressedKey;
         Controls controls;
 
@@ -61,6 +63,7 @@ namespace Galaga.States
             );
             previousKeyboardState = Keyboard.GetState();
             pressedKey = new();
+            _optionPositions = new Dictionary<int, Tuple<int, int>>();
             base.Initialize(graphicsDevice, graphics, window);
         }
         public override void LoadContent(ContentManager contentManager)
@@ -74,6 +77,7 @@ namespace Galaga.States
         protected override void ProcessInput()
         {
             KeyboardState currentKeyboardState = Keyboard.GetState();
+            var currentMouseState = Mouse.GetState();
             if (!_listening)
             {
                 if (currentKeyboardState.IsKeyUp(Keys.Up) && previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
@@ -82,7 +86,16 @@ namespace Galaga.States
                 if (currentKeyboardState.IsKeyUp(Keys.Down) && previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _controls.Count)
                     _indexOfChoice += 1;
 
-                if (currentKeyboardState.IsKeyUp(Keys.Enter) && previousKeyboardState.IsKeyDown(Keys.Enter))
+                if (!_optionPositions.Any())
+                    _optionPositions = MouseMenu.DefineOptionPositions(Fonts, _controls.Count, renderTarget);
+                if (currentMouseState.Position != _previousMouseState.Position)
+                    _indexOfChoice = MouseMenu.UpdateIndexBasedOnMouse(currentMouseState, Window, _optionPositions, _indexOfChoice);
+                
+                if (currentKeyboardState.IsKeyUp(Keys.Enter) && previousKeyboardState.IsKeyDown(Keys.Enter)
+                    || currentMouseState.LeftButton == ButtonState.Released 
+                    && _previousMouseState.LeftButton == ButtonState.Pressed 
+                    && currentMouseState.X < Window.ClientBounds.Width
+                    && currentMouseState.X > 0)
                 {
                     _listening = true;
                 }
@@ -127,6 +140,7 @@ namespace Galaga.States
                 }
             }
             previousKeyboardState = currentKeyboardState;
+            _previousMouseState = currentMouseState;
             base.ProcessInput();
 
         }
@@ -141,22 +155,26 @@ namespace Galaga.States
             SpriteFont bigFont = Fonts["big"];
             Vector2 titleSize = bigFont.MeasureString("Controls");
             RenderUtilities.CreateBorderOnWord(SpriteBatch, bigFont, "Controls",
-                new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 4)));
+                new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 8)));
 
             SpriteFont font = Fonts["default"];
+            var middle = _controls.Count / 2;
             if (_listening)
             {
                 string message = "Listening...";
                 Vector2 stringSize = font.MeasureString(message);
-                RenderUtilities.CreateBorderOnWord(SpriteBatch, font, message, new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2 - stringSize.Y)));
+                var diff = -1 - middle;
+                RenderUtilities.CreateBorderOnWord(SpriteBatch, font, message, new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) + diff * Constants.MENU_BUFFER));
             }
+            
             for (int i = 0; i < _controls.Count; i++)
             {
                 SpriteFont optionFont = _indexOfChoice == i ? bigFont : font;
 
                 string control = _controls[i];
-                Vector2 stringSize = font.MeasureString(control);
-                RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, control, new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2 + (1.5f * stringSize.Y * i))));
+                Vector2 stringSize = optionFont.MeasureString(control);
+                int diff = i - middle;
+                RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, _controls[i], new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) + diff * Constants.MENU_BUFFER));
             }
             SpriteBatch.End();
             Graphics.GraphicsDevice.SetRenderTarget(null);

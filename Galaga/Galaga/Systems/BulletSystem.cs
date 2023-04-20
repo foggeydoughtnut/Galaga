@@ -42,6 +42,7 @@ public class BulletSystem : ObjectSystem
                 if (b.VelocityY < 0) // Player bullets are always negative velocity and enemies are positive
                 {
                     _numberOfPlayerBulletsOut--;
+                    _statsSystem.MissedBullet();
                 }
                 return true;
             }
@@ -64,6 +65,7 @@ public class BulletSystem : ObjectSystem
                 if (e.VelocityY < 0) // Player bullets are always negative velocity and enemies are positive
                 {
                     _numberOfPlayerBulletsOut--;
+                    _statsSystem.HitBullet();
                 }
                 return true;
             }

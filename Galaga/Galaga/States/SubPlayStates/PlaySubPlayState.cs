@@ -29,7 +29,7 @@ public class PlaySubPlayState : SubPlayState
         
         _systems = new List<Systems.System>();
         ParticleSystem particleSystem = new(textures["particle"]);
-        GameStatsSystem gameStats = new();
+        GameStatsSystem gameStats = GameStatsSystem.GetSystem();
         BulletSystem bulletSystem = new(textures["playerBullet"], textures["enemyBullet"], gameStats, textures["debug"]);
         PlayerSystem playerSystem = new(textures["ship"], gameStats, bulletSystem, textures["debug"], particleSystem);
 
@@ -62,7 +62,11 @@ public class PlaySubPlayState : SubPlayState
     {
         KeyboardState currentKeyboardState = Keyboard.GetState();
         foreach (Systems.System system in _systems)
+        {
             system.Update(gameTime);
+            if (system is PlayerSystem { PlayerKilled: true })
+                return PlayStates.Loser;
+        }
         if (currentKeyboardState.IsKeyUp(Keys.Escape) && _previousKeyboardState.IsKeyDown(Keys.Escape))
         {
             _previousKeyboardState = currentKeyboardState;
@@ -71,7 +75,6 @@ public class PlaySubPlayState : SubPlayState
 
         _previousKeyboardState = currentKeyboardState;
         return PlayStates.Play;
-
     }
 
     public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)

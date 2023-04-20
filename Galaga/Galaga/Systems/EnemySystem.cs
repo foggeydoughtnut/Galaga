@@ -32,6 +32,7 @@ public class EnemySystem : ObjectSystem
     private readonly PlayerSystem _playerSystem;
     private readonly BulletSystem _bulletSystem;
     private readonly ParticleSystem _particleSystem;
+    private readonly HighScoreTracker _scoreTracker;
     private readonly List<Enemy> _enemies;
     private readonly GameWindow _window;
     private const int EntranceCircleRadius = Constants.GAMEPLAY_X / 8;
@@ -89,6 +90,7 @@ public class EnemySystem : ObjectSystem
         _playerSystem = playerSystem;
         _bulletSystem = bulletSystem;
         _particleSystem = particleSystem;
+        _scoreTracker = HighScoreTracker.GetTracker();
         _beeTexture = beeTexture;
         _debugTexture = debugTexture;
         _butterflyTexture = butterflyTexture;
@@ -562,11 +564,36 @@ public class EnemySystem : ObjectSystem
     {
         Enemy hitEnemy = _enemies.First(e => e.Id == id);
         hitEnemy.health--;
-        if (hitEnemy.health <= 0 )
+        _destroyedEnemiesThisStage++;
+        if (hitEnemy.health > 0) return;
+
+        _particleSystem.EnemyDeath(hitEnemy.Position);
+        _enemies.Remove(hitEnemy);
+        ScoreDestroyedEnemy(hitEnemy);
+    }
+
+    private void ScoreDestroyedEnemy(Enemy enemy)
+    {
+        switch (enemy)
         {
-            _destroyedEnemiesThisStage++;
-            _particleSystem.EnemyDeath(hitEnemy.Position);
-            _enemies.Remove(hitEnemy);
+            case EnemyBee:
+                _scoreTracker.CurrentGameScore += enemy.attack ? 100 : 50;
+                break;
+            case EnemyButterfly:
+                _scoreTracker.CurrentGameScore += enemy.attack ? 160 : 80;
+                break;
+            case EnemyBossGalaga boss:
+                if (boss.attack)
+                    _scoreTracker.CurrentGameScore += boss.NumEscorts switch
+                    {
+                        2 => 1600,
+                        1 => 800,
+                        _ => 400
+                    };
+                else
+                    _scoreTracker.CurrentGameScore += 150;
+                break;
         }
+    }
     }
 }

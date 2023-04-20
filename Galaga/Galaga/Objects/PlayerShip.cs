@@ -23,6 +23,7 @@ public class PlayerShip : Object
     : base(position, dimensions, texture, 10_000, debugTexture, numberOfSubImages)
     {
         _bounds = bounds;
+        CannotRotate = true;
     }
     protected override void Translate(Point offset)
     {

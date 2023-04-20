@@ -28,7 +28,7 @@ public abstract class Enemy : Object
 
     public int health { get; set; } = 1;
 
-    private bool attack = false;
+    public bool attack = false;
 
     public PlayerShip Player;
     private readonly Random rnd;

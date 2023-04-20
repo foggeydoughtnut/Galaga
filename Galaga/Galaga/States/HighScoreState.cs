@@ -53,15 +53,15 @@ public class HighScoreState : GameState
 
     public override void Render()
     {
-        this.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
-        this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-        this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+        Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
+        Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
+        Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
         // High Score Title
         SpriteFont bigFont = Fonts["big"];
         Vector2 titleSize = bigFont.MeasureString("High Scores");
         RenderUtilities.CreateBorderOnWord(SpriteBatch, bigFont, "High Scores",
-            new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 4)));
+            new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 8)));
         
         // No high scores
         SpriteFont font = Fonts["default"];

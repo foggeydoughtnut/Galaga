@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -12,11 +13,13 @@ public class PauseSubPlayState : SubPlayState
 {
     private int _indexOfChoice;
     private readonly List<string> _options;
+    private Dictionary<int, Tuple<int, int>> _optionPositions;
     private readonly HighScoreTracker _tracker;
     private readonly GraphicsDeviceManager Graphics;
     private readonly GameWindow Window;
     private readonly RenderTarget2D _renderTarget;
     private KeyboardState _previousKeyboardState;
+    private MouseState _previousMouseState;
 
 
     public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window)
@@ -27,6 +30,7 @@ public class PauseSubPlayState : SubPlayState
             "Quit"
         };
         _tracker = HighScoreTracker.GetTracker();
+        _optionPositions = new Dictionary<int, Tuple<int, int>>();
 
         Graphics = graphics;
         Window = window;
@@ -41,7 +45,6 @@ public class PauseSubPlayState : SubPlayState
             RenderTargetUsage.DiscardContents
         );
         _previousKeyboardState = Keyboard.GetState();
-
     }
 
     public override PlayStates Update(GameTime gameTime)
@@ -53,7 +56,16 @@ public class PauseSubPlayState : SubPlayState
 
         if (currentKeyboardState.IsKeyUp(Keys.Down) && _previousKeyboardState.IsKeyDown(Keys.Down) && _indexOfChoice + 1 < _options.Count)
             _indexOfChoice += 1;
-        if (currentKeyboardState.IsKeyUp(Keys.Enter) && _previousKeyboardState.IsKeyDown(Keys.Enter))
+        
+        var currentMouseState = Mouse.GetState();
+        if (currentMouseState.Position != _previousMouseState.Position)
+            _indexOfChoice = MouseMenu.UpdateIndexBasedOnMouse(currentMouseState, Window, _optionPositions, _indexOfChoice);
+        
+        if (currentKeyboardState.IsKeyUp(Keys.Enter) && _previousKeyboardState.IsKeyDown(Keys.Enter)
+            || currentMouseState.LeftButton == ButtonState.Released 
+            && _previousMouseState.LeftButton == ButtonState.Pressed 
+            && currentMouseState.X < Window.ClientBounds.Width
+            && currentMouseState.X > 0)
             if (_indexOfChoice == 0)
             {
                 _previousKeyboardState = currentKeyboardState;
@@ -66,12 +78,15 @@ public class PauseSubPlayState : SubPlayState
             }
 
         _previousKeyboardState = currentKeyboardState;
+        _previousMouseState = currentMouseState;
 
         return PlayStates.Pause;
     }
 
     public override void Render(SpriteBatch spriteBatch, Dictionary<string, SpriteFont> fonts)
     {
+        if (!_optionPositions.Any())
+            _optionPositions = MouseMenu.DefineOptionPositions(fonts, _options.Count, _renderTarget);
         Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
         Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
         Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);

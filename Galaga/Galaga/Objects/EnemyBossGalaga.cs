@@ -26,6 +26,7 @@ namespace Galaga.Objects
         private bool isStartingOnLeft;
 
         private List<Texture2D> _textures;
+        public int NumEscorts;
 
 
         public EnemyBossGalaga(Point position, Point dimensions, List<Texture2D> textures, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack)
