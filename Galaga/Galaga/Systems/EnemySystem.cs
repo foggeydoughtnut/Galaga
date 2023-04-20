@@ -65,7 +65,7 @@ public class EnemySystem : ObjectSystem
     List<List<WaveEnemy>> _bonusRoundOneEnemies;
     private List<List<List<WaveEnemy>>> _rounds;
     private int _numOfGroupsPerStage = 5;
-    private int _numberOfEnemiesPerSubGroup = 4; // There are two subgroups per wave
+    private int _numberOfEnemiesPerGroup = 8;
     private int _enemyIndex;
 
     private int _groupIndex;
@@ -149,61 +149,45 @@ public class EnemySystem : ObjectSystem
         for (int i = 0; i < _numOfGroupsPerStage; i++)
         {
             List<WaveEnemy> group = new();
-            for (int firstGroup = 0; firstGroup < _numberOfEnemiesPerSubGroup; firstGroup++) // Create first subgroup of enemies
+            for (int j = 0; j < _numberOfEnemiesPerGroup; j++) // Create first subgroup of enemies
             {
                 WaveEnemy enemy;
                 if (i == 0) // First group
                 {
-                    List<Vector2> path = new()
+                    if (j % 2 == 1)
                     {
-                        new(Constants.GAMEPLAY_X / 2 - 48, Constants.GAMEPLAY_Y / 3)
-                    };
-                    path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
-
-
-                    enemy = new("bee", path, new(Constants.GAMEPLAY_X/2 + 48, 0));
-                    group.Add(enemy);
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 2 - 48, Constants.GAMEPLAY_Y / 3)
+                        };
+                        path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
+                        enemy = new("bee", path, new(Constants.GAMEPLAY_X/2 + 48, 0));
+                        group.Add(enemy);
+                    }
+                    else
+                    {
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 2 + 48, Constants.GAMEPLAY_Y / 3)
+                        };
+                        path.AddRange(CircleCreator.CreateClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
+                        enemy = new("butterfly", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
+                        group.Add(enemy);
+                    }
                 }
                 else if (i == 1)
                 {
-                    enemy = new("bossGalaga", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 2)
-                {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 3)
-                {
-                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else
-                {
-                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                
-            }
-            for (int secondGroup = 0; secondGroup < _numberOfEnemiesPerSubGroup; secondGroup++) // Second subgroup of enemies
-            {
-                WaveEnemy enemy;
-                if (i == 0) // First group
-                {
-                    List<Vector2> path = new()
+                    List<Vector2> path = new();
+                    path.Add(new(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2));
+                    path.AddRange(CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 4 - 24, Constants.GAMEPLAY_Y / 2, 24));
+                    if (j%2 == 1)
                     {
-                        new(Constants.GAMEPLAY_X / 2 + 48, Constants.GAMEPLAY_Y / 3)
-                    };
-                    path.AddRange(CircleCreator.CreateClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
-
-
-                    enemy = new("butterfly", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 1)
-                {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                        enemy = new("bossGalaga", path, new(0, 7 * Constants.GAMEPLAY_Y / 8));
+                    }
+                    else
+                    {
+                        enemy = new("butterfly", path, new(0, 7 * Constants.GAMEPLAY_Y / 8));
+                    }
                     group.Add(enemy);
                 }
                 else if (i == 2)
@@ -231,47 +215,35 @@ public class EnemySystem : ObjectSystem
         for (int i = 0; i < _numOfGroupsPerStage; i++)
         {
             List<WaveEnemy> group = new();
-            for (int firstGroup = 0; firstGroup < _numberOfEnemiesPerSubGroup; firstGroup++) // Create first subgroup of enemies
+            for (int j = 0; j < _numberOfEnemiesPerGroup; j++) // Create first subgroup of enemies
             {
                 WaveEnemy enemy;
                 if (i == 0) // First group
                 {
-                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
+                    if (j % 2 == 1)
+                    {
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 2 - 48, Constants.GAMEPLAY_Y / 3)
+                        };
+                        path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
+                        enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2 + 48, 0));
+                        group.Add(enemy);
+                    }
+                    else
+                    {
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 2 + 48, Constants.GAMEPLAY_Y / 3)
+                        };
+                        path.AddRange(CircleCreator.CreateClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
+                        enemy = new("butterfly", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
+                        group.Add(enemy);
+                    }
                 }
                 else if (i == 1)
                 {
                     enemy = new("bossGalaga", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 2)
-                {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 3)
-                {
-                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else
-                {
-                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-
-            }
-            for (int secondGroup = 0; secondGroup < _numberOfEnemiesPerSubGroup; secondGroup++) // Second subgroup of enemies
-            {
-                WaveEnemy enemy;
-                if (i == 0) // First group
-                {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 1)
-                {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
                     group.Add(enemy);
                 }
                 else if (i == 2)
@@ -299,47 +271,35 @@ public class EnemySystem : ObjectSystem
         for (int i = 0; i < _numOfGroupsPerStage; i++)
         {
             List<WaveEnemy> group = new();
-            for (int firstGroup = 0; firstGroup < _numberOfEnemiesPerSubGroup; firstGroup++) // Create first subgroup of enemies
+            for (int j = 0; j < _numberOfEnemiesPerGroup; j++) // Create first subgroup of enemies
             {
                 WaveEnemy enemy;
                 if (i == 0) // First group
                 {
-                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
+                    if (j % 2 == 1)
+                    {
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 2 - 48, Constants.GAMEPLAY_Y / 3)
+                        };
+                        path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
+                        enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2 + 48, 0));
+                        group.Add(enemy);
+                    }
+                    else
+                    {
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 2 + 48, Constants.GAMEPLAY_Y / 3)
+                        };
+                        path.AddRange(CircleCreator.CreateClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
+                        enemy = new("butterfly", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
+                        group.Add(enemy);
+                    }
                 }
                 else if (i == 1)
                 {
                     enemy = new("bossGalaga", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 2)
-                {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 3)
-                {
-                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else
-                {
-                    enemy = new("bee", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-
-            }
-            for (int secondGroup = 0; secondGroup < _numberOfEnemiesPerSubGroup; secondGroup++) // Second subgroup of enemies
-            {
-                WaveEnemy enemy;
-                if (i == 0) // First group
-                {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
-                    group.Add(enemy);
-                }
-                else if (i == 1)
-                {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
                     group.Add(enemy);
                 }
                 else if (i == 2)
@@ -503,7 +463,7 @@ public class EnemySystem : ObjectSystem
                         EnemyBossGalaga newBossGalaga = new(enemy.StartPos, new Point(Constants.CHARACTER_DIMENSIONS),
                             _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem, !_isBonusRound)
                             {
-                                EntrancePath = _points.ToList(),
+                                EntrancePath = enemy.Path.ToList(),
                                 Destination = _bossGalagaNextPos
                             };
                         _enemies.Add(newBossGalaga);
