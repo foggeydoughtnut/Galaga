@@ -21,6 +21,7 @@ public class PlayerSystem : ObjectSystem
     private Controls _controls;
     private TimeSpan _playerLastShotTime;
     private TimeSpan _playerShotDelay = TimeSpan.FromSeconds(0.25);
+    private KeyboardState _previousKeyboardState;
 
     private float speed = 7500f;
 
@@ -61,7 +62,7 @@ public class PlayerSystem : ObjectSystem
             debugTexture,
             numberOfSubImages: 1
         );
-
+        _previousKeyboardState = Keyboard.GetState();
     }
 
     public override void Update(GameTime gameTime)
@@ -71,15 +72,18 @@ public class PlayerSystem : ObjectSystem
         //Debug.WriteLine(controls.Right.ToString());
         _playerShip.Update(gameTime.ElapsedGameTime);
         _playerShip.VelocityX = 0;
-        if (Keyboard.GetState().IsKeyDown(_controls.Right))
+        var currentKeyboardState = Keyboard.GetState();
+        if (currentKeyboardState.IsKeyDown(_controls.Right))
             _playerShip.VelocityX = speed * gameTime.ElapsedGameTime.TotalSeconds;
-        if (Keyboard.GetState().IsKeyDown(_controls.Left))
+        if (currentKeyboardState.IsKeyDown(_controls.Left))
             _playerShip.VelocityX = -speed * gameTime.ElapsedGameTime.TotalSeconds;
-        if (Keyboard.GetState().IsKeyDown(_controls.Fire) && _playerLastShotTime + _playerShotDelay < gameTime.TotalGameTime)
+        if (currentKeyboardState.IsKeyUp(_controls.Fire) && _previousKeyboardState.IsKeyDown(_controls.Fire))
         {
             _bulletSystem.FirePlayerBullet(new Point(_playerShip.Position.X + _playerShip.Dimensions.X / 2, _playerShip.Position.Y));
             _playerLastShotTime = gameTime.TotalGameTime;
         }
+
+        _previousKeyboardState = currentKeyboardState;
     }
 
     public override void Render(SpriteBatch spriteBatch)
