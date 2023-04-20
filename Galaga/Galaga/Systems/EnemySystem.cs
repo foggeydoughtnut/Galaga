@@ -595,5 +595,4 @@ public class EnemySystem : ObjectSystem
                 break;
         }
     }
-    }
 }
