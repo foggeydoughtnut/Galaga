@@ -22,6 +22,7 @@ public class PlayerSystem : ObjectSystem
     private TimeSpan _playerLastShotTime;
     private TimeSpan _playerShotDelay = TimeSpan.FromSeconds(0.25);
     private KeyboardState _previousKeyboardState;
+    public bool PlayerKilled;
 
     private float speed = 7500f;
 
@@ -97,7 +98,7 @@ public class PlayerSystem : ObjectSystem
     public void PlayerHit()
     {
         _particleSystem.PlayerDeath(_playerShip.Position);
-
+        PlayerKilled = true;
         //Debug.WriteLine("Player was hit");
     }
 }

@@ -2,12 +2,18 @@ namespace Galaga.Systems;
 
 public class GameStatsSystem
 {
-    private int _hitBullets;
-    private int _missedBullets;
+    public int HitBullets;
+    public int MissedBullets;
+    private static GameStatsSystem _gameStatsSystem;
     
-    public float ShotPercentage => (float)_hitBullets / (_hitBullets + _missedBullets);
+    public static GameStatsSystem GetSystem()
+    {
+        return _gameStatsSystem ??= new GameStatsSystem();
+    } 
+    
+    public float ShotPercentage => (float)HitBullets / (HitBullets + MissedBullets);
 
-    public void MissedBullet() => _missedBullets++;
+    public void MissedBullet() => MissedBullets++;
 
-    public void HitBullet() => _hitBullets++;
+    public void HitBullet() => HitBullets++;
 }
