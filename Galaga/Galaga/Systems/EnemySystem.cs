@@ -408,6 +408,7 @@ public class EnemySystem : ObjectSystem
         }
         if (_destroyedEnemiesThisStage >= _maxEnemiesPerRound)
         {
+            Debug.WriteLine("Start round timer");
             _roundFinished = true;
             _roundTimerActive = true;
         }
@@ -564,9 +565,9 @@ public class EnemySystem : ObjectSystem
     {
         Enemy hitEnemy = _enemies.First(e => e.Id == id);
         hitEnemy.health--;
-        _destroyedEnemiesThisStage++;
         if (hitEnemy.health > 0) return;
 
+        _destroyedEnemiesThisStage++;
         _particleSystem.EnemyDeath(hitEnemy.Position);
         _enemies.Remove(hitEnemy);
         ScoreDestroyedEnemy(hitEnemy);
