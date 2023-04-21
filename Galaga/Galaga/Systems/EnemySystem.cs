@@ -194,7 +194,12 @@ public class EnemySystem : ObjectSystem
                 }
                 else if (i == 2)
                 {
-                    enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    //enemy = new("butterfly", CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 4, EntranceCircleRadius).ToList(), new(Constants.GAMEPLAY_X / 2, 0));
+                    //group.Add(enemy);
+                    List<Vector2> path = new();
+                    path.Add(new(3 * Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2));
+                    path.AddRange(CircleCreator.CreateClockwiseCircle(3 * Constants.GAMEPLAY_X / 4 + 36, Constants.GAMEPLAY_Y / 2, 36));
+                    enemy = new("butterfly", path, new(Constants.GAMEPLAY_X, 7 * Constants.GAMEPLAY_Y / 8));
                     group.Add(enemy);
                 }
                 else if (i == 3)
@@ -400,15 +405,12 @@ public class EnemySystem : ObjectSystem
                 if (_roundIndex % _rounds.Count == 0)
                 {
                     _roundIndex = 0; // Make it just loop
-                    Debug.WriteLine("This was called");
-
                 }
 
             }
         }
         if (_destroyedEnemiesThisStage >= _maxEnemiesPerRound)
         {
-            Debug.WriteLine("Start round timer");
             _roundFinished = true;
             _roundTimerActive = true;
         }
