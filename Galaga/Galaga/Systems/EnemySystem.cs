@@ -118,7 +118,7 @@ public class EnemySystem : ObjectSystem
         _destroyedEnemiesThisStage = 0;
 
         #region Rounds Initialization
-        _isBonusRound = true;
+        _isBonusRound = false;
         _roundOneEnemies = new();
         AddRoundOne();
         _roundTwoEnemies = new();
@@ -140,13 +140,14 @@ public class EnemySystem : ObjectSystem
         };
 
         _roundFinished = false;
-        _roundIndex = 2;
+        _roundIndex = 0;
         _roundTimerActive = false;
         _roundDelay = 5f;
 
         #endregion
     }
 
+    #region Entrance Paths
     private void AddRoundOne()
     {
         for (int i = 0; i < _numOfGroupsPerStage; i++)
@@ -424,7 +425,9 @@ public class EnemySystem : ObjectSystem
             _bonusRoundOneEnemies.Add(group);
         }
     }
-    #region Bonus Round Paths
+    #endregion
+
+    #region Bonus Round Paths NOT NEEDED ENEMIES
     private void GenerateDragonflyPath(bool oddEnemy)
     {
         if (oddEnemy)
@@ -458,6 +461,8 @@ public class EnemySystem : ObjectSystem
     {
         if (_groupTimerActive)
         {
+            if (_isBonusRound) _groupDelay = 4.5f;
+            else _groupDelay = 3f;
             _groupTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (_groupTimer >= _groupDelay)
             {
@@ -469,6 +474,8 @@ public class EnemySystem : ObjectSystem
         }
         if (_roundTimerActive)
         {
+            if (_isBonusRound) _roundDelay = 10f;
+            else _roundDelay = 5f;
             _roundTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (_roundTimer >= _roundDelay)
             {
