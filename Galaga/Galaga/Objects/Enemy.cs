@@ -35,25 +35,29 @@ public abstract class Enemy : Object
 
     private BulletSystem _bulletSystem;
 
-    public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
+    private bool _canAttack;
+
+    public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
     {
         EntrancePath = new List<Vector2>();
         ReachedEndOfEntrancePath = false;
         Player = player;
         rnd = new();
         _bulletSystem = bulletSystem;
+        _canAttack = canAttack;
         
         attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
     }
 
     // This one is for boss Galaga since it has more than 1 texture
-    public Enemy(Point position, Point dimensions, List<Texture2D> textures, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem) : base(position, dimensions, textures[0], animationTimeMilliseconds, debugTexture, numAnimations)
+    public Enemy(Point position, Point dimensions, List<Texture2D> textures, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack) : base(position, dimensions, textures[0], animationTimeMilliseconds, debugTexture, numAnimations)
     {
         EntrancePath = new List<Vector2>();
         ReachedEndOfEntrancePath = false;
         Player = player;
         rnd = new();
         _bulletSystem = bulletSystem;
+        _canAttack = canAttack;
 
         attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
     }
@@ -62,29 +66,32 @@ public abstract class Enemy : Object
     {
         base.Update(elapsedTime);
 
-        if (attack)
+        if (_canAttack) // Bonus round enemies can't attack
         {
-            CalculateAttackPath();
-
-            // Start timer for when it will shoot
-            startShootTimer = true;
-            if (startShootTimer && !doneShooting)
+            if (attack)
             {
-                shootTimer += (float)elapsedTime.TotalSeconds;
-                if (shootTimer >= shootDelay)
-                {
-                    _bulletSystem.FireEnemyBullet(new Point(Position.X, Position.Y+Constants.CHARACTER_DIMENSIONS));
-                    numberOfShotsFired++;
-                    shootTimer -= 0.2f;
-                }
-                if (numberOfShotsFired > 1)
-                {
-                    doneShooting = true;
-                    startShootTimer = false;
-                }
-            }
+                CalculateAttackPath();
 
-            return;
+                // Start timer for when it will shoot
+                startShootTimer = true;
+                if (startShootTimer && !doneShooting)
+                {
+                    shootTimer += (float)elapsedTime.TotalSeconds;
+                    if (shootTimer >= shootDelay)
+                    {
+                        _bulletSystem.FireEnemyBullet(new Point(Position.X, Position.Y+Constants.CHARACTER_DIMENSIONS));
+                        numberOfShotsFired++;
+                        shootTimer -= 0.2f;
+                    }
+                    if (numberOfShotsFired > 1)
+                    {
+                        doneShooting = true;
+                        startShootTimer = false;
+                    }
+                }
+
+                return;
+            }
         }
 
         if (!EntrancePath.Any() && Destination == null)
