@@ -5,6 +5,7 @@ using System.IO;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -22,6 +23,7 @@ public class PlayerSystem : ObjectSystem
     private TimeSpan _playerLastShotTime;
     private TimeSpan _playerShotDelay = TimeSpan.FromSeconds(0.25);
     private KeyboardState _previousKeyboardState;
+    private IReadOnlyDictionary<string, SoundEffect> _soundEffects;
     public bool PlayerKilled;
 
     private float speed = 7500f;
@@ -31,7 +33,7 @@ public class PlayerSystem : ObjectSystem
         return _playerShip;
     }
 
-    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture, ParticleSystem particleSystem)
+    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture, ParticleSystem particleSystem, IReadOnlyDictionary<string, SoundEffect> soundEffects)
     {
         if (Controls.ChangeInControls)
         {
@@ -53,6 +55,7 @@ public class PlayerSystem : ObjectSystem
         _bulletSystem = bulletSystem;
         _gameStatsSystem = gameStatsSystem;
         _particleSystem = particleSystem;
+        _soundEffects = soundEffects;
 
 
         _playerShip = new PlayerShip(
@@ -81,6 +84,7 @@ public class PlayerSystem : ObjectSystem
         if (currentKeyboardState.IsKeyUp(_controls.Fire) && _previousKeyboardState.IsKeyDown(_controls.Fire))
         {
             _bulletSystem.FirePlayerBullet(new Point(_playerShip.Position.X + _playerShip.Dimensions.X / 2, _playerShip.Position.Y));
+            _soundEffects["shot"].Play();
             _playerLastShotTime = gameTime.TotalGameTime;
         }
 
@@ -98,6 +102,7 @@ public class PlayerSystem : ObjectSystem
     public void PlayerHit()
     {
         _particleSystem.PlayerDeath(_playerShip.Position);
+        _soundEffects["death"].Play();
         PlayerKilled = true;
         //Debug.WriteLine("Player was hit");
     }

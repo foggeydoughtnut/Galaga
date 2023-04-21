@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Galaga.States.SubPlayStates;
 using Galaga.Systems;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -14,16 +15,18 @@ public class PlayState : GameState
     private PlayStates _nextPlayState;
     private readonly Dictionary<PlayStates, SubPlayState> _playStates = new();
     private AudioSystem _audioSystem;
+    private bool _playedStartupEffect;
 
     private void InitializeState()
     {
         _playStates.Clear();
         _playStates.Add(PlayStates.Loser, new LoserState(Graphics, Window));
-        _playStates.Add(PlayStates.Play, new PlaySubPlayState(Graphics, Window, Textures));
+        _playStates.Add(PlayStates.Play, new PlaySubPlayState(Graphics, Window, Textures, SoundEffects));
         _playStates.Add(PlayStates.Pause, new PauseSubPlayState(Graphics, Window));
        
         _currentPlayState = PlayStates.Play;
         _nextPlayState = PlayStates.Play;
+        _playedStartupEffect = false;
     } 
     
     public override void LoadContent(ContentManager contentManager)
@@ -46,15 +49,32 @@ public class PlayState : GameState
         Textures.Add("satellite", contentManager.Load<Texture2D>("Images/Satellite"));
 
         Textures.Add("background", contentManager.Load<Texture2D>("Images/Background"));
+
+        SoundEffects.Add("start", contentManager.Load<SoundEffect>("Sound/Startup"));
+        SoundEffects.Add("stage", contentManager.Load<SoundEffect>("Sound/StageFlag"));
+        SoundEffects.Add("shot", contentManager.Load<SoundEffect>("Sound/Shooting"));
+        SoundEffects.Add("enemyFly", contentManager.Load<SoundEffect>("Sound/EnemyFlying"));
+        SoundEffects.Add("bee", contentManager.Load<SoundEffect>("Sound/Enemy1Death"));
+        SoundEffects.Add("butterfly", contentManager.Load<SoundEffect>("Sound/Enemy2Death"));
+        SoundEffects.Add("boss.1", contentManager.Load<SoundEffect>("Sound/Enemy3DeathPart1"));
+        SoundEffects.Add("boss.2", contentManager.Load<SoundEffect>("Sound/Enemy3DeathPart2"));
+        SoundEffects.Add("death", contentManager.Load<SoundEffect>("Sound/Death"));
+        SoundEffects.Add("bonus", contentManager.Load<SoundEffect>("Sound/ChallengingStageStart"));
+        SoundEffects.Add("bonusEnd", contentManager.Load<SoundEffect>("Sound/ChallengingStageResults"));
         InitializeState();
     }
 
     public override GameStates Update(GameTime gameTime)
     {
+        if (!_playedStartupEffect)
+        {
+            _playedStartupEffect = true;
+            SoundEffects["start"].Play();
+            MediaPlayer.IsRepeating = false;
+        }
         _nextPlayState = _playStates[_currentPlayState].Update(gameTime);
         if (_nextPlayState != PlayStates.Finish) return GameStates.GamePlay;
         
-        _audioSystem.Stop();
         InitializeState();
         return GameStates.MainMenu;
     }
