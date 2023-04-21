@@ -493,9 +493,6 @@ public class EnemySystem : ObjectSystem
 
                 if (_roundIndex % 2 == 0) // bonus round
                 {
-                    _bossGalagaNextPos = new Vector2(Constants.GAMEPLAY_X / 2, -200);
-                    _butterflyNextPos = new Vector2(Constants.GAMEPLAY_X / 2, -200);
-                    _beeNextPos = new Vector2(Constants.GAMEPLAY_X / 2, -200);
                     Debug.WriteLine("Bonus");
                     _isBonusRound = true;
                 }
@@ -508,6 +505,7 @@ public class EnemySystem : ObjectSystem
                 if (_roundIndex % _rounds.Count == 0)
                 {
                     _roundIndex = 0; // Make it just loop
+                    _isBonusRound = false;
                 }
 
             }
