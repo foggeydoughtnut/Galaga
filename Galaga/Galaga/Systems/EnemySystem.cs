@@ -37,7 +37,6 @@ public class EnemySystem : ObjectSystem
     private readonly HighScoreTracker _scoreTracker;
     private readonly List<Enemy> _enemies;
     private readonly GameWindow _window;
-    private const int EntranceCircleRadius = Constants.GAMEPLAY_X / 8;
     private Vector2 _butterflyNextPos;
     private Vector2 _beeNextPos;
     private Vector2 _bossGalagaNextPos;
@@ -50,6 +49,8 @@ public class EnemySystem : ObjectSystem
 
     private readonly Texture2D _debugTexture;
     private readonly int _maxEnemiesPerRound = 40;
+
+
     private int _createdEnemies;
     private int _destroyedEnemiesThisStage;
 
@@ -88,7 +89,7 @@ public class EnemySystem : ObjectSystem
     private bool _breathDelayTimerActive;
     private float _breathDelayTimer;
     private float _breathDelay;
-    private bool _breathing;
+    public static bool Breathing;
     #endregion
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
@@ -113,9 +114,9 @@ public class EnemySystem : ObjectSystem
 
         _enemies = new List<Enemy>();
         _window = window;
-        _bossGalagaNextPos = new Vector2(50.0f, 2.0f);
-        _butterflyNextPos = new Vector2(50.0f, 34.0f);
-        _beeNextPos = new Vector2(50.0f, 66.0f);
+        _bossGalagaNextPos = new Vector2(66.0f, 2.0f);
+        _butterflyNextPos = new Vector2(66.0f, 34.0f);
+        _beeNextPos = new Vector2(66.0f, 66.0f);
 
         _destroyedEnemiesThisStage = 0;
 
@@ -151,8 +152,8 @@ public class EnemySystem : ObjectSystem
         #region Breathing
         _breathDelayTimerActive = false;
         _breathDelayTimer = 0f;
-        _breathDelay = 2f;
-        _breathing = false;
+        _breathDelay = 3f;
+        Breathing = false;
         #endregion
     }
 
@@ -500,6 +501,7 @@ public class EnemySystem : ObjectSystem
                 _enemyIndex = 0;
                 _roundFinished = false;
                 _createdEnemies = 0;
+                Breathing = false;
 
                 if (_roundIndex % 2 == 0) // bonus round
                 {
@@ -509,9 +511,9 @@ public class EnemySystem : ObjectSystem
                 }
                 else
                 {
-                    _bossGalagaNextPos = new Vector2(50.0f, 18.0f);
-                    _butterflyNextPos = new Vector2(50.0f, 50.0f);
-                    _beeNextPos = new Vector2(50.0f, 82.0f);
+                    _bossGalagaNextPos = new Vector2(66.0f, 18.0f);
+                    _butterflyNextPos = new Vector2(66.0f, 50.0f);
+                    _beeNextPos = new Vector2(66.0f, 82.0f);
                 }
                 if (_roundIndex % _rounds.Count == 0)
                 {
@@ -526,14 +528,14 @@ public class EnemySystem : ObjectSystem
             _breathDelayTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (_breathDelayTimer > _breathDelay)
             {
-                _breathing = true;
+                Breathing = true;
             }
         }
         if (_destroyedEnemiesThisStage >= _maxEnemiesPerRound)
         {
             _roundFinished = true;
             _roundTimerActive = true;
-            _breathing = false;
+            Breathing = false;
             _breathDelayTimerActive = false;
             _breathDelayTimer = 0f;
         }
@@ -561,9 +563,9 @@ public class EnemySystem : ObjectSystem
                         _enemies.Add(newBee);
 
                         _beeNextPos.X += Constants.CHARACTER_DIMENSIONS;
-                        if (_beeNextPos.X > Constants.GAMEPLAY_X)
+                        if (_beeNextPos.X > Constants.GAMEPLAY_X - 66f)
                         {
-                            _beeNextPos.X = 50;
+                            _beeNextPos.X = 66f;
                             _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }
                     }
@@ -579,9 +581,9 @@ public class EnemySystem : ObjectSystem
                         };
                         _enemies.Add(newButterfly);
                         _butterflyNextPos.X += Constants.CHARACTER_DIMENSIONS;
-                        if (_butterflyNextPos.X > Constants.GAMEPLAY_X)
+                        if (_butterflyNextPos.X > Constants.GAMEPLAY_X - 66f)
                         {
-                            _butterflyNextPos.X = 50;
+                            _butterflyNextPos.X = 66.0f;
                             _butterflyNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }
 
@@ -598,9 +600,9 @@ public class EnemySystem : ObjectSystem
                         _enemies.Add(newBossGalaga);
 
                         _bossGalagaNextPos.X += Constants.CHARACTER_DIMENSIONS;
-                        if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X)
+                        if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X - 66f)
                         {
-                            _bossGalagaNextPos.X = 50;
+                            _bossGalagaNextPos.X = 66.0f;
                             _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }
 

@@ -37,6 +37,11 @@ public abstract class Enemy : Object
 
     private bool _canAttack;
 
+    private double _elapsedTimeTotal;
+    private Vector2 _breathingVelocity;
+    private int _direction; // Negative when breathing in, positive when out
+
+
     public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
     {
         EntrancePath = new List<Vector2>();
@@ -45,8 +50,9 @@ public abstract class Enemy : Object
         rnd = new();
         _bulletSystem = bulletSystem;
         _canAttack = canAttack;
-        
+        _elapsedTimeTotal = 0;
         attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
+        _direction = 1;
     }
 
     // This one is for boss Galaga since it has more than 1 texture
@@ -65,6 +71,34 @@ public abstract class Enemy : Object
     public override void Update(TimeSpan elapsedTime)
     {
         base.Update(elapsedTime);
+        _elapsedTimeTotal += elapsedTime.TotalSeconds;
+
+        if (EnemySystem.Breathing)
+        {
+            if (!attack)
+            {
+                if (Math.Sin(2*Math.PI * _elapsedTimeTotal) >= 0)
+                    _direction = 1;
+                else
+                    _direction = -1;
+
+                if (Position.X < Constants.GAMEPLAY_X / 2)
+                {
+                    _breathingVelocity = new(1f * _direction, -1.0f * _direction);
+                    _breathingVelocity *= 90;
+                    _breathingVelocity *= (float)elapsedTime.TotalSeconds;
+                }
+                else
+                {
+                    _breathingVelocity = new(-1.0f * _direction , -1.0f * _direction);
+                    _breathingVelocity *= 90;
+                    _breathingVelocity *= (float)elapsedTime.TotalSeconds;
+                }
+                Position.X += (int)_breathingVelocity.X;
+                Position.Y += (int)_breathingVelocity.Y;
+            }
+
+        }
 
         if (_canAttack) // Bonus round enemies can't attack
         {
