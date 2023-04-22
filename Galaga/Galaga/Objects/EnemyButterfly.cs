@@ -57,12 +57,13 @@ namespace Galaga.Objects
             if (_rotatedPath.Count > 0)
             {
                 Vector2 nextPoint = _rotatedPath[0];
-                _rotatedPath.RemoveAt(0);
                 float xDistance = nextPoint.X - Position.X;
                 float xDistanceSquared = xDistance * xDistance;
                 float yDistance = nextPoint.Y - Position.Y;
                 float yDistanceSquared = yDistance * yDistance;
                 double totalDistance = Math.Sqrt(xDistanceSquared + yDistanceSquared);
+                if (totalDistance <= Constants.CHARACTER_DIMENSIONS)
+                    _rotatedPath.RemoveAt(0);
                 VelocityX = VelocityVector * xDistance / totalDistance;
                 VelocityY = VelocityVector * yDistance / totalDistance;
             }
