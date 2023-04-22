@@ -32,28 +32,31 @@ public class EnemyBee : Enemy
         if (_isStartingOnLeft)
         {
             List<Vector2> topCounterClockwiseSemiCircle = CircleCreator.CreateCounterClockwiseCircle(_startAttackPos.X - 24, _startAttackPos.Y - 8, 24).ToList();
-            topCounterClockwiseSemiCircle.RemoveRange(20, 20);
+            topCounterClockwiseSemiCircle.RemoveRange(28, 12);
             _path.AddRange(topCounterClockwiseSemiCircle);
-            _path.Add(new(2*Constants.GAMEPLAY_X/3, Constants.GAMEPLAY_Y/2));
-            _path.Add(new(2 * Constants.GAMEPLAY_X / 3, 7 * Constants.GAMEPLAY_Y / 8));
-            _path.AddRange(CircleCreator.CreateClockwiseSemiCircle(2 * Constants.GAMEPLAY_X / 3 - 32, 7 * Constants.GAMEPLAY_Y / 8, 32));
+            List<Vector2> cornerCircle = CircleCreator.CreateClockwiseCircle(2 * Constants.GAMEPLAY_X / 3 - 32, Constants.GAMEPLAY_Y / 2 + 32, 32).ToList();
+            cornerCircle.RemoveRange(20, 20);
+            cornerCircle.RemoveRange(0, 10);
+            _path.AddRange(cornerCircle);
+            _path.Add(new(2 * Constants.GAMEPLAY_X / 3, 7 * Constants.GAMEPLAY_Y / 8 - 16));
+            _path.AddRange(CircleCreator.CreateClockwiseSemiCircle(2 * Constants.GAMEPLAY_X / 3 - 32, 7 * Constants.GAMEPLAY_Y / 8 - 16, 32));
             _path.Add(new(_startAttackPos.X, _startAttackPos.Y));
         }
         else
         {
             List<Vector2> topClockwiseCircle = CircleCreator.CreateClockwiseCircle(_startAttackPos.X + 24, _startAttackPos.Y - 8, 24).ToList();
-            topClockwiseCircle.RemoveRange(20, 20);
+            topClockwiseCircle.RemoveRange(28, 12);
             _path.AddRange(topClockwiseCircle);
-            _path.Add(new(Constants.GAMEPLAY_X / 3, Constants.GAMEPLAY_Y / 2));
-            _path.Add(new(Constants.GAMEPLAY_X / 3, 7 * Constants.GAMEPLAY_Y / 8));
-            _path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 3 + 32, 7 * Constants.GAMEPLAY_Y / 8, 32));
+            //_path.Add(new(Constants.GAMEPLAY_X / 3, Constants.GAMEPLAY_Y / 2));
+            List<Vector2> cornerCircle = CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 3 + 32, Constants.GAMEPLAY_Y / 2 + 32, 32).ToList();
+            cornerCircle.RemoveRange(20, 20);
+            cornerCircle.RemoveRange(0, 10);
+            _path.AddRange(cornerCircle);
+            _path.Add(new(Constants.GAMEPLAY_X / 3, 7 * Constants.GAMEPLAY_Y / 8 - 16));
+            _path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 3 + 32, 7 * Constants.GAMEPLAY_Y / 8 - 16, 32));
             _path.Add(new(_startAttackPos.X, _startAttackPos.Y));
         }
 
-
-        //_path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 0f, Position.X, 600f, Position.Y, 2f));
-/*        float angleInRadians = CircleCreator.GetAngleRadians(new(Position.X, Position.Y), new(_playerPosition.X, _playerPosition.Y));
-        _rotatedPath = CircleCreator.RotatePath(_path, angleInRadians, Position.X, Position.Y);*/
         base.Attack();
     }
 
@@ -76,7 +79,7 @@ public class EnemyBee : Enemy
             float yDistance = nextPoint.Y - Position.Y;
             float yDistanceSquared = yDistance * yDistance;
             double totalDistance = Math.Sqrt(xDistanceSquared + yDistanceSquared);
-            if (totalDistance <= Constants.CHARACTER_DIMENSIONS)
+            if (totalDistance <= Constants.CHARACTER_DIMENSIONS/2)
                 _path.RemoveAt(0);
             VelocityX = VelocityVector * xDistance / totalDistance;
             VelocityY = VelocityVector * yDistance / totalDistance;
@@ -87,30 +90,13 @@ public class EnemyBee : Enemy
             ResetVelocity();
             ResetAttackTimer();
         }
-/*        // If the bee hits the bottom of the stage, then wrap
-        if (Position.Y > Constants.GAMEPLAY_Y)
-        {
-            _rotatedPath.Clear();
-            _path.Clear();
-            ResetVelocity();
-            Position.X = _startAttackPos.X;
-            Position.Y = _startAttackPos.Y - 150;
-            VelocityY = VelocityVector / 2;
-        }*/
-        // Set the velocity to be straight down after the butterfly hits the bottom of the stage and it teleported up.
-/*        if (Position.Y >= _startAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)
-        {
-            VelocityY = 0;
-            Position.Y = _startAttackPos.Y;
-            ResetAttackTimer();
-        }*/
     }
 
     public override void Render(SpriteBatch spriteBatch)
     {
         base.Render(spriteBatch);
 
-        if (true)
+        if (DEBUG)
         {
             for (int i = 0; i < _path.Count; i++)
             {
