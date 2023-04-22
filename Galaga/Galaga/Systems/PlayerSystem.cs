@@ -21,8 +21,9 @@ public class PlayerSystem : ObjectSystem
     private TimeSpan _playerLastShotTime;
     private TimeSpan _playerShotDelay = TimeSpan.FromSeconds(0.25);
     private KeyboardState _previousKeyboardState;
-    private readonly IReadOnlyDictionary<string, SoundEffect> _soundEffects;
+    private readonly AudioSystem _audioSystem;
     public bool PlayerKilled;
+    private int _lives;
 
 
     public PlayerShip GetPlayer()
@@ -30,7 +31,7 @@ public class PlayerSystem : ObjectSystem
         return _playerShip;
     }
 
-    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture, ParticleSystem particleSystem, IReadOnlyDictionary<string, SoundEffect> soundEffects)
+    public PlayerSystem(Texture2D shipTexture, GameStatsSystem gameStatsSystem, BulletSystem bulletSystem, Texture2D debugTexture, ParticleSystem particleSystem, AudioSystem audioSystem)
     {
         if (Controls.ChangeInControls)
         {
@@ -52,8 +53,7 @@ public class PlayerSystem : ObjectSystem
         _bulletSystem = bulletSystem;
         _gameStatsSystem = gameStatsSystem;
         _particleSystem = particleSystem;
-        _soundEffects = soundEffects;
-
+        _audioSystem = audioSystem;
 
         _playerShip = new PlayerShip(
             position: new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS),
