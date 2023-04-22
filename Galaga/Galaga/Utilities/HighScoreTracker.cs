@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Galaga.Systems;
 
 namespace Galaga.Utilities;
 
@@ -13,6 +14,8 @@ public class HighScoreTracker
      private bool _loading;
      private bool _saving;
      private static HighScoreTracker _tracker;
+     private GameStatsSystem _gameStatsSystem;
+     
 
      public static HighScoreTracker GetTracker()
      {
@@ -22,11 +25,7 @@ public class HighScoreTracker
      private HighScoreTracker()
      {
          LoadScores();
-     }
-
-     public void AddToCurrentGameScore(int points)
-     {
-          CurrentGameScore += points;
+         _gameStatsSystem = GameStatsSystem.GetSystem();
      }
 
      public void FinishGame()
@@ -38,6 +37,7 @@ public class HighScoreTracker
                HighScores.RemoveRange(5, HighScores.Count - 5);
           CurrentGameScore = 0;
           SaveScores();
+          _gameStatsSystem.FinishGame();
      }
 
      public void ResetHighScores()

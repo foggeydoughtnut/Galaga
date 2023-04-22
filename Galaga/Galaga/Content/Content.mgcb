@@ -190,3 +190,69 @@
 /processorParam:TextureFormat=Color
 /build:Images/Satellite.png
 
+#begin Sound/ChallengingStageResults.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/ChallengingStageResults.mp3
+
+#begin Sound/ChallengingStageStart.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/ChallengingStageStart.mp3
+
+#begin Sound/Death.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Death.mp3
+
+#begin Sound/Enemy1Death.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Enemy1Death.mp3
+
+#begin Sound/Enemy2Death.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Enemy2Death.mp3
+
+#begin Sound/Enemy3DeathPart1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Enemy3DeathPart1.mp3
+
+#begin Sound/Enemy3DeathPart2.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Enemy3DeathPart2.mp3
+
+#begin Sound/EnemyFlying.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/EnemyFlying.mp3
+
+#begin Sound/Shooting.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Shooting.mp3
+
+#begin Sound/StageFlag.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/StageFlag.mp3
+
+#begin Sound/Startup.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Startup.mp3
+

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,7 +17,7 @@ public abstract class GameState
     protected GameWindow Window;
     protected readonly Dictionary<string, Texture2D> Textures = new();
     protected readonly Dictionary<string, SpriteFont> Fonts = new();
-    protected readonly Dictionary<string, Song> Songs = new();
+    protected readonly Dictionary<string, SoundEffect> SoundEffects = new();
 
     public virtual void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, GameWindow window)
     {

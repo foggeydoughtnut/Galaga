@@ -69,11 +69,13 @@ public class PauseSubPlayState : SubPlayState
             if (_indexOfChoice == 0)
             {
                 _previousKeyboardState = currentKeyboardState;
+                _previousMouseState = currentMouseState;
                 return PlayStates.Play;
             }
             else
             {
                 _previousKeyboardState = currentKeyboardState;
+                _previousMouseState = currentMouseState;
                 return PlayStates.Finish;
             }
 
