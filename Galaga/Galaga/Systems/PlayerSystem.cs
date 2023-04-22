@@ -23,7 +23,11 @@ public class PlayerSystem : ObjectSystem
     private KeyboardState _previousKeyboardState;
     private readonly AudioSystem _audioSystem;
     public bool PlayerKilled;
-    private int _lives;
+    private readonly TimeSpan _invincibilityTime = new(0, 0, 3);
+    private TimeSpan _timeLeftInvincible;
+    private TimeSpan _flashTime = new(0, 0, 0, 0, 250);
+    private bool _renderShip = true;
+    private readonly List<PlayerShip> _liveShips = new();
 
 
     public PlayerShip GetPlayer()
@@ -56,18 +60,42 @@ public class PlayerSystem : ObjectSystem
         _audioSystem = audioSystem;
 
         _playerShip = new PlayerShip(
-            position: new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS),
+            position: new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS * 2),
             bounds: new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y),
             dimensions: new Point(Constants.CHARACTER_DIMENSIONS),
             shipTexture,
             debugTexture,
             numberOfSubImages: 1
         );
+        for (var i = 0; i < 3; i++)
+            _liveShips.Add(new PlayerShip(
+                position: new Point(i * Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS),
+                bounds: new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y),
+                dimensions: new Point(Constants.CHARACTER_DIMENSIONS),
+                shipTexture,
+                debugTexture,
+                numberOfSubImages: 1
+            ));
         _previousKeyboardState = Keyboard.GetState();
     }
 
     public override void Update(GameTime gameTime)
     {
+        if (!_playerShip.IsObstacle)
+        {
+            _timeLeftInvincible -= gameTime.ElapsedGameTime;
+            _flashTime -= gameTime.ElapsedGameTime;
+            if (_timeLeftInvincible.TotalMilliseconds < 0)
+            {
+                _renderShip = true;
+                _playerShip.IsObstacle = true;
+            }
+            if (!_playerShip.IsObstacle && _flashTime.TotalMilliseconds <= 0)
+            {
+                _renderShip = !_renderShip;
+                _flashTime = new TimeSpan(0, 0, 0, 0, 250);
+            }
+        }
         string controlsFileData = File.ReadAllText("controls.json");
         _controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
         //Debug.WriteLine(controls.Right.ToString());
@@ -88,7 +116,10 @@ public class PlayerSystem : ObjectSystem
 
     public override void Render(SpriteBatch spriteBatch)
     {
-        _playerShip.Render(spriteBatch);
+        if(_renderShip)
+            _playerShip.Render(spriteBatch);
+        foreach(var ship in _liveShips)
+            ship.Render(spriteBatch);
     }
 
     public override void ObjectHit(Guid id)
@@ -97,8 +128,13 @@ public class PlayerSystem : ObjectSystem
     public void PlayerHit()
     {
         _particleSystem.PlayerDeath(_playerShip.Position);
-        PlayerKilled = true;
         _audioSystem.PlaySoundEffect("death");
+        _liveShips.RemoveAt(_liveShips.Count - 1);
+        _timeLeftInvincible = _invincibilityTime;
+        _playerShip.IsObstacle = false;
+        _renderShip = false;
+        if(_liveShips.Count <= 0)
+            PlayerKilled = true;
         //Debug.WriteLine("Player was hit");
     }
 }
