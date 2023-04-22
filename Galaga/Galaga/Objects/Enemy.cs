@@ -46,7 +46,8 @@ public abstract class Enemy : Object
         _bulletSystem = bulletSystem;
         _canAttack = canAttack;
         
-        attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
+        //attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
+        attackDelay = (float)(rnd.NextDouble()) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
     }
 
     // This one is for boss Galaga since it has more than 1 texture
