@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
@@ -23,10 +21,9 @@ public class PlayerSystem : ObjectSystem
     private TimeSpan _playerLastShotTime;
     private TimeSpan _playerShotDelay = TimeSpan.FromSeconds(0.25);
     private KeyboardState _previousKeyboardState;
-    private IReadOnlyDictionary<string, SoundEffect> _soundEffects;
+    private readonly IReadOnlyDictionary<string, SoundEffect> _soundEffects;
     public bool PlayerKilled;
 
-    private float speed = 7500f;
 
     public PlayerShip GetPlayer()
     {
@@ -75,16 +72,14 @@ public class PlayerSystem : ObjectSystem
         _controls = JsonConvert.DeserializeObject<Controls>(controlsFileData);
         //Debug.WriteLine(controls.Right.ToString());
         _playerShip.Update(gameTime.ElapsedGameTime);
-        _playerShip.VelocityX = 0;
         var currentKeyboardState = Keyboard.GetState();
         if (currentKeyboardState.IsKeyDown(_controls.Right))
-            _playerShip.VelocityX = speed * gameTime.ElapsedGameTime.TotalSeconds;
+            _playerShip.MovePlayer(gameTime.ElapsedGameTime, 1);
         if (currentKeyboardState.IsKeyDown(_controls.Left))
-            _playerShip.VelocityX = -speed * gameTime.ElapsedGameTime.TotalSeconds;
+            _playerShip.MovePlayer(gameTime.ElapsedGameTime, -1);
         if (currentKeyboardState.IsKeyUp(_controls.Fire) && _previousKeyboardState.IsKeyDown(_controls.Fire))
         {
             _bulletSystem.FirePlayerBullet(new Point(_playerShip.Position.X + _playerShip.Dimensions.X / 2, _playerShip.Position.Y));
-            _soundEffects["shot"].Play();
             _playerLastShotTime = gameTime.TotalGameTime;
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -16,19 +17,21 @@ public class BulletSystem : ObjectSystem
     private readonly Texture2D _playerBulletTexture;
     private readonly Texture2D _enemyBulletTexture;
     private readonly Texture2D _debugTexture;
+    private IReadOnlyDictionary<string, SoundEffect> _soundEffects;
 
     private int _numberOfPlayerBulletsOut; // In the game you can only have two player bullets out on the field at once. 
 
 
     public List<Bullet> GetBullets() { return _bullets; }
 
-    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture, GameStatsSystem statsSystem, Texture2D debugTexture)
+    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture, GameStatsSystem statsSystem, Texture2D debugTexture, IReadOnlyDictionary<string, SoundEffect> soundEffects)
     {
         _statsSystem = statsSystem;
         _playerBulletTexture = playerBulletTexture;
         _enemyBulletTexture = enemyBulletTexture;
         _debugTexture = debugTexture;
         _numberOfPlayerBulletsOut = 0;
+        _soundEffects = soundEffects;
     }
 
     public override void Update(GameTime gameTime)
@@ -76,6 +79,7 @@ public class BulletSystem : ObjectSystem
 
     public void FirePlayerBullet(Point position)
     {
+        _soundEffects["shot"].Play();
         if (_numberOfPlayerBulletsOut < 999) // In the game you could only have two bullets out at a time for added difficulty but this one he said he wanted it not to be limited
         {
             _bullets.Add(new Bullet(

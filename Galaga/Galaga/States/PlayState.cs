@@ -16,6 +16,7 @@ public class PlayState : GameState
     private readonly Dictionary<PlayStates, SubPlayState> _playStates = new();
     private AudioSystem _audioSystem;
     private bool _playedStartupEffect;
+    public bool UseAi;
 
     private void InitializeState()
     {
@@ -27,6 +28,7 @@ public class PlayState : GameState
         _currentPlayState = PlayStates.Play;
         _nextPlayState = PlayStates.Play;
         _playedStartupEffect = false;
+        UseAi = false;
     } 
     
     public override void LoadContent(ContentManager contentManager)
@@ -66,6 +68,11 @@ public class PlayState : GameState
 
     public override GameStates Update(GameTime gameTime)
     {
+        if (UseAi && _playStates[PlayStates.Play] is PlaySubPlayState subPlayState && _playStates[PlayStates.Loser] is LoserState loserState)
+        {
+            subPlayState.UseAi = true;
+            loserState.UsedAi = true;
+        }
         if (!_playedStartupEffect)
         {
             _playedStartupEffect = true;

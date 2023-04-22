@@ -20,6 +20,8 @@ public class MenuState : GameState
     RenderTarget2D renderTarget;
     KeyboardState previousKeyboardState;
     private MouseState _previousMouseState;
+    public bool UseAi;
+    private TimeSpan _inactivityTimer = TimeSpan.Zero;
 
     public override void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, GameWindow window)
     {
@@ -58,14 +60,22 @@ public class MenuState : GameState
 
     public override GameStates Update(GameTime gameTime)
     {
+        _inactivityTimer += gameTime.ElapsedGameTime;
         _nextState = GameStates.MainMenu;
+        if (_inactivityTimer.Seconds > 10)
+        {
+            _inactivityTimer = TimeSpan.Zero;
+            UseAi = true;
+            return GameStates.GamePlay;
+        }
         ProcessInput();
         return _nextState;
     }
     protected override void ProcessInput()
     {
         KeyboardState currentKeyboardState = Keyboard.GetState();
-
+        var initialIndex = _indexOfChoice;
+        
         if (currentKeyboardState.IsKeyUp(Keys.Up) && previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
             _indexOfChoice -= 1;
 
@@ -99,6 +109,8 @@ public class MenuState : GameState
         _previousMouseState = currentMouseState;
 
         base.ProcessInput();
+        if(initialIndex != _indexOfChoice)
+            _inactivityTimer = TimeSpan.Zero;
     }
 
     public override void Render()
