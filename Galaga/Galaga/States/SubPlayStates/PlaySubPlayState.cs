@@ -3,7 +3,6 @@ using System.Linq;
 using Galaga.Systems;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -18,19 +17,20 @@ public class PlaySubPlayState : SubPlayState
     private readonly RenderTarget2D _renderTarget;
     private readonly IReadOnlyDictionary<string, Texture2D> _textures;
     private KeyboardState _previousKeyboardState;
+    private MouseState _previousMouseState;
     public bool UseAi;
 
-    public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures, IReadOnlyDictionary<string, SoundEffect> soundEffects)
+    public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures, AudioSystem audioSystem)
     {
         _tracker = HighScoreTracker.GetTracker();
         
         _systems = new List<Systems.System>();
         ParticleSystem particleSystem = new(textures["particle"]);
         GameStatsSystem gameStats = GameStatsSystem.GetSystem();
-        BulletSystem bulletSystem = new(textures["playerBullet"], textures["enemyBullet"], gameStats, textures["debug"], soundEffects);
-        PlayerSystem playerSystem = new(textures["ship"], gameStats, bulletSystem, textures["debug"], particleSystem, soundEffects);
+        BulletSystem bulletSystem = new(textures["playerBullet"], textures["enemyBullet"], gameStats, textures["debug"], audioSystem);
+        PlayerSystem playerSystem = new(textures["ship"], gameStats, bulletSystem, textures["debug"], particleSystem, audioSystem);
 
-        EnemySystem enemySystem = new(playerSystem, bulletSystem, particleSystem, window, textures["bee"], textures["debug"], textures["butterfly"], new() { textures["bossGalagaFull"], textures["bossGalagaHalf"] }, textures["dragonfly"], textures["satellite"], soundEffects);
+        EnemySystem enemySystem = new(playerSystem, bulletSystem, particleSystem, window, textures["bee"], textures["debug"], textures["butterfly"], new() { textures["bossGalagaFull"], textures["bossGalagaHalf"] }, textures["dragonfly"], textures["satellite"], audioSystem);
         CollisionDetectionSystem collisionDetectionSystem = new(playerSystem, enemySystem, bulletSystem);
         _systems.Add(playerSystem);
         _systems.Add(enemySystem);
@@ -52,6 +52,7 @@ public class PlaySubPlayState : SubPlayState
         );
         _textures = textures;
         _previousKeyboardState = Keyboard.GetState();
+        _previousMouseState = Mouse.GetState();
 
     }
 
@@ -60,8 +61,15 @@ public class PlaySubPlayState : SubPlayState
         if (UseAi)
             SetupAi();
         KeyboardState currentKeyboardState = Keyboard.GetState();
-        if (UseAi && _previousKeyboardState.GetPressedKeys().Any() && !currentKeyboardState.GetPressedKeys().Any())
-            return PlayStates.Loser;
+        MouseState currentMouseState = Mouse.GetState();
+        if (UseAi)
+        {
+            var buttonPressed = _previousKeyboardState.GetPressedKeys().Any() && !currentKeyboardState.GetPressedKeys().Any();
+            var mouseMoved = _previousMouseState != currentMouseState && currentMouseState.Position is { X: < Constants.BOUNDS_X and > 0, Y: < Constants.BOUNDS_Y and > 0} ;
+            if(buttonPressed || mouseMoved)
+                return PlayStates.Loser;
+        }
+            
         foreach (Systems.System system in _systems)
         {
             system.Update(gameTime);
@@ -71,10 +79,12 @@ public class PlaySubPlayState : SubPlayState
         if (currentKeyboardState.IsKeyUp(Keys.Escape) && _previousKeyboardState.IsKeyDown(Keys.Escape))
         {
             _previousKeyboardState = currentKeyboardState;
+            _previousMouseState = currentMouseState;
             return PlayStates.Pause;
         }
 
         _previousKeyboardState = currentKeyboardState;
+        _previousMouseState = currentMouseState;
         return PlayStates.Play;
     }
 

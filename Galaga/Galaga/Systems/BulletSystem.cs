@@ -17,21 +17,21 @@ public class BulletSystem : ObjectSystem
     private readonly Texture2D _playerBulletTexture;
     private readonly Texture2D _enemyBulletTexture;
     private readonly Texture2D _debugTexture;
-    private IReadOnlyDictionary<string, SoundEffect> _soundEffects;
+    private readonly AudioSystem _audioSystem;
 
     private int _numberOfPlayerBulletsOut; // In the game you can only have two player bullets out on the field at once. 
 
 
     public List<Bullet> GetBullets() { return _bullets; }
 
-    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture, GameStatsSystem statsSystem, Texture2D debugTexture, IReadOnlyDictionary<string, SoundEffect> soundEffects)
+    public BulletSystem(Texture2D playerBulletTexture, Texture2D enemyBulletTexture, GameStatsSystem statsSystem, Texture2D debugTexture, AudioSystem audioSystem)
     {
         _statsSystem = statsSystem;
         _playerBulletTexture = playerBulletTexture;
         _enemyBulletTexture = enemyBulletTexture;
         _debugTexture = debugTexture;
         _numberOfPlayerBulletsOut = 0;
-        _soundEffects = soundEffects;
+        _audioSystem = audioSystem;
     }
 
     public override void Update(GameTime gameTime)
@@ -40,7 +40,7 @@ public class BulletSystem : ObjectSystem
             bullet.Update(gameTime.ElapsedGameTime);
         _bullets.RemoveAll(delegate (Bullet b)
         {
-            if (b.Position.Y is <= 0 or > Constants.BOUNDS_Y)
+            if (b.Position.Y is <= 0 or > Constants.GAMEPLAY_Y)
             {
                 if (b.VelocityY < 0) // Player bullets are always negative velocity and enemies are positive
                 {
@@ -79,7 +79,7 @@ public class BulletSystem : ObjectSystem
 
     public void FirePlayerBullet(Point position)
     {
-        _soundEffects["shot"].Play();
+        _audioSystem.PlaySoundEffect("shot");
         if (_numberOfPlayerBulletsOut < 999) // In the game you could only have two bullets out at a time for added difficulty but this one he said he wanted it not to be limited
         {
             _bullets.Add(new Bullet(

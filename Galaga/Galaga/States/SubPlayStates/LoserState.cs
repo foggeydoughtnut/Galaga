@@ -41,7 +41,12 @@ public class LoserState : SubPlayState
 
     public override PlayStates Update(GameTime gameTime)
     {
-        if (UsedAi) return PlayStates.Finish;
+        if (UsedAi)
+        {
+            _gameStatsSystem.FinishGame();
+            _tracker.CurrentGameScore = 0;
+            return PlayStates.Finish;
+        }
         var currentKeyboardState = Keyboard.GetState();
         if (currentKeyboardState.IsKeyUp(Keys.Enter) && _previousKeyboardState.IsKeyDown(Keys.Enter))
         {
