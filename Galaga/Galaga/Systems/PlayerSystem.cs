@@ -97,8 +97,8 @@ public class PlayerSystem : ObjectSystem
     public void PlayerHit()
     {
         _particleSystem.PlayerDeath(_playerShip.Position);
-        _soundEffects["death"].Play();
         PlayerKilled = true;
+        _audioSystem.PlaySoundEffect("death");
         //Debug.WriteLine("Player was hit");
     }
 }
