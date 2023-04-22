@@ -48,7 +48,9 @@ public class EnemySystem : ObjectSystem
     private readonly IReadOnlyDictionary<string, SoundEffect> _soundEffects;
 
     private readonly Texture2D _debugTexture;
-    private readonly int _maxEnemiesPerRound = 40;
+    //private readonly int _maxEnemiesPerRound = 40;
+    private readonly int _maxEnemiesPerRound = 1;
+
 
 
     private int _createdEnemies;
