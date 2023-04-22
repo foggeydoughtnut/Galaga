@@ -41,7 +41,6 @@ public class EnemySystem : ObjectSystem
     private Vector2 _butterflyNextPos;
     private Vector2 _beeNextPos;
     private Vector2 _bossGalagaNextPos;
-    private List<Vector2> _points;
     private readonly TimeSpan _entranceDelay = new(0,0,0,0,150);
     private TimeSpan _elapsedTime = TimeSpan.Zero;
     private readonly Texture2D _beeTexture;
@@ -85,6 +84,12 @@ public class EnemySystem : ObjectSystem
 
     #endregion
 
+    #region Breathing Variables
+    private bool _breathDelayTimerActive;
+    private float _breathDelayTimer;
+    private float _breathDelay;
+    private bool _breathing;
+    #endregion
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
@@ -111,12 +116,6 @@ public class EnemySystem : ObjectSystem
         _bossGalagaNextPos = new Vector2(50.0f, 2.0f);
         _butterflyNextPos = new Vector2(50.0f, 34.0f);
         _beeNextPos = new Vector2(50.0f, 66.0f);
-
-        _points = new List<Vector2> { new(200, 0) };
-        Random rand = new();
-        int randX = rand.Next() % (Constants.GAMEPLAY_X / 2) + Constants.GAMEPLAY_X / 4;
-        int randY = rand.Next() % (Constants.GAMEPLAY_Y / 4) + Constants.GAMEPLAY_Y / 4;
-        _points.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(randX, randY, EntranceCircleRadius));
 
         _destroyedEnemiesThisStage = 0;
 
@@ -147,6 +146,13 @@ public class EnemySystem : ObjectSystem
         _roundTimerActive = false;
         _roundDelay = 5f;
 
+        #endregion
+
+        #region Breathing
+        _breathDelayTimerActive = false;
+        _breathDelayTimer = 0f;
+        _breathDelay = 2f;
+        _breathing = false;
         #endregion
     }
 
@@ -515,10 +521,21 @@ public class EnemySystem : ObjectSystem
 
             }
         }
+        if (_breathDelayTimerActive)
+        {
+            _breathDelayTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (_breathDelayTimer > _breathDelay)
+            {
+                _breathing = true;
+            }
+        }
         if (_destroyedEnemiesThisStage >= _maxEnemiesPerRound)
         {
             _roundFinished = true;
             _roundTimerActive = true;
+            _breathing = false;
+            _breathDelayTimerActive = false;
+            _breathDelayTimer = 0f;
         }
         if (!_roundFinished && !_groupTimerActive && _groupIndex < _numOfGroupsPerStage) // Spawn enemies in the group
         {
@@ -602,6 +619,11 @@ public class EnemySystem : ObjectSystem
                 _roundFinished = true;
                 _roundTimerActive = true;
                 _soundEffects["stage"].Play();
+            }
+
+            if (_createdEnemies == _maxEnemiesPerRound)
+            {
+                _breathDelayTimerActive = true;
             }
         }
 
