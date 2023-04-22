@@ -55,6 +55,12 @@ namespace Galaga
         protected override void Update(GameTime gameTime)
         {
             _nextState = _currentState.Update(gameTime);
+            if (_currentState is MenuState { UseAi: true } menuState && _nextState == GameStates.GamePlay)
+            {
+                menuState.UseAi = false;
+                ((PlayState)_states[GameStates.GamePlay]).UseAi = true;
+            }
+            
             if (_nextState == GameStates.Exit)
                 Exit();
             base.Update(gameTime);

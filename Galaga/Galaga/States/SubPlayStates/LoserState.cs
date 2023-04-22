@@ -17,6 +17,7 @@ public class LoserState : SubPlayState
     private readonly RenderTarget2D _renderTarget;
     private readonly GameStatsSystem _gameStatsSystem;
     private KeyboardState _previousKeyboardState;
+    public bool UsedAi;
 
     public LoserState(GraphicsDeviceManager graphics, GameWindow window)
     {
@@ -40,6 +41,7 @@ public class LoserState : SubPlayState
 
     public override PlayStates Update(GameTime gameTime)
     {
+        if (UsedAi) return PlayStates.Finish;
         var currentKeyboardState = Keyboard.GetState();
         if (currentKeyboardState.IsKeyUp(Keys.Enter) && _previousKeyboardState.IsKeyDown(Keys.Enter))
         {

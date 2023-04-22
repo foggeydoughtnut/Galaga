@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection.Metadata;
@@ -11,6 +12,7 @@ public class PlayerShip : Object
 {
     private readonly Point _bounds;
     public bool HasDuelShips = false;
+    private float _speed = 7500f;
 
 /*    public PlayerShip(Point position, Point bounds, Point dimensions, Texture2D texture, Texture2D debugTexture, int numberOfSubImages)
         : base(position, dimensions, texture, 500, debugTexture, numberOfSubImages)
@@ -25,6 +27,18 @@ public class PlayerShip : Object
         _bounds = bounds;
         CannotRotate = true;
     }
+
+    public override void Update(TimeSpan elapsedTime)
+    {
+        base.Update(elapsedTime);
+        VelocityX = 0;
+    }
+
+    public void MovePlayer(TimeSpan elapsedTime, int direction)
+    {
+        VelocityX = _speed * elapsedTime.TotalSeconds * direction;
+    }
+    
     protected override void Translate(Point offset)
     {
         //465ish
