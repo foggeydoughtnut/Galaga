@@ -34,8 +34,10 @@ public class CollisionDetectionSystem : System
         gameObjects.Clear();
         _collisions.Clear();
 
+        
         PlayerShip playerShip = _playerSystem.GetPlayer();
-        gameObjects.Add(new (playerShip.Id, playerShip.Collider, "player", "player"));
+        if(playerShip.IsObstacle)
+            gameObjects.Add(new (playerShip.Id, playerShip.Collider, "player", "player"));
 
         List<Bullet> bullets = _bulletSystem.GetBullets();
         for (int i = 0; i < bullets.Count; i++)

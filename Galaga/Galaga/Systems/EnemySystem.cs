@@ -34,6 +34,7 @@ public class EnemySystem : ObjectSystem
     private readonly PlayerSystem _playerSystem;
     private readonly BulletSystem _bulletSystem;
     private readonly ParticleSystem _particleSystem;
+    private readonly AudioSystem _audioSystem;
     private readonly HighScoreTracker _scoreTracker;
     private readonly List<Enemy> _enemies;
     private readonly GameWindow _window;
@@ -45,7 +46,6 @@ public class EnemySystem : ObjectSystem
     private readonly Texture2D _beeTexture;
     private readonly Texture2D _butterflyTexture;
     private readonly List<Texture2D> _bossGalagaTextures;
-    private readonly IReadOnlyDictionary<string, SoundEffect> _soundEffects;
 
     private readonly Texture2D _debugTexture;
     //private readonly int _maxEnemiesPerRound = 40;
@@ -96,7 +96,7 @@ public class EnemySystem : ObjectSystem
 
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
-    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures, Texture2D dragonflyTexture, Texture2D satelliteTexture, IReadOnlyDictionary<string, SoundEffect> soundEffects)
+    public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures, Texture2D dragonflyTexture, Texture2D satelliteTexture, AudioSystem audioSystem)
     {
         _playerSystem = playerSystem;
         _bulletSystem = bulletSystem;
@@ -111,7 +111,7 @@ public class EnemySystem : ObjectSystem
         _dragonflyPathOdd = new();
         _dragonflyPathEven = new();
         _satellitePath = new();
-        _soundEffects = soundEffects;
+        _audioSystem = audioSystem;
 
 
         _enemies = new List<Enemy>();
@@ -509,7 +509,7 @@ public class EnemySystem : ObjectSystem
                 {
                     Debug.WriteLine("Bonus");
                     _isBonusRound = true;
-                    _soundEffects["bonus"].Play();
+                    _audioSystem.PlaySoundEffect("bonus");
                 }
                 else
                 {
@@ -622,7 +622,7 @@ public class EnemySystem : ObjectSystem
             {
                 _roundFinished = true;
                 _roundTimerActive = true;
-                _soundEffects["stage"].Play();
+                _audioSystem.PlaySoundEffect("stage");
             }
 
             if (_createdEnemies == _maxEnemiesPerRound)
@@ -704,7 +704,7 @@ public class EnemySystem : ObjectSystem
 
         if (hitEnemy.health > 0)
         {
-            _soundEffects["boss.1"].Play();
+            _audioSystem.PlaySoundEffect("boss.1");
             return;
         }
 
@@ -715,13 +715,13 @@ public class EnemySystem : ObjectSystem
         switch (hitEnemy)
         {
             case EnemyBee:
-                _soundEffects["bee"].Play();
+                _audioSystem.PlaySoundEffect("bee");
                 break;
             case EnemyButterfly:
-                _soundEffects["butterfly"].Play();
+                _audioSystem.PlaySoundEffect("butterfly");
                 break;                
             case EnemyBossGalaga:
-                _soundEffects["boss.2"].Play();
+                _audioSystem.PlaySoundEffect("boss.2");
                 break;                
         }
     }

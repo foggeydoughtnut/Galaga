@@ -252,7 +252,7 @@
 
 #begin Sound/Startup.mp3
 /importer:Mp3Importer
-/processor:SoundEffectProcessor
+/processor:SongProcessor
 /processorParam:Quality=Best
 /build:Sound/Startup.mp3
 

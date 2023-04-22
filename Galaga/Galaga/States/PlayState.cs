@@ -22,7 +22,7 @@ public class PlayState : GameState
     {
         _playStates.Clear();
         _playStates.Add(PlayStates.Loser, new LoserState(Graphics, Window));
-        _playStates.Add(PlayStates.Play, new PlaySubPlayState(Graphics, Window, Textures, SoundEffects));
+        _playStates.Add(PlayStates.Play, new PlaySubPlayState(Graphics, Window, Textures, _audioSystem));
         _playStates.Add(PlayStates.Pause, new PauseSubPlayState(Graphics, Window));
        
         _currentPlayState = PlayStates.Play;
@@ -37,7 +37,6 @@ public class PlayState : GameState
         Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));
         Fonts.Add("vBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
         //Song song = contentManager.Load<Song>("Audio/Take Me Out to the Ball Game");
-        _audioSystem = new AudioSystem(null);
         Textures.Add("ship", contentManager.Load<Texture2D>("Images/PlayerShip"));
         Textures.Add("playerBullet", contentManager.Load<Texture2D>("Images/PlayerBullet"));
         Textures.Add("enemyBullet", contentManager.Load<Texture2D>("Images/EnemyBullet"));
@@ -52,7 +51,6 @@ public class PlayState : GameState
 
         Textures.Add("background", contentManager.Load<Texture2D>("Images/Background"));
 
-        SoundEffects.Add("start", contentManager.Load<SoundEffect>("Sound/Startup"));
         SoundEffects.Add("stage", contentManager.Load<SoundEffect>("Sound/StageFlag"));
         SoundEffects.Add("shot", contentManager.Load<SoundEffect>("Sound/Shooting"));
         SoundEffects.Add("enemyFly", contentManager.Load<SoundEffect>("Sound/EnemyFlying"));
@@ -63,6 +61,8 @@ public class PlayState : GameState
         SoundEffects.Add("death", contentManager.Load<SoundEffect>("Sound/Death"));
         SoundEffects.Add("bonus", contentManager.Load<SoundEffect>("Sound/ChallengingStageStart"));
         SoundEffects.Add("bonusEnd", contentManager.Load<SoundEffect>("Sound/ChallengingStageResults"));
+        _audioSystem = new AudioSystem(contentManager.Load<Song>("Sound/Startup"), SoundEffects);
+
         InitializeState();
     }
 
@@ -76,13 +76,14 @@ public class PlayState : GameState
         if (!_playedStartupEffect)
         {
             _playedStartupEffect = true;
-            SoundEffects["start"].Play();
+            _audioSystem.PlayStartup();
             MediaPlayer.IsRepeating = false;
         }
         _nextPlayState = _playStates[_currentPlayState].Update(gameTime);
         if (_nextPlayState != PlayStates.Finish) return GameStates.GamePlay;
         
         InitializeState();
+        _audioSystem.Stop();
         return GameStates.MainMenu;
     }
 
