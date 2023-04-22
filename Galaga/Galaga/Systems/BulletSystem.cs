@@ -93,13 +93,13 @@ public class BulletSystem : ObjectSystem
 
     }
     
-    public void FireEnemyBullet(Point position)
+    public void FireEnemyBullet(Point position, Vector2 velocity)
     {
         _bullets.Add(new Bullet(
             position,
             dimensions: new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height),
             _playerBulletTexture,
-            velocity: 250,
+            velocity: velocity * 200,
             _debugTexture,
             numberOfSubImages: 1,
             "enemy"

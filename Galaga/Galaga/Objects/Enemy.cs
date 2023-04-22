@@ -46,8 +46,7 @@ public abstract class Enemy : Object
         _bulletSystem = bulletSystem;
         _canAttack = canAttack;
         
-        //attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
-        attackDelay = (float)(rnd.NextDouble()) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
+        attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
     }
 
     // This one is for boss Galaga since it has more than 1 texture
@@ -80,7 +79,11 @@ public abstract class Enemy : Object
                     shootTimer += (float)elapsedTime.TotalSeconds;
                     if (shootTimer >= shootDelay)
                     {
-                        _bulletSystem.FireEnemyBullet(new Point(Position.X, Position.Y+Constants.CHARACTER_DIMENSIONS));
+                        Vector2 enemyPos = new(Position.X, Position.Y + Constants.CHARACTER_DIMENSIONS);
+                        Vector2 playerPos = new(Player.Position.X, Player.Position.Y);
+                        Vector2 bulletVelocity = playerPos - enemyPos;
+                        bulletVelocity.Normalize();
+                        _bulletSystem.FireEnemyBullet(new Point(Position.X, Position.Y+Constants.CHARACTER_DIMENSIONS), bulletVelocity);
                         numberOfShotsFired++;
                         shootTimer -= 0.2f;
                     }
