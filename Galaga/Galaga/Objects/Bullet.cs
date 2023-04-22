@@ -13,4 +13,12 @@ public class Bullet : Object
         VelocityY = velocity;
         Type = type;
     }
+
+    public Bullet(Point position, Point dimensions, Texture2D texture, Vector2 velocity, Texture2D debugTexture, int numberOfSubImages, string type)
+        : base(position, dimensions, texture, 10_000, debugTexture, numberOfSubImages)
+    {
+        VelocityX = velocity.X;
+        VelocityY= velocity.Y;
+        Type = type;
+    }
 }
