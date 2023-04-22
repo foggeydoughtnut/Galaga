@@ -23,7 +23,7 @@ namespace Galaga.Objects
 
         private Point _startAttackPos;
 
-        private bool isStartingOnLeft;
+        private bool _isStartingOnLeft;
 
         private List<Texture2D> _textures;
         public int NumEscorts;
@@ -34,18 +34,18 @@ namespace Galaga.Objects
         {
             _path = new();
             _rotatedPath = new();
-            isStartingOnLeft = true;
+            _isStartingOnLeft = true;
             health = 2;
             _textures = textures;
         }
 
         protected override void Attack()
         {
-            isStartingOnLeft = Position.X < Constants.GAMEPLAY_X / 2;
+            _isStartingOnLeft = Position.X < Constants.GAMEPLAY_X / 2;
             _playerPosition = Player.Position;
             _startAttackPos = Position;
 
-            if (isStartingOnLeft)
+            if (_isStartingOnLeft)
             {
                 // Create Counter clockwise circle path, then travel on sin wave path
 

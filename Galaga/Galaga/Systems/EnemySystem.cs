@@ -175,7 +175,9 @@ public class EnemySystem : ObjectSystem
                             new(Constants.GAMEPLAY_X / 2 + 48, Constants.GAMEPLAY_Y / 3)
                         };
                         path.AddRange(CircleCreator.CreateClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
-                        enemy = new("butterfly", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
+                        //enemy = new("butterfly", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
+
+                        enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2 - 48, 0)); // FOR TESTING DELETE
                         group.Add(enemy);
                     }
                 }
@@ -656,6 +658,7 @@ public class EnemySystem : ObjectSystem
         foreach (Enemy enemy in _enemies)
         {
             enemy.Update(gameTime.ElapsedGameTime);
+            break;
         }
     }
 
