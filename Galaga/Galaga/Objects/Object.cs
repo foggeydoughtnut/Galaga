@@ -71,11 +71,11 @@ public abstract class Object
         if (ObjectTexture is null) return;
         if (_numberOfSubImages == 1)
         {
-            spriteBatch.Draw(ObjectTexture, Collider, null, Color.White, (float)DetermineHeading(), Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(ObjectTexture, new Rectangle(new Point(Position.X + Dimensions.X / 2, Position.Y + Dimensions.Y / 2 ), Dimensions), null, Color.White, (float)DetermineHeading(), new Vector2(Dimensions.X / 2, Dimensions.Y /2), SpriteEffects.None, 1f);
         }
         else
         {
-            spriteBatch.Draw(ObjectTexture, Collider, new Rectangle(_currentTextureIndex * SubImageDimension, 0, SubImageDimension, SubImageDimension), Color.White, (float)DetermineHeading(), Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(ObjectTexture, new Rectangle(new Point(Position.X + Dimensions.X / 2, Position.Y + Dimensions.Y / 2 ), Dimensions), new Rectangle(_currentTextureIndex * SubImageDimension, 0, SubImageDimension, SubImageDimension), Color.White, (float)DetermineHeading(), new Vector2(Dimensions.X / 2, Dimensions.Y /2), SpriteEffects.None, 1f);
         }
 
         if (DEBUG)
