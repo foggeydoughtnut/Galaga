@@ -61,6 +61,7 @@ public class PlayState : GameState
         SoundEffects.Add("death", contentManager.Load<SoundEffect>("Sound/Death"));
         SoundEffects.Add("bonus", contentManager.Load<SoundEffect>("Sound/ChallengingStageStart"));
         SoundEffects.Add("bonusEnd", contentManager.Load<SoundEffect>("Sound/ChallengingStageResults"));
+        SoundEffects.Add("enemyBreathing", contentManager.Load<SoundEffect>("Sound/EnemyBreathing"));
         _audioSystem = new AudioSystem(contentManager.Load<Song>("Sound/Startup"), SoundEffects);
 
         InitializeState();
