@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Galaga.Systems;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace Galaga.States;
 
@@ -18,6 +20,7 @@ public class MenuState : GameState
     private GameStates _nextState;
     private Dictionary<int, Tuple<int, int>> _optionPositions;
     RenderTarget2D renderTarget;
+    private AudioSystem _audioSystem;
     KeyboardState previousKeyboardState;
     private MouseState _previousMouseState;
     public bool UseAi;
@@ -34,7 +37,7 @@ public class MenuState : GameState
             "Quit"
         };
 
-        this.renderTarget = new RenderTarget2D(
+        renderTarget = new RenderTarget2D(
             graphicsDevice,
             1440,
             1080,
@@ -53,9 +56,14 @@ public class MenuState : GameState
 
     public override void LoadContent(ContentManager contentManager)
     {
-        Fonts.Add("default", contentManager.Load<SpriteFont>("Fonts/DemoFont1"));
-        Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));
-        Fonts.Add("veryBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
+        Fonts.Add("galaga", contentManager.Load<SpriteFont>("Fonts/File"));
+        Fonts.Add("galagaBig", contentManager.Load<SpriteFont>("Fonts/File2"));
+        Textures.Add("background", contentManager.Load<Texture2D>("Images/Background"));
+        Textures.Add("galagaTitle", contentManager.Load<Texture2D>("Images/Galaga"));
+        Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
+        SoundEffects.Add("butterfly", contentManager.Load<SoundEffect>("Sound/Enemy2Death"));
+        SoundEffects.Add("boss.1", contentManager.Load<SoundEffect>("Sound/Enemy3DeathPart1"));
+        _audioSystem = new  AudioSystem(contentManager.Load<Song>("Sound/Startup"), SoundEffects);
     }
 
     public override GameStates Update(GameTime gameTime)
@@ -104,24 +112,31 @@ public class MenuState : GameState
                 _ => throw new ArgumentOutOfRangeException()
             };
             // Handle enter key released
+            _inactivityTimer = TimeSpan.Zero;
         }
         previousKeyboardState = currentKeyboardState;
         _previousMouseState = currentMouseState;
 
         base.ProcessInput();
-        if(initialIndex != _indexOfChoice)
+        if (initialIndex != _indexOfChoice)
+        {
             _inactivityTimer = TimeSpan.Zero;
+            _audioSystem.PlaySoundEffect("boss.1");
+        }
     }
 
     public override void Render()
     {
-        this.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
-        this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-        this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+        Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
+        Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+        Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+        SpriteBatch.Draw(Textures["background"], new Rectangle(0, 0, renderTarget.Width, renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
+        SpriteBatch.Draw(Textures["galagaTitle"], new Rectangle(renderTarget.Width / 8, 20, 3 * renderTarget.Width /  4 , renderTarget.Height / 3), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
+
         // Render Menu
-        SpriteFont font = Fonts["default"];
-        SpriteFont bigFont = Fonts["big"];
+        SpriteFont font = Fonts["galaga"];
+        SpriteFont bigFont = Fonts["galagaBig"];
         int middle = _options.Count / 2;
         // Show options
         for (int i = 0; i < _options.Count; i++)
@@ -129,7 +144,7 @@ public class MenuState : GameState
             SpriteFont optionFont = _indexOfChoice == i ? bigFont : font;
             Vector2 stringSize = optionFont.MeasureString(_options[i]);
             int diff = i - middle;
-            RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, _options[i], new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) + diff * Constants.MENU_BUFFER));
+            RenderUtilities.CreateBorderOnWord(SpriteBatch, optionFont, _options[i], new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2) + 100 + diff * Constants.MENU_BUFFER));
         }
 
 

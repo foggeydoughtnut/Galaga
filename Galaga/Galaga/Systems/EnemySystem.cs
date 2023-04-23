@@ -2,13 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Galaga.Systems;
@@ -122,9 +119,15 @@ public class EnemySystem : ObjectSystem
 
         _enemies = new List<Enemy>();
         _window = window;
+<<<<<<< HEAD
         _bossGalagaNextPos = new Vector2(80.0f, 16.0f);
         _butterflyNextPos = new Vector2(80.0f, 48.0f);
         _beeNextPos = new Vector2(80f, 80.0f);
+=======
+        _bossGalagaNextPos = new Vector2(66.0f, 18.0f);
+        _butterflyNextPos = new Vector2(66.0f, 50.0f);
+        _beeNextPos = new Vector2(66.0f, 82.0f);
+>>>>>>> ScoreAndStyling
 
         _destroyedEnemiesThisStage = 0;
 
@@ -619,9 +622,15 @@ public class EnemySystem : ObjectSystem
                 }
                 else
                 {
+<<<<<<< HEAD
                     _bossGalagaNextPos = new Vector2(80.0f, 16.0f);
                     _butterflyNextPos = new Vector2(80.0f, 48.0f);
                     _beeNextPos = new Vector2(80.0f, 80.0f);
+=======
+                    _bossGalagaNextPos = new Vector2(66.0f, 34.0f);
+                    _butterflyNextPos = new Vector2(66.0f, 66.0f);
+                    _beeNextPos = new Vector2(66.0f, 98.0f);
+>>>>>>> ScoreAndStyling
                 }
                 if (_roundIndex % _rounds.Count == 0)
                 {
@@ -822,12 +831,12 @@ public class EnemySystem : ObjectSystem
             enemy.Render(spriteBatch);
     }
 
-    public override void ObjectHit(Guid id)
+    public void ObjectHit(Guid id, bool instantDeath = false)
     {
         Enemy hitEnemy = _enemies.First(e => e.Id == id);
         hitEnemy.health--;
 
-        if (hitEnemy.health > 0)
+        if (hitEnemy.health > 0 && !instantDeath)
         {
             _audioSystem.PlaySoundEffect("boss.1");
             return;

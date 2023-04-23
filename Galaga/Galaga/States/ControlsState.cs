@@ -68,9 +68,10 @@ namespace Galaga.States
         }
         public override void LoadContent(ContentManager contentManager)
         {
-            Fonts.Add("default", contentManager.Load<SpriteFont>("Fonts/DemoFont1"));
-            Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));
-            Fonts.Add("veryBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
+            Textures.Add("background", contentManager.Load<Texture2D>("Images/Background"));
+            Fonts.Add("galaga", contentManager.Load<SpriteFont>("Fonts/File"));
+            Fonts.Add("galagaBig", contentManager.Load<SpriteFont>("Fonts/File2"));
+            Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
         }
 
 
@@ -151,13 +152,14 @@ namespace Galaga.States
             this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
             this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+            SpriteBatch.Draw(Textures["background"], new Rectangle(0, 0, renderTarget.Width, renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
 
-            SpriteFont bigFont = Fonts["big"];
+            SpriteFont bigFont = Fonts["galagaBig"];
             Vector2 titleSize = bigFont.MeasureString("Controls");
             RenderUtilities.CreateBorderOnWord(SpriteBatch, bigFont, "Controls",
                 new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 8)));
 
-            SpriteFont font = Fonts["default"];
+            SpriteFont font = Fonts["galaga"];
             var middle = _controls.Count / 2;
             if (_listening)
             {

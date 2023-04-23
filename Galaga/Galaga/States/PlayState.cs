@@ -21,9 +21,9 @@ public class PlayState : GameState
     private void InitializeState()
     {
         _playStates.Clear();
-        _playStates.Add(PlayStates.Loser, new LoserState(Graphics, Window));
+        _playStates.Add(PlayStates.Loser, new LoserState(Graphics, Window, Textures));
         _playStates.Add(PlayStates.Play, new PlaySubPlayState(Graphics, Window, Textures, _audioSystem));
-        _playStates.Add(PlayStates.Pause, new PauseSubPlayState(Graphics, Window));
+        _playStates.Add(PlayStates.Pause, new PauseSubPlayState(Graphics, Window, Textures));
        
         _currentPlayState = PlayStates.Play;
         _nextPlayState = PlayStates.Play;
@@ -33,9 +33,9 @@ public class PlayState : GameState
     
     public override void LoadContent(ContentManager contentManager)
     {
-        Fonts.Add("default", contentManager.Load<SpriteFont>("Fonts/DemoFont1"));
-        Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));
-        Fonts.Add("vBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
+        Fonts.Add("galaga", contentManager.Load<SpriteFont>("Fonts/File"));
+        Fonts.Add("galagaBig", contentManager.Load<SpriteFont>("Fonts/File2"));
+        Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
         //Song song = contentManager.Load<Song>("Audio/Take Me Out to the Ball Game");
         Textures.Add("ship", contentManager.Load<Texture2D>("Images/PlayerShip"));
         Textures.Add("playerBullet", contentManager.Load<Texture2D>("Images/PlayerBullet"));
@@ -81,6 +81,7 @@ public class PlayState : GameState
             MediaPlayer.IsRepeating = false;
         }
         _nextPlayState = _playStates[_currentPlayState].Update(gameTime);
+        _currentPlayState = _nextPlayState;
         if (_nextPlayState != PlayStates.Finish) return GameStates.GamePlay;
         
         InitializeState();
@@ -93,6 +94,5 @@ public class PlayState : GameState
         //SpriteBatch.Begin();
         _playStates[_currentPlayState].Render(SpriteBatch, Fonts);
         //SpriteBatch.End();
-        _currentPlayState = _nextPlayState;
     }
 }

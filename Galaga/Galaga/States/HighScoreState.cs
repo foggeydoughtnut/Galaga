@@ -32,8 +32,10 @@ public class HighScoreState : GameState
 
     public override void LoadContent(ContentManager contentManager)
     {
-        Fonts.Add("default", contentManager.Load<SpriteFont>("Fonts/DemoFont1"));
-        Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));    
+        Textures.Add("background", contentManager.Load<Texture2D>("Images/Background"));
+        Fonts.Add("galaga", contentManager.Load<SpriteFont>("Fonts/File"));
+        Fonts.Add("galagaBig", contentManager.Load<SpriteFont>("Fonts/File2"));
+        Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
         _tracker = HighScoreTracker.GetTracker();
     }
 
@@ -57,14 +59,16 @@ public class HighScoreState : GameState
         Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
         Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+        SpriteBatch.Draw(Textures["background"], new Rectangle(0, 0, renderTarget.Width, renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
+
         // High Score Title
-        SpriteFont bigFont = Fonts["big"];
+        SpriteFont bigFont = Fonts["galagaBig"];
         Vector2 titleSize = bigFont.MeasureString("High Scores");
         RenderUtilities.CreateBorderOnWord(SpriteBatch, bigFont, "High Scores",
             new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 8)));
         
         // No high scores
-        SpriteFont font = Fonts["default"];
+        SpriteFont font = Fonts["galaga"];
         int highScoreCount = _tracker.HighScores.Count;
         if (highScoreCount == 0)
         {

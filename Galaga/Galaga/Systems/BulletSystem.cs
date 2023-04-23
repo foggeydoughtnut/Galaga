@@ -59,7 +59,7 @@ public class BulletSystem : ObjectSystem
             bullet.Render(spriteBatch);
     }
 
-    public override void ObjectHit(Guid id)
+    public void ObjectHit(Guid id)
     {
         _bullets.RemoveAll(delegate(Bullet e) 
         {

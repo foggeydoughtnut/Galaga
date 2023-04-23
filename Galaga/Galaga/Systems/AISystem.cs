@@ -14,7 +14,7 @@ public class AiSystem : System
     private readonly EnemySystem _enemySystem;
     private readonly PlayerShip _player;
     private readonly BulletSystem _bulletSystem;
-    private readonly TimeSpan _bulletLimiter = new(0, 0, 0, 0, 350);
+    private readonly TimeSpan _bulletLimiter = new(0, 0, 0, 0, 300);
     private TimeSpan _timeSinceFire = TimeSpan.Zero;
     private Enemy _lastFiredEnemy;
 
@@ -28,14 +28,14 @@ public class AiSystem : System
     public override void Update(GameTime gameTime)
     {
         _timeSinceFire += gameTime.ElapsedGameTime;
-        var enemies = _enemySystem.GetEnemies().ToList();
-        if (!enemies.Any() || !enemies.Where(e=>e.Position.X is > 0 and < Constants.GAMEPLAY_X).Any())
+        var enemies = _enemySystem.GetEnemies().Where(e=>e.Position.X is > 0 and < Constants.GAMEPLAY_X).ToList();
+        if (!enemies.Any() || !enemies.Any())
         {
             MoveTowardsCenter(gameTime.ElapsedGameTime);
             return;
         }
 
-        var enemyBullets = _bulletSystem.GetBullets().Where(b => b.VelocityY > 0).ToList();
+        var enemyBullets = _bulletSystem.GetBullets().Where(b => b.VelocityY > 0 && b.Position.Y > 150).ToList();
         var attackingEnemies = enemies.Where(e => e.attack && e.Position.Y > 150).ToList();
         // If something is coming at us, avoid it
         if (enemyBullets.Any() || attackingEnemies.Any())
@@ -43,14 +43,15 @@ public class AiSystem : System
             var objects = enemyBullets.Cast<Object>().ToList();
             objects.AddRange(attackingEnemies);
             var closestObject = FindClosestObject(objects);
+            if (closestObject is null) return;
             var distToObject = closestObject.Position.X - _player.Position.X; 
             if (Math.Abs(distToObject) < 50)
-                MoveAwayFromIncoming(distToObject, _player.Position.Y - closestObject.Position.Y ,gameTime.ElapsedGameTime);
+                MoveAwayFromIncoming(distToObject, gameTime.ElapsedGameTime);
             else
                 MoveTowardsCenter(gameTime.ElapsedGameTime);
-
-            if(enemies.Where(e => Math.Abs(e.Position.X - _player.Position.X) < 5).Any())
-                AttemptFire();
+            var closeEnemies = enemies.Where(e => Math.Abs(e.Position.X - _player.Position.X) < 5).ToList();
+            if(closeEnemies.Any())
+                AttemptFire(closeEnemies.First());
         }
         // Nothing is coming at us, so attack
         else
@@ -58,6 +59,7 @@ public class AiSystem : System
             if(_lastFiredEnemy is not EnemyBossGalaga {health: 2} && enemies.Count > 1)
                 enemies.Remove(_lastFiredEnemy);
             var closestEnemy = FindClosestXDirectionEnemy(enemies);
+            if (closestEnemy is null) return;
             var distToEnemy = _player.Position.X - closestEnemy.Position.X;
             switch (distToEnemy)
             {
@@ -68,14 +70,13 @@ public class AiSystem : System
                     MoveRight(gameTime.ElapsedGameTime);
                     break;
                 default:
-                    AttemptFire();
-                    _lastFiredEnemy = closestEnemy;
+                    AttemptFire(closestEnemy);
                     break;
             }
 
             // Handle the challenging stage when they come out of the bottom
             var bottomOfEnemy = closestEnemy.Position.Y + closestEnemy.Dimensions.Y;
-            if (bottomOfEnemy > _player.Position.Y && Math.Abs(distToEnemy) < 20)
+            if (bottomOfEnemy > _player.Position.Y && Math.Abs(distToEnemy) < 50)
             {
                 if(distToEnemy > 0)
                     MoveRight(gameTime.ElapsedGameTime);
@@ -105,7 +106,7 @@ public class AiSystem : System
         }
     }
 
-    private void MoveAwayFromIncoming(int distToIncomingX, int distToIncomingY, TimeSpan elapsedTime)
+    private void MoveAwayFromIncoming(int distToIncomingX, TimeSpan elapsedTime)
     {
         switch (distToIncomingX)
         {
@@ -129,23 +130,31 @@ public class AiSystem : System
     }
 
     
-    private void AttemptFire()
+    private void AttemptFire(Enemy enemy)
     {
         if (_timeSinceFire < _bulletLimiter) return;
         _timeSinceFire = TimeSpan.Zero;
         var position = _player.Position;
         position.X += _player.Dimensions.X / 2;
         _bulletSystem.FirePlayerBullet(position);
+        _lastFiredEnemy = enemy;
     }
 
     private Object FindClosestObject(IEnumerable<Object> objects)
     {
+        objects = FindObjectsInFrame(objects);
         return objects.MinBy(a => Distance2DSquared(a.Position, _player.Position));
     }
     
     private Enemy FindClosestXDirectionEnemy(IEnumerable<Enemy> objects)
     {
+        objects = FindObjectsInFrame(objects).Cast<Enemy>();
         return objects.MinBy(a => Math.Abs(a.Position.X - _player.Position.X));
+    }
+
+    private List<Object> FindObjectsInFrame(IEnumerable<Object> objects)
+    {
+        return objects.Where(o => o.Position.X is < Constants.GAMEPLAY_X and > 0).ToList();
     }
 
     private static double Distance2DSquared(Point p1, Point p2)

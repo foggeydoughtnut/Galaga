@@ -29,9 +29,10 @@ public class CreditState : GameState
 
     public override void LoadContent(ContentManager contentManager)
     {
-        Fonts.Add("default", contentManager.Load<SpriteFont>("Fonts/DemoFont1"));
-        Fonts.Add("big", contentManager.Load<SpriteFont>("Fonts/DemoFont2"));
-        Fonts.Add("veryBig", contentManager.Load<SpriteFont>("Fonts/DemoFont3"));
+        Textures.Add("background", contentManager.Load<Texture2D>("Images/Background"));
+        Fonts.Add("galaga", contentManager.Load<SpriteFont>("Fonts/File"));
+        Fonts.Add("galagaBig", contentManager.Load<SpriteFont>("Fonts/File2"));
+        Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
     }
 
     public override GameStates Update(GameTime gameTime)
@@ -46,13 +47,14 @@ public class CreditState : GameState
         this.Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
         this.Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+        SpriteBatch.Draw(Textures["background"], new Rectangle(0, 0, renderTarget.Width, renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
 
-        SpriteFont bigFont = Fonts["big"];
+        SpriteFont bigFont = Fonts["galagaBig"];
         Vector2 titleSize = bigFont.MeasureString("Credits");
         RenderUtilities.CreateBorderOnWord(SpriteBatch, bigFont, "Credits",
             new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 4)));
 
-        SpriteFont font = Fonts["default"];
+        SpriteFont font = Fonts["galaga"];
         Vector2 stringSize = font.MeasureString("We Did This. Trey Crowther and Jeff Anderson.");
         RenderUtilities.CreateBorderOnWord(SpriteBatch, font, "We Did This. Trey Crowther and Jeff Anderson.", new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2)));
 

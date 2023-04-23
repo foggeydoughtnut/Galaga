@@ -60,7 +60,7 @@ public class PlayerSystem : ObjectSystem
         _audioSystem = audioSystem;
 
         _playerShip = new PlayerShip(
-            position: new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS * 2),
+            position: new Point(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS),
             bounds: new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y),
             dimensions: new Point(Constants.CHARACTER_DIMENSIONS),
             shipTexture,
@@ -69,7 +69,7 @@ public class PlayerSystem : ObjectSystem
         );
         for (var i = 0; i < 3; i++)
             _liveShips.Add(new PlayerShip(
-                position: new Point(i * Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y - Constants.CHARACTER_DIMENSIONS),
+                position: new Point(i * Constants.CHARACTER_DIMENSIONS, Constants.RENDER_TARGET_Y - Constants.CHARACTER_DIMENSIONS),
                 bounds: new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y),
                 dimensions: new Point(Constants.CHARACTER_DIMENSIONS),
                 shipTexture,
@@ -122,9 +122,6 @@ public class PlayerSystem : ObjectSystem
             ship.Render(spriteBatch);
     }
 
-    public override void ObjectHit(Guid id)
-    {
-    }
     public void PlayerHit()
     {
         _particleSystem.PlayerDeath(_playerShip.Position);
