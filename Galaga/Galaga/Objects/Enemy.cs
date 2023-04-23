@@ -90,6 +90,7 @@ public abstract class Enemy : Object
                 if (Math.Abs(_breathingMovement.X) > 4)
                 {
                     Position.X += _breathingMovement.X < 0 ? 1 : -1;
+                    StartAttackPos.X += _breathingMovement.X < 0 ? 1 : -1;
                     _breathingMovement.X = 0;
                 }
             }
@@ -123,6 +124,8 @@ public abstract class Enemy : Object
                 {
                     Position.X += _breathingMovement.X < 0 ? 1 : -1;
                     Position.Y += _breathingMovement.Y < 0 ? 1 : -1;
+                    StartAttackPos.X += _breathingMovement.X < 0 ? 1 : -1;
+                    StartAttackPos.Y += _breathingMovement.Y < 0 ? 1 : -1;
                     _breathingMovement = Vector2.Zero;
                 }
             }

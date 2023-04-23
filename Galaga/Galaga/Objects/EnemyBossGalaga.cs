@@ -44,31 +44,39 @@ namespace Galaga.Objects
 
             _isStartingOnLeft = Position.X < Constants.GAMEPLAY_X / 2;
             _playerPosition = Player.Position;
-
+            List<Vector2> pathToBeRotated = new();
             if (_isStartingOnLeft)
             {
+                List<Vector2> topCounterClockwiseSemiCircle = CircleCreator.CreateCounterClockwiseCircle(StartAttackPos.X - 16, StartAttackPos.Y - 8, 16).ToList();
+                topCounterClockwiseSemiCircle.RemoveRange(28, 12);
+                _path.AddRange(topCounterClockwiseSemiCircle);
                 // Create Counter clockwise circle path, then travel on sin wave path
 
                 // Counter Clockwise path
-                _path.AddRange(CircleCreator.CreateCounterClockwiseCircle(StartAttackPos.X + 24, StartAttackPos.Y + 24, 24));
-                    
+                pathToBeRotated.AddRange(CircleCreator.CreateCounterClockwiseCircle(StartAttackPos.X + 24, StartAttackPos.Y + 24, 24));
+
                 // Sin wave path
-                _path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 200f, _path[_path.Count-1].X, 500f, _path[_path.Count - 1].Y, 5f));
+                pathToBeRotated.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 200f, pathToBeRotated[^1].X, 500f, pathToBeRotated[^1].Y, 5f));
             }
             else
             {
+                List<Vector2> topClockwiseCircle = CircleCreator.CreateClockwiseCircle(StartAttackPos.X + 16, StartAttackPos.Y - 8, 16).ToList();
+                topClockwiseCircle.RemoveRange(28, 12);
+                _path.AddRange(topClockwiseCircle);
                 // Create clockwise circle path, then travel on sin wave path
 
                 // Clockwise circle path
-                _path.AddRange(CircleCreator.CreateClockwiseCircle(Position.X + 24, Position.Y - 24, 24));
+                pathToBeRotated.AddRange(CircleCreator.CreateClockwiseCircle(Position.X + 24, Position.Y - 24, 24));
 
 
                 // Sin wave path
-                _path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 125f, _path[_path.Count - 1].X, 500f, _path[_path.Count - 1].Y, 5f));
+                pathToBeRotated.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 125f, pathToBeRotated[^1].X, 500f, pathToBeRotated[^1].Y, 5f));
             }
 
             float angleInRadians = CircleCreator.GetAngleRadians(new(Position.X, Position.Y), new(_playerPosition.X, _playerPosition.Y));
-            _rotatedPath = CircleCreator.RotatePath(_path, angleInRadians, Position.X, Position.Y);
+            _rotatedPath = CircleCreator.RotatePath(pathToBeRotated, angleInRadians, Position.X, Position.Y);
+            _path.AddRange(_rotatedPath);
+
             //_rotatedPath = _path;
 
             base.Attack();
@@ -85,9 +93,9 @@ namespace Galaga.Objects
             base.CalculateAttackPath();
 
             // Calculate velocity to go along the path
-            if (_rotatedPath.Count > 0)
+            if (_path.Count > 0)
             {
-                Vector2 nextPoint = _rotatedPath[0];
+                Vector2 nextPoint = _path[0];
                 
                 float xDistance = nextPoint.X - Position.X;
                 float xDistanceSquared = xDistance * xDistance;
@@ -95,14 +103,14 @@ namespace Galaga.Objects
                 float yDistanceSquared = yDistance * yDistance;
                 double totalDistance = Math.Sqrt(xDistanceSquared + yDistanceSquared);
                 if (totalDistance <= Constants.CHARACTER_DIMENSIONS)
-                    _rotatedPath.RemoveAt(0);
+                    _path.RemoveAt(0);
                 VelocityX = VelocityVector * xDistance / totalDistance;
                 VelocityY = VelocityVector * yDistance / totalDistance;
             }
             // If the butterfly hits the bottom of the stage, then wrap
             if (Position.Y > Constants.GAMEPLAY_Y + 50)
             {
-                _rotatedPath.Clear();
+                _path.Clear();
                 _path.Clear();
                 ResetVelocity();
                 Position.X = StartAttackPos.X;
@@ -110,7 +118,7 @@ namespace Galaga.Objects
                 VelocityY = VelocityVector / 2;
             }
             // Set the velocity to be straight down after the butterfly hits the bottom of the stage and it teleported up.
-            if (Position.Y >= StartAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)
+            if (Position.Y >= StartAttackPos.Y && _path.Count == 0)
             {
                 VelocityY = 0;
                 Position.Y = StartAttackPos.Y;
@@ -133,11 +141,11 @@ namespace Galaga.Objects
         {
             base.Render(spriteBatch);
 
-            if (DEBUG)
+            if (true)
             {
-                for (int i = 0; i < _rotatedPath.Count; i++)
+                for (int i = 0; i < _path.Count; i++)
                 {
-                    Vector2 point = _rotatedPath[i];
+                    Vector2 point = _path[i];
                     spriteBatch.Draw(_debugTexture, new Vector2(point.X, point.Y), Color.White);
                 }
             }
