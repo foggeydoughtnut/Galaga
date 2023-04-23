@@ -70,12 +70,26 @@ public class CollisionDetectionSystem : System
                 bool intersects = gameObjects[i].Item2.Intersects(gameObjects[j].Item2);
                 if (intersects)
                 {
+                    var iType = gameObjects[i].Item3;
+                    var jType = gameObjects[j].Item3;
+                    // If one is an enemy and the other is a player then the enemy dies instantly,
+                    // even if it's a boss galaga
+                    if (gameObjects[i].Item3 == "player" && gameObjects[j].Item3 == "enemy"
+                        || gameObjects[j].Item3 == "player" && gameObjects[i].Item3 == "enemy")
+                    {
+                        // Find which one is the enemy
+                        if (gameObjects[i].Item3 == "enemy")
+                            iType = "death";
+                        else
+                            jType = "death";
+                    }
                     // If they do, mark that both of add to the collisions dictionary and mark that both collided
 
                     if (!_collisions.ContainsKey(gameObjects[i].Item1))
-                        _collisions.Add(gameObjects[i].Item1, gameObjects[i].Item3);
+                        _collisions.Add(gameObjects[i].Item1, iType);
                     if (!_collisions.ContainsKey(gameObjects[j].Item1))
-                        _collisions.Add(gameObjects[j].Item1, gameObjects[j].Item3);
+                        _collisions.Add(gameObjects[j].Item1, jType);
+                    
                 }
             }
         }
@@ -95,6 +109,8 @@ public class CollisionDetectionSystem : System
             {
                 _enemySystem.ObjectHit(collision.Key);
             }
+            else if(collision.Value == "death")
+                _enemySystem.ObjectHit(collision.Key, true);
         }
     }
 

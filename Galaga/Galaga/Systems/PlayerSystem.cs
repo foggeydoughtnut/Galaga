@@ -122,9 +122,6 @@ public class PlayerSystem : ObjectSystem
             ship.Render(spriteBatch);
     }
 
-    public override void ObjectHit(Guid id)
-    {
-    }
     public void PlayerHit()
     {
         _particleSystem.PlayerDeath(_playerShip.Position);

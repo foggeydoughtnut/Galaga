@@ -693,12 +693,12 @@ public class EnemySystem : ObjectSystem
             enemy.Render(spriteBatch);
     }
 
-    public override void ObjectHit(Guid id)
+    public void ObjectHit(Guid id, bool instantDeath = false)
     {
         Enemy hitEnemy = _enemies.First(e => e.Id == id);
         hitEnemy.health--;
 
-        if (hitEnemy.health > 0)
+        if (hitEnemy.health > 0 && !instantDeath)
         {
             _audioSystem.PlaySoundEffect("boss.1");
             return;
