@@ -39,7 +39,6 @@ public abstract class Enemy : Object
 
     private double _elapsedTimeTotal;
     private Vector2 _breathingVelocity;
-    private int _direction; // Negative when breathing in, positive when out
     private Vector2 _breathingMovement;
     public Point StartAttackPos;
 
@@ -55,8 +54,8 @@ public abstract class Enemy : Object
         _canAttack = canAttack;
         _elapsedTimeTotal = 0;
         attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
-        _direction = 1;
         _breathingMovement = new();
+        StartAttackPos = new();
     }
 
     // This one is for boss Galaga since it has more than 1 texture
@@ -68,33 +67,54 @@ public abstract class Enemy : Object
         rnd = new();
         _bulletSystem = bulletSystem;
         _canAttack = canAttack;
-
+        _breathingMovement = new();
+        StartAttackPos = new();
         attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
+        _elapsedTimeTotal = 0;
+
     }
 
     public override void Update(TimeSpan elapsedTime)
     {
         base.Update(elapsedTime);
         _elapsedTimeTotal += elapsedTime.TotalSeconds;
+        if (ReachedEndOfEntrancePath && !EnemySystem.Breathing)
+        {
+            _breathingVelocity = new(EnemySystem.HorizontalDirection, 0);
+            _breathingVelocity *= 90;
+            _breathingVelocity *= (float)elapsedTime.TotalSeconds;
+            _breathingMovement += _breathingVelocity;
 
+            if (!attack)
+            {
+                if (Math.Abs(_breathingMovement.X) > 4)
+                {
+                    Position.X += _breathingMovement.X < 0 ? 1 : -1;
+                    _breathingMovement.X = 0;
+                }
+            }
+            else
+            {
+                if (Math.Abs(_breathingMovement.X) > 4)
+                {
+                    StartAttackPos.X += _breathingMovement.X < 0 ? 1 : -1;
+                    _breathingMovement.X = 0;
+                }
+            }
+        }
         if (EnemySystem.Breathing)
         {
             if (!attack)
             {
-                if (Math.Cos(0.5 * Math.PI * _elapsedTimeTotal) >= 0)
-                    _direction = 1;
-                else
-                    _direction = -1;
-
                 if (Position.X < Constants.GAMEPLAY_X / 2)
                 {
-                    _breathingVelocity = new(1f * _direction, -1.0f * _direction);
+                    _breathingVelocity = new(1f * EnemySystem.BreathingDirection, -1.0f * EnemySystem.BreathingDirection);
                     _breathingVelocity *= 90;
                     _breathingVelocity *= (float)elapsedTime.TotalSeconds;
-                }
+                } 
                 else
                 {
-                    _breathingVelocity = new(-1.0f * _direction , -1.0f * _direction);
+                    _breathingVelocity = new(-1.0f * EnemySystem.BreathingDirection, -1.0f * EnemySystem.BreathingDirection);
                     _breathingVelocity *= 90;
                     _breathingVelocity *= (float)elapsedTime.TotalSeconds;
                 }
@@ -103,10 +123,29 @@ public abstract class Enemy : Object
                 {
                     Position.X += _breathingMovement.X < 0 ? 1 : -1;
                     Position.Y += _breathingMovement.Y < 0 ? 1 : -1;
-                    if (_breathingMovement.X > 0) _breathingMovement.X = 0;
-                    else _breathingMovement.X = 0;
-                    if (_breathingMovement.Y > 0) _breathingMovement.Y = 0;
-                    else _breathingMovement.Y = 0;
+                    _breathingMovement = Vector2.Zero;
+                }
+            }
+            else
+            {
+                if (Position.X < Constants.GAMEPLAY_X / 2)
+                {
+                    _breathingVelocity = new(1f * EnemySystem.BreathingDirection, -1.0f * EnemySystem.BreathingDirection);
+                    _breathingVelocity *= 90;
+                    _breathingVelocity *= (float)elapsedTime.TotalSeconds;
+                }
+                else
+                {
+                    _breathingVelocity = new(-1.0f * EnemySystem.BreathingDirection, -1.0f * EnemySystem.BreathingDirection);
+                    _breathingVelocity *= 90;
+                    _breathingVelocity *= (float)elapsedTime.TotalSeconds;
+                }
+                _breathingMovement += _breathingVelocity;
+                if (Math.Abs(_breathingMovement.Y) > 4 && Math.Abs(_breathingMovement.X) > 2)
+                {
+                    StartAttackPos.X += _breathingMovement.X < 0 ? 1 : -1;
+                    StartAttackPos.Y += _breathingMovement.Y < 0 ? 1 : -1;
+                    _breathingMovement = Vector2.Zero;
                 }
             }
         }

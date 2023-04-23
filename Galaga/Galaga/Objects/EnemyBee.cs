@@ -26,6 +26,7 @@ public class EnemyBee : Enemy
     protected override void Attack()
     {
         _isStartingOnLeft = Position.X < Constants.GAMEPLAY_X / 2;
+        StartAttackPos = Position;
 
         if (_isStartingOnLeft)
         {

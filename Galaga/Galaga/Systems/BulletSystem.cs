@@ -79,9 +79,9 @@ public class BulletSystem : ObjectSystem
 
     public void FirePlayerBullet(Point position)
     {
-        _audioSystem.PlaySoundEffect("shot");
         if (_numberOfPlayerBulletsOut < 999) // In the game you could only have two bullets out at a time for added difficulty but this one he said he wanted it not to be limited
         {
+            _audioSystem.PlaySoundEffect("shot");
             _bullets.Add(new Bullet(
                 position: new Point(position.X-1, position.Y-6),
                 dimensions: new Point(_playerBulletTexture.Width, _playerBulletTexture.Height),

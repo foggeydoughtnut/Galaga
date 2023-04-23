@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -48,7 +49,7 @@ public class EnemySystem : ObjectSystem
     private readonly List<Texture2D> _bossGalagaTextures;
 
     private readonly Texture2D _debugTexture;
-    private readonly int _maxEnemiesPerRound = 40;
+    private readonly int _maxEnemiesPerRound = 40; //40
 
 
 
@@ -91,8 +92,13 @@ public class EnemySystem : ObjectSystem
     private float _breathDelayTimer;
     private float _breathDelay;
     public static bool Breathing;
+    public static int BreathingDirection;
     #endregion
 
+    public static int HorizontalDirection;
+    private Vector2 _idleMovementOffset;
+    private Vector2 _idleVelocity;
+    private double _totalElapsedTimeBreathing;
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
     public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures, Texture2D dragonflyTexture, Texture2D satelliteTexture, AudioSystem audioSystem)
@@ -111,13 +117,14 @@ public class EnemySystem : ObjectSystem
         _dragonflyPathEven = new();
         _satellitePath = new();
         _audioSystem = audioSystem;
+        _idleMovementOffset = new();
 
 
         _enemies = new List<Enemy>();
         _window = window;
-        _bossGalagaNextPos = new Vector2(66.0f, 2.0f);
-        _butterflyNextPos = new Vector2(66.0f, 34.0f);
-        _beeNextPos = new Vector2(66.0f, 66.0f);
+        _bossGalagaNextPos = new Vector2(80.0f, 16.0f);
+        _butterflyNextPos = new Vector2(80.0f, 48.0f);
+        _beeNextPos = new Vector2(80f, 80.0f);
 
         _destroyedEnemiesThisStage = 0;
 
@@ -155,7 +162,11 @@ public class EnemySystem : ObjectSystem
         _breathDelayTimer = 0f;
         _breathDelay = 3f;
         Breathing = false;
+        _totalElapsedTimeBreathing = 0;
+        BreathingDirection = 1;
         #endregion
+        HorizontalDirection = 1;
+
     }
 
     #region Entrance Paths
@@ -364,27 +375,27 @@ public class EnemySystem : ObjectSystem
                 {
                     List<Vector2> path = new()
                     {
-                        new(Constants.GAMEPLAY_X / 2 + 32, 3 * Constants.GAMEPLAY_Y / 4),
-                        new(Constants.GAMEPLAY_X / 2 + 32, Constants.GAMEPLAY_Y / 4),
+                        new(Constants.GAMEPLAY_X / 2 + 32, 3 * Constants.GAMEPLAY_Y / 4 - 24),
+                        new(Constants.GAMEPLAY_X / 2 + 32, Constants.GAMEPLAY_Y / 4 - 24),
                     };
 
-                    List<Vector2> topCounterClockwiseSemiCircle = CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 2 + 16, Constants.GAMEPLAY_Y / 4, 16).ToList();
+                    List<Vector2> topCounterClockwiseSemiCircle = CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 2 + 16, Constants.GAMEPLAY_Y / 4 - 24, 16).ToList();
                     topCounterClockwiseSemiCircle.RemoveRange(20, 20);
                     path.AddRange(topCounterClockwiseSemiCircle);
 
-                    path.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2));
+                    path.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2 - 24));
 
-                    List<Vector2> bottomCounterClockwiseSemiCircle = CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 2 + 16, Constants.GAMEPLAY_Y / 2, 16).ToList();
+                    List<Vector2> bottomCounterClockwiseSemiCircle = CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 2 + 16, Constants.GAMEPLAY_Y / 2 - 24, 16).ToList();
                     bottomCounterClockwiseSemiCircle.RemoveRange(0, 20);
                     path.AddRange(bottomCounterClockwiseSemiCircle);
 
                     if (j % 2 == 1)
                     {
-                        enemy = new("bossGalaga", path, new(0, 7 * Constants.GAMEPLAY_Y / 8), new(Constants.GAMEPLAY_X + 50, -50));
+                        enemy = new("bossGalaga", path, new(0, 7 * Constants.GAMEPLAY_Y / 8 - 24), new(Constants.GAMEPLAY_X + 50, -50));
                     }
                     else
                     {
-                        enemy = new("bee", path, new(0, 7 * Constants.GAMEPLAY_Y / 8), new(Constants.GAMEPLAY_X + 50, -50));
+                        enemy = new("bee", path, new(0, 7 * Constants.GAMEPLAY_Y / 8 - 24), new(Constants.GAMEPLAY_X + 50, -50));
                     }
                     group.Add(enemy);
                 }
@@ -392,21 +403,21 @@ public class EnemySystem : ObjectSystem
                 {
                     List<Vector2> path = new()
                     {
-                        new(Constants.GAMEPLAY_X / 2 - 32, 3 * Constants.GAMEPLAY_Y / 4),
-                        new(Constants.GAMEPLAY_X / 2 - 32, Constants.GAMEPLAY_Y / 4),
+                        new(Constants.GAMEPLAY_X / 2 - 32, 3 * Constants.GAMEPLAY_Y / 4 - 24),
+                        new(Constants.GAMEPLAY_X / 2 - 32, Constants.GAMEPLAY_Y / 4 - 24),
                     };
 
-                    List<Vector2> topClockwiseSemiCircle = CircleCreator.CreateClockwiseCircle(Constants.GAMEPLAY_X / 2 - 16, Constants.GAMEPLAY_Y / 4, 16).ToList();
+                    List<Vector2> topClockwiseSemiCircle = CircleCreator.CreateClockwiseCircle(Constants.GAMEPLAY_X / 2 - 16, Constants.GAMEPLAY_Y / 4 - 24, 16).ToList();
                     topClockwiseSemiCircle.RemoveRange(20, 20);
                     path.AddRange(topClockwiseSemiCircle);
 
-                    path.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2));
+                    path.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2 - 24));
 
-                    List<Vector2> bottomClockwiseSemiCircle = CircleCreator.CreateClockwiseCircle(Constants.GAMEPLAY_X / 2 - 16, Constants.GAMEPLAY_Y / 2, 16).ToList();
+                    List<Vector2> bottomClockwiseSemiCircle = CircleCreator.CreateClockwiseCircle(Constants.GAMEPLAY_X / 2 - 16, Constants.GAMEPLAY_Y / 2 - 24, 16).ToList();
                     bottomClockwiseSemiCircle.RemoveRange(0, 20);
                     path.AddRange(bottomClockwiseSemiCircle);
 
-                    enemy = new("bee", path, new(7 * Constants.GAMEPLAY_X / 8, 7 * Constants.GAMEPLAY_Y / 8), new(-50, -50));
+                    enemy = new("bee", path, new(7 * Constants.GAMEPLAY_X / 8, 7 * Constants.GAMEPLAY_Y / 8 - 24), new(-50, -50));
                     group.Add(enemy);
                 }
                 else if (i == 3)
@@ -471,6 +482,36 @@ public class EnemySystem : ObjectSystem
 
     public override void Update(GameTime gameTime)
     {
+        if (Math.Sin(0.5 * Math.PI * gameTime.TotalGameTime.TotalSeconds) >= 0)
+            HorizontalDirection = 1;
+        else
+            HorizontalDirection = -1;
+        if (Breathing)
+        {
+            _totalElapsedTimeBreathing += gameTime.ElapsedGameTime.TotalSeconds;
+            if (Math.Sin(0.5 * Math.PI * _totalElapsedTimeBreathing) >= 0)
+                BreathingDirection = 1;
+            else
+                BreathingDirection = -1;
+        }
+
+
+        _idleVelocity = new(HorizontalDirection, 0);
+        _idleVelocity *= 90;
+        _idleVelocity *= (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _idleMovementOffset += _idleVelocity;
+
+        if (Math.Abs(_idleMovementOffset.X) > 4)
+        {
+            _bossGalagaNextPos.X += _idleMovementOffset.X < 0 ? -1 : 1;
+            _butterflyNextPos.X += _idleMovementOffset.X < 0 ? -1 : 1;
+            _beeNextPos.X += _idleMovementOffset.X < 0 ? -1 : 1;
+
+            _idleMovementOffset.X = 0;
+        }
+
+
+
         if (_groupTimerActive)
         {
             if (_isBonusRound) _groupDelay = 4.5f;
@@ -512,9 +553,9 @@ public class EnemySystem : ObjectSystem
                 }
                 else
                 {
-                    _bossGalagaNextPos = new Vector2(66.0f, 18.0f);
-                    _butterflyNextPos = new Vector2(66.0f, 50.0f);
-                    _beeNextPos = new Vector2(66.0f, 82.0f);
+                    _bossGalagaNextPos = new Vector2(80.0f, 16.0f);
+                    _butterflyNextPos = new Vector2(80.0f, 48.0f);
+                    _beeNextPos = new Vector2(80.0f, 80.0f);
                 }
                 if (_roundIndex % _rounds.Count == 0)
                 {
@@ -564,9 +605,9 @@ public class EnemySystem : ObjectSystem
                         _enemies.Add(newBee);
 
                         _beeNextPos.X += Constants.CHARACTER_DIMENSIONS;
-                        if (_beeNextPos.X > Constants.GAMEPLAY_X - 66f)
+                        if (_beeNextPos.X > Constants.GAMEPLAY_X - 80f)
                         {
-                            _beeNextPos.X = 66f;
+                            _beeNextPos.X = 80f;
                             _beeNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }
                     }
@@ -582,9 +623,9 @@ public class EnemySystem : ObjectSystem
                         };
                         _enemies.Add(newButterfly);
                         _butterflyNextPos.X += Constants.CHARACTER_DIMENSIONS;
-                        if (_butterflyNextPos.X > Constants.GAMEPLAY_X - 66f)
+                        if (_butterflyNextPos.X > Constants.GAMEPLAY_X - 80f)
                         {
-                            _butterflyNextPos.X = 66.0f;
+                            _butterflyNextPos.X = 80f;
                             _butterflyNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }
 
@@ -601,9 +642,9 @@ public class EnemySystem : ObjectSystem
                         _enemies.Add(newBossGalaga);
 
                         _bossGalagaNextPos.X += Constants.CHARACTER_DIMENSIONS;
-                        if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X - 66f)
+                        if (_bossGalagaNextPos.X > Constants.GAMEPLAY_X - 80f)
                         {
-                            _bossGalagaNextPos.X = 66.0f;
+                            _bossGalagaNextPos.X = 80.0f;
                             _bossGalagaNextPos.Y += Constants.CHARACTER_DIMENSIONS;
                         }
 
