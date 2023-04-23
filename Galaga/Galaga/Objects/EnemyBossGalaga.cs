@@ -141,7 +141,7 @@ namespace Galaga.Objects
         {
             base.Render(spriteBatch);
 
-            if (true)
+            if (DEBUG)
             {
                 for (int i = 0; i < _path.Count; i++)
                 {
