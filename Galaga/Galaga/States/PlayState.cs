@@ -80,6 +80,7 @@ public class PlayState : GameState
             MediaPlayer.IsRepeating = false;
         }
         _nextPlayState = _playStates[_currentPlayState].Update(gameTime);
+        _currentPlayState = _nextPlayState;
         if (_nextPlayState != PlayStates.Finish) return GameStates.GamePlay;
         
         InitializeState();
@@ -92,6 +93,5 @@ public class PlayState : GameState
         //SpriteBatch.Begin();
         _playStates[_currentPlayState].Render(SpriteBatch, Fonts);
         //SpriteBatch.End();
-        _currentPlayState = _nextPlayState;
     }
 }
