@@ -152,7 +152,7 @@ public class EnemySystem : ObjectSystem
         };
 
         _roundFinished = false;
-        _roundIndex = 1;
+        _roundIndex = 0;
         _roundTimerActive = false;
         _roundDelay = 5f;
 
