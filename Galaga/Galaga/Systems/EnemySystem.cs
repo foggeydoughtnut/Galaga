@@ -46,7 +46,7 @@ public class EnemySystem : ObjectSystem
     private readonly List<Texture2D> _bossGalagaTextures;
 
     private readonly Texture2D _debugTexture;
-    private readonly int _maxEnemiesPerRound = 1;
+    private readonly int _maxEnemiesPerRound = 40;
 
 
 
@@ -119,15 +119,9 @@ public class EnemySystem : ObjectSystem
 
         _enemies = new List<Enemy>();
         _window = window;
-<<<<<<< HEAD
-        _bossGalagaNextPos = new Vector2(80.0f, 16.0f);
-        _butterflyNextPos = new Vector2(80.0f, 48.0f);
-        _beeNextPos = new Vector2(80f, 80.0f);
-=======
-        _bossGalagaNextPos = new Vector2(66.0f, 18.0f);
-        _butterflyNextPos = new Vector2(66.0f, 50.0f);
-        _beeNextPos = new Vector2(66.0f, 82.0f);
->>>>>>> ScoreAndStyling
+        _bossGalagaNextPos = new Vector2(80.0f, 18.0f);
+        _butterflyNextPos = new Vector2(80.0f, 50.0f);
+        _beeNextPos = new Vector2(80.0f, 82.0f);
 
         _destroyedEnemiesThisStage = 0;
 
@@ -622,15 +616,9 @@ public class EnemySystem : ObjectSystem
                 }
                 else
                 {
-<<<<<<< HEAD
-                    _bossGalagaNextPos = new Vector2(80.0f, 16.0f);
-                    _butterflyNextPos = new Vector2(80.0f, 48.0f);
-                    _beeNextPos = new Vector2(80.0f, 80.0f);
-=======
-                    _bossGalagaNextPos = new Vector2(66.0f, 34.0f);
-                    _butterflyNextPos = new Vector2(66.0f, 66.0f);
-                    _beeNextPos = new Vector2(66.0f, 98.0f);
->>>>>>> ScoreAndStyling
+                    _bossGalagaNextPos = new Vector2(80.0f, 34.0f);
+                    _butterflyNextPos = new Vector2(80.0f, 66.0f);
+                    _beeNextPos = new Vector2(80.0f, 98.0f);
                 }
                 if (_roundIndex % _rounds.Count == 0)
                 {
@@ -821,7 +809,6 @@ public class EnemySystem : ObjectSystem
         foreach (Enemy enemy in _enemies)
         {
             enemy.Update(gameTime.ElapsedGameTime);
-            break;
         }
     }
 
