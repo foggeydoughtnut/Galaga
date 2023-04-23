@@ -152,7 +152,7 @@ public class EnemySystem : ObjectSystem
         };
 
         _roundFinished = false;
-        _roundIndex = 0;
+        _roundIndex = 1;
         _roundTimerActive = false;
         _roundDelay = 5f;
 
@@ -299,49 +299,93 @@ public class EnemySystem : ObjectSystem
                 }
                 else if (i == 1)
                 {
-                    List<Vector2> path = new();
-                    path.Add(new(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2));
-                    path.AddRange(CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 4 - 24, Constants.GAMEPLAY_Y / 2, 24));
                     if (j % 2 == 1)
                     {
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2)
+                        };
+                        path.AddRange(CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 4 - 24, Constants.GAMEPLAY_Y / 2, 24));
                         enemy = new("bossGalaga", path, new(0, 7 * Constants.GAMEPLAY_Y / 8));
                     }
                     else
                     {
-                        enemy = new("butterfly", path, new(0, 7 * Constants.GAMEPLAY_Y / 8));
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 4 - Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y / 2 - Constants.CHARACTER_DIMENSIONS/2)
+                        };
+                        path.AddRange(CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 4 - 24 - Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y / 2 - Constants.CHARACTER_DIMENSIONS/2, 24));
+                        enemy = new("butterfly", path, new(-Constants.CHARACTER_DIMENSIONS, 7 * Constants.GAMEPLAY_Y / 8 - Constants.CHARACTER_DIMENSIONS/2));
                     }
                     enemies.Add(enemy);
                 }
                 else if (i == 2)
                 {
-                    List<Vector2> path = new()
+                    if (j % 2 == 1)
                     {
-                        new(3 * Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2)
-                    };
-                    path.AddRange(CircleCreator.CreateClockwiseCircle(3 * Constants.GAMEPLAY_X / 4 + 36, Constants.GAMEPLAY_Y / 2, 36));
-                    enemy = new("butterfly", path, new(Constants.GAMEPLAY_X, 7 * Constants.GAMEPLAY_Y / 8));
+                        List<Vector2> path = new()
+                        {
+                            new(3 * Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2)
+                        };
+                        path.AddRange(CircleCreator.CreateClockwiseCircle(3 * Constants.GAMEPLAY_X / 4 + 36, Constants.GAMEPLAY_Y / 2, 36));
+                        enemy = new("butterfly", path, new(Constants.GAMEPLAY_X, 7 * Constants.GAMEPLAY_Y / 8));
+                    }
+                    else
+                    {
+                        List<Vector2> path = new()
+                        {
+                            new(3 * Constants.GAMEPLAY_X / 4 + Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y/2 - Constants.CHARACTER_DIMENSIONS/2)
+                        };
+                        path.AddRange(CircleCreator.CreateClockwiseCircle(3 * Constants.GAMEPLAY_X / 4 + 36 + Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y / 2 - Constants.CHARACTER_DIMENSIONS/2, 36));
+                        enemy = new("butterfly", path, new(Constants.GAMEPLAY_X + Constants.CHARACTER_DIMENSIONS, 7 * Constants.GAMEPLAY_Y / 8 - Constants.CHARACTER_DIMENSIONS/2));
+                    }
                     enemies.Add(enemy);
                 }
                 else if (i == 3)
                 {
-                    List<Vector2> path = new()
+                    if (j % 2 == 1)
                     {
-                        new(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2)
-                    };
-                    path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 4 + 24, Constants.GAMEPLAY_Y / 2 + 16, 24));
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2)
+                        };
+                        path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 4 + 24, Constants.GAMEPLAY_Y / 2 + 16, 24));
+                        enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2, 0));
+                    }
+                    else
+                    {
+                        List<Vector2> path = new()
+                        {
+                            new(Constants.GAMEPLAY_X / 4 + Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y / 2)
+                        };
+                        path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 4 + 24 + Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y / 2 + 16, 24));
+                        enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2 + Constants.CHARACTER_DIMENSIONS, 0));
+                    }
 
-                    enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2, 0));
                     enemies.Add(enemy);
                 }
                 else
                 {
-                    List<Vector2> path = new()
+                    if (j % 2 == 1)
                     {
-                        new(3 * Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2)
-                    };
-                    path.AddRange(CircleCreator.CreateClockwiseSemiCircle(3 * Constants.GAMEPLAY_X / 4 - 24, Constants.GAMEPLAY_Y / 2 + 16, 24));
+                        List<Vector2> path = new()
+                        {
+                            new(3 * Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2)
+                        };
+                        path.AddRange(CircleCreator.CreateClockwiseSemiCircle(3 * Constants.GAMEPLAY_X / 4 - 24, Constants.GAMEPLAY_Y / 2 + 16, 24));
 
-                    enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2, 0));
+                        enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2, 0));
+                    }
+                    else
+                    {
+                        List<Vector2> path = new()
+                        {
+                            new(3 * Constants.GAMEPLAY_X / 4 - Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y / 2)
+                        };
+                        path.AddRange(CircleCreator.CreateClockwiseSemiCircle(3 * Constants.GAMEPLAY_X / 4 - 24 - Constants.CHARACTER_DIMENSIONS, Constants.GAMEPLAY_Y / 2 + 16, 24));
+
+                        enemy = new("bee", path, new(Constants.GAMEPLAY_X / 2 - Constants.CHARACTER_DIMENSIONS, 0));
+                    }
                     enemies.Add(enemy);
                 }
             }
