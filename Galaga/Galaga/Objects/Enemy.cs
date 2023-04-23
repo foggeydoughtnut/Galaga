@@ -41,6 +41,8 @@ public abstract class Enemy : Object
     private Vector2 _breathingVelocity;
     private int _direction; // Negative when breathing in, positive when out
     private Vector2 _breathingMovement;
+    public Point StartAttackPos;
+
 
 
     public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
@@ -79,7 +81,7 @@ public abstract class Enemy : Object
         {
             if (!attack)
             {
-                if (Math.Sin(0.5 * Math.PI * _elapsedTimeTotal) >= 0)
+                if (Math.Cos(0.5 * Math.PI * _elapsedTimeTotal) >= 0)
                     _direction = 1;
                 else
                     _direction = -1;
@@ -99,7 +101,7 @@ public abstract class Enemy : Object
                 _breathingMovement += _breathingVelocity;
                 if (Math.Abs(_breathingMovement.Y) > 4 && Math.Abs(_breathingMovement.X) > 2)
                 {
-                    Position.X += _breathingMovement.X < 0 ? -1 : 1;
+                    Position.X += _breathingMovement.X < 0 ? 1 : -1;
                     Position.Y += _breathingMovement.Y < 0 ? 1 : -1;
                     if (_breathingMovement.X > 0) _breathingMovement.X = 0;
                     else _breathingMovement.X = 0;
@@ -107,7 +109,6 @@ public abstract class Enemy : Object
                     else _breathingMovement.Y = 0;
                 }
             }
-
         }
 
         if (_canAttack) // Bonus round enemies can't attack
@@ -183,6 +184,8 @@ public abstract class Enemy : Object
     protected virtual void Attack()
     {
         attack = true;
+        StartAttackPos = Position;
+
     }
 
     public virtual void CalculateAttackPath()

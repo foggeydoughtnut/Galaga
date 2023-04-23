@@ -22,7 +22,6 @@ namespace Galaga.Objects
 
         private List<Vector2> _rotatedPath;
 
-        private Point _startAttackPos;
 
 
         public EnemyButterfly(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack)
@@ -36,7 +35,6 @@ namespace Galaga.Objects
         protected override void Attack()
         {
             _playerPosition = Player.Position;
-            _startAttackPos = Position;
             _path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 0f, Position.X, 600f, Position.Y, 2f));
             float angleInRadians = CircleCreator.GetAngleRadians(new(Position.X, Position.Y), new(_playerPosition.X, _playerPosition.Y));
             _rotatedPath = CircleCreator.RotatePath(_path, angleInRadians, Position.X, Position.Y);
@@ -73,15 +71,15 @@ namespace Galaga.Objects
                 _rotatedPath.Clear();
                 _path.Clear();
                 ResetVelocity();
-                Position.X = _startAttackPos.X;
-                Position.Y = _startAttackPos.Y - 150;
+                Position.X = StartAttackPos.X;
+                Position.Y = StartAttackPos.Y - 150;
                 VelocityY = VelocityVector/2;
             }
             // Set the velocity to be straight down after the butterfly hits the bottom of the stage and it teleported up.
-            if (Position.Y >= _startAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)
+            if (Position.Y >= StartAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)
             {
                 VelocityY = 0;
-                Position.Y = _startAttackPos.Y;
+                Position.Y = StartAttackPos.Y;
                 ResetAttackTimer();
             }
         }

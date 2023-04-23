@@ -48,8 +48,7 @@ public class EnemySystem : ObjectSystem
     private readonly List<Texture2D> _bossGalagaTextures;
 
     private readonly Texture2D _debugTexture;
-    //private readonly int _maxEnemiesPerRound = 40;
-    private readonly int _maxEnemiesPerRound = 1;
+    private readonly int _maxEnemiesPerRound = 40;
 
 
 

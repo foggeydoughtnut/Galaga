@@ -21,7 +21,6 @@ namespace Galaga.Objects
 
         private List<Vector2> _rotatedPath;
 
-        private Point _startAttackPos;
 
         private bool _isStartingOnLeft;
 
@@ -43,15 +42,14 @@ namespace Galaga.Objects
         {
             _isStartingOnLeft = Position.X < Constants.GAMEPLAY_X / 2;
             _playerPosition = Player.Position;
-            _startAttackPos = Position;
 
             if (_isStartingOnLeft)
             {
                 // Create Counter clockwise circle path, then travel on sin wave path
 
                 // Counter Clockwise path
-                _path.AddRange(CircleCreator.CreateCounterClockwiseCircle(_startAttackPos.X + 24, _startAttackPos.Y + 24, 24));
-
+                _path.AddRange(CircleCreator.CreateCounterClockwiseCircle(StartAttackPos.X + 24, StartAttackPos.Y + 24, 24));
+                    
                 // Sin wave path
                 _path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 200f, _path[_path.Count-1].X, 500f, _path[_path.Count - 1].Y, 5f));
             }
@@ -105,15 +103,15 @@ namespace Galaga.Objects
                 _rotatedPath.Clear();
                 _path.Clear();
                 ResetVelocity();
-                Position.X = _startAttackPos.X;
-                Position.Y = _startAttackPos.Y - 150;
+                Position.X = StartAttackPos.X;
+                Position.Y = StartAttackPos.Y - 150;
                 VelocityY = VelocityVector / 2;
             }
             // Set the velocity to be straight down after the butterfly hits the bottom of the stage and it teleported up.
-            if (Position.Y >= _startAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)
+            if (Position.Y >= StartAttackPos.Y && _rotatedPath.Count == 0 && _path.Count == 0)
             {
                 VelocityY = 0;
-                Position.Y = _startAttackPos.Y;
+                Position.Y = StartAttackPos.Y;
                 ResetAttackTimer();
             }
         }

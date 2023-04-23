@@ -14,7 +14,6 @@ public class EnemyBee : Enemy
     private List<Vector2> _path;
 
 
-    private Point _startAttackPos;
     private bool _isStartingOnLeft;
     public EnemyBee(Point position, Point dimensions, Texture2D texture, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack) 
         : base(position, dimensions, texture, 2, animationTimeMilliseconds, debugTexture, player, bulletSystem, canAttack)
@@ -27,11 +26,10 @@ public class EnemyBee : Enemy
     protected override void Attack()
     {
         _isStartingOnLeft = Position.X < Constants.GAMEPLAY_X / 2;
-        _startAttackPos = Position;
 
         if (_isStartingOnLeft)
         {
-            List<Vector2> topCounterClockwiseSemiCircle = CircleCreator.CreateCounterClockwiseCircle(_startAttackPos.X - 24, _startAttackPos.Y - 8, 24).ToList();
+            List<Vector2> topCounterClockwiseSemiCircle = CircleCreator.CreateCounterClockwiseCircle(StartAttackPos.X - 24, StartAttackPos.Y - 8, 24).ToList();
             topCounterClockwiseSemiCircle.RemoveRange(28, 12);
             _path.AddRange(topCounterClockwiseSemiCircle);
             List<Vector2> cornerCircle = CircleCreator.CreateClockwiseCircle(2 * Constants.GAMEPLAY_X / 3 - 32, Constants.GAMEPLAY_Y / 2 + 32, 32).ToList();
@@ -40,11 +38,11 @@ public class EnemyBee : Enemy
             _path.AddRange(cornerCircle);
             _path.Add(new(2 * Constants.GAMEPLAY_X / 3, 7 * Constants.GAMEPLAY_Y / 8 - 16));
             _path.AddRange(CircleCreator.CreateClockwiseSemiCircle(2 * Constants.GAMEPLAY_X / 3 - 32, 7 * Constants.GAMEPLAY_Y / 8 - 16, 32));
-            _path.Add(new(_startAttackPos.X, _startAttackPos.Y));
+            _path.Add(new(StartAttackPos.X, StartAttackPos.Y));
         }
         else
         {
-            List<Vector2> topClockwiseCircle = CircleCreator.CreateClockwiseCircle(_startAttackPos.X + 24, _startAttackPos.Y - 8, 24).ToList();
+            List<Vector2> topClockwiseCircle = CircleCreator.CreateClockwiseCircle(StartAttackPos.X + 24, StartAttackPos.Y - 8, 24).ToList();
             topClockwiseCircle.RemoveRange(28, 12);
             _path.AddRange(topClockwiseCircle);
             //_path.Add(new(Constants.GAMEPLAY_X / 3, Constants.GAMEPLAY_Y / 2));
@@ -54,7 +52,7 @@ public class EnemyBee : Enemy
             _path.AddRange(cornerCircle);
             _path.Add(new(Constants.GAMEPLAY_X / 3, 7 * Constants.GAMEPLAY_Y / 8 - 16));
             _path.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 3 + 32, 7 * Constants.GAMEPLAY_Y / 8 - 16, 32));
-            _path.Add(new(_startAttackPos.X, _startAttackPos.Y));
+            _path.Add(new(StartAttackPos.X, StartAttackPos.Y));
         }
 
         base.Attack();
