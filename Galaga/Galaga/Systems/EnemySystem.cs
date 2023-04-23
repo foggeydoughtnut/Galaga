@@ -49,7 +49,7 @@ public class EnemySystem : ObjectSystem
     private readonly List<Texture2D> _bossGalagaTextures;
 
     private readonly Texture2D _debugTexture;
-    private readonly int _maxEnemiesPerRound = 40; //40
+    private readonly int _maxEnemiesPerRound = 40;
 
 
 
@@ -78,7 +78,7 @@ public class EnemySystem : ObjectSystem
     private float _groupTimer;
     private bool _groupTimerActive;
     private float _groupDelay;
-
+    private bool _stoppedRoundSoundEffects;
     private bool _roundFinished;
     private int _roundIndex;
     private float _roundTimer;
@@ -129,6 +129,7 @@ public class EnemySystem : ObjectSystem
         _destroyedEnemiesThisStage = 0;
 
         #region Rounds Initialization
+        _stoppedRoundSoundEffects = false;
         _isBonusRound = false;
         _roundOneEnemies = new();
         AddRoundOne();
@@ -527,6 +528,11 @@ public class EnemySystem : ObjectSystem
         }
         if (_roundTimerActive)
         {
+            if (!_stoppedRoundSoundEffects)
+            {
+                _audioSystem.StopSoundEffects();
+                _stoppedRoundSoundEffects = true;
+            }
             if (_isBonusRound) _roundDelay = 10f;
             else _roundDelay = 5f;
             _roundTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -544,10 +550,10 @@ public class EnemySystem : ObjectSystem
                 _roundFinished = false;
                 _createdEnemies = 0;
                 Breathing = false;
+                _stoppedRoundSoundEffects = false;
 
                 if (_roundIndex % 2 == 0) // bonus round
                 {
-                    Debug.WriteLine("Bonus");
                     _isBonusRound = true;
                     _audioSystem.PlaySoundEffect("bonus");
                 }
@@ -570,7 +576,10 @@ public class EnemySystem : ObjectSystem
             _breathDelayTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (_breathDelayTimer > _breathDelay)
             {
+                if (!Breathing && !_isBonusRound)
+                    _audioSystem.PlaySoundEffect("enemyBreathing", 0.25f);
                 Breathing = true;
+                _breathDelayTimerActive = false;
             }
         }
         if (_destroyedEnemiesThisStage >= _maxEnemiesPerRound)
@@ -665,7 +674,7 @@ public class EnemySystem : ObjectSystem
                 _audioSystem.PlaySoundEffect("stage");
             }
 
-            if (_createdEnemies == _maxEnemiesPerRound)
+            if (_createdEnemies == _maxEnemiesPerRound && !_breathDelayTimerActive)
             {
                 _breathDelayTimerActive = true;
             }

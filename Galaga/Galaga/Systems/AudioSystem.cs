@@ -13,16 +13,38 @@ public class AudioSystem
     private bool _playingMusic;
     private readonly IReadOnlyDictionary<string, SoundEffect> _soundEffects;
     private readonly Song _song;
+    SoundEffectInstance _instance;
+    List<SoundEffectInstance> _soundEffectInstances;
 
     public AudioSystem(Song song, IReadOnlyDictionary<string, SoundEffect> soundEffects)
     {
         _song = song;
         _soundEffects = soundEffects;
+        _soundEffectInstances = new();
     }
 
-    public void PlaySoundEffect(string name)
+    public void PlaySoundEffect(string name, float volume=-1)
     {
-        _soundEffects[name].Play();
+        if (volume == -1)
+        {
+            _instance = _soundEffects[name].CreateInstance();
+            _instance.Play();
+        }
+        else
+        {
+            _instance = _soundEffects[name].CreateInstance();
+            _instance.Volume = volume;
+            _instance.Play();
+        }
+        _soundEffectInstances.Add(_instance);
+    }
+
+    public void StopSoundEffects()
+    {
+        foreach (SoundEffectInstance instance in _soundEffectInstances)
+        {
+            instance.Stop();
+        }
     }
 
     public void PlayStartup()
