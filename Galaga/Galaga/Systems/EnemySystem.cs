@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using Galaga.Objects;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Galaga.Systems;
@@ -115,9 +112,9 @@ public class EnemySystem : ObjectSystem
 
         _enemies = new List<Enemy>();
         _window = window;
-        _bossGalagaNextPos = new Vector2(66.0f, 2.0f);
-        _butterflyNextPos = new Vector2(66.0f, 34.0f);
-        _beeNextPos = new Vector2(66.0f, 66.0f);
+        _bossGalagaNextPos = new Vector2(66.0f, 18.0f);
+        _butterflyNextPos = new Vector2(66.0f, 50.0f);
+        _beeNextPos = new Vector2(66.0f, 82.0f);
 
         _destroyedEnemiesThisStage = 0;
 
@@ -512,9 +509,9 @@ public class EnemySystem : ObjectSystem
                 }
                 else
                 {
-                    _bossGalagaNextPos = new Vector2(66.0f, 18.0f);
-                    _butterflyNextPos = new Vector2(66.0f, 50.0f);
-                    _beeNextPos = new Vector2(66.0f, 82.0f);
+                    _bossGalagaNextPos = new Vector2(66.0f, 34.0f);
+                    _butterflyNextPos = new Vector2(66.0f, 66.0f);
+                    _beeNextPos = new Vector2(66.0f, 98.0f);
                 }
                 if (_roundIndex % _rounds.Count == 0)
                 {

@@ -20,9 +20,10 @@ public class PauseSubPlayState : SubPlayState
     private readonly RenderTarget2D _renderTarget;
     private KeyboardState _previousKeyboardState;
     private MouseState _previousMouseState;
+    private readonly IReadOnlyDictionary<string, Texture2D> _textures;
 
 
-    public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window)
+    public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures)
     {
         _options = new List<string>
         {
@@ -44,6 +45,7 @@ public class PauseSubPlayState : SubPlayState
             Graphics.GraphicsDevice.PresentationParameters.MultiSampleCount,
             RenderTargetUsage.DiscardContents
         );
+        _textures = textures;
         _previousKeyboardState = Keyboard.GetState();
     }
 
@@ -93,16 +95,13 @@ public class PauseSubPlayState : SubPlayState
         Graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
         Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
         spriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
-        // Show high score
-        SpriteFont font = fonts["default"];
-        SpriteFont bigFont = fonts["big"];
-        Vector2 stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
-        spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
-            new Vector2(_renderTarget.Width - stringSize.X, 0), Color.White);
+        spriteBatch.Draw(_textures["background"], new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
 
         // Show options
+        SpriteFont font = fonts["galaga"];
+        SpriteFont bigFont = fonts["galagaBig"];
         SpriteFont optionFont = _indexOfChoice == 0 ? bigFont : font;
-        stringSize = optionFont.MeasureString(_options[0]);
+        var stringSize = optionFont.MeasureString(_options[0]);
         RenderUtilities.CreateBorderOnWord(spriteBatch, optionFont, _options[0], new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(_renderTarget.Height / 2) - stringSize.Y));
         optionFont = _indexOfChoice == 1 ? bigFont : font;
         stringSize = optionFont.MeasureString(_options[1]);

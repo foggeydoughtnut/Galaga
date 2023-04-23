@@ -28,9 +28,9 @@ public static class MouseMenu
         var middle = numOptions / 2;
         for (var i = 0; i < numOptions; i++)
         {
-            var (_, y) = fonts[ "default"].MeasureString("word");
+            var (_, y) = fonts["galaga"].MeasureString("word");
             var diff = i - middle;
-            var top = Convert.ToInt32(renderTarget.Height / 2) + diff * Constants.MENU_BUFFER;
+            var top = Convert.ToInt32(renderTarget.Height / 2) + 100 + diff * Constants.MENU_BUFFER;
             optionPositions[i] = new Tuple<int, int>(top, (int)y + top);
         }
 

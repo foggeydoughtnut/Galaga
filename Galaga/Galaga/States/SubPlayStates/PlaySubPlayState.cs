@@ -42,8 +42,8 @@ public class PlaySubPlayState : SubPlayState
         _window = window;
         _renderTarget = new RenderTarget2D(
             _graphics.GraphicsDevice,
-            Constants.GAMEPLAY_X,
-            Constants.GAMEPLAY_Y,
+            Constants.RENDER_TARGET_X,
+            Constants.RENDER_TARGET_Y,
             false,
             SurfaceFormat.Color,
             DepthFormat.None,
@@ -99,13 +99,25 @@ public class PlaySubPlayState : SubPlayState
         foreach (Systems.System system in _systems)
             system.Render(spriteBatch);
 
-        // Show high score
-/*        SpriteFont font = fonts["default"];
-        Vector2 stringSize = font.MeasureString("Score: " + _tracker.CurrentGameScore);
-        spriteBatch.DrawString(font, "Score: " + _tracker.CurrentGameScore,
-            new Vector2(_renderTarget.Width - stringSize.X, 0), Color.White);
+        SpriteFont font = fonts["galagaSmall"];
+        Vector2 stringSize = font.MeasureString(_tracker.CurrentGameScore.ToString());
+        
+        spriteBatch.DrawString(font, "1UP",
+            new Vector2(font.MeasureString("1").X, 0), Color.Red);
+        spriteBatch.DrawString(font, _tracker.CurrentGameScore.ToString(),
+            new Vector2(0, stringSize.Y), Color.White);
 
-*/
+        stringSize = font.MeasureString("High Score");
+        spriteBatch.DrawString(font, "High Score",
+            new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, 0), Color.Red);
+        var highScore = "20000";
+        if (_tracker.HighScores.Any())
+            highScore = _tracker.HighScores.Max().ToString();
+        stringSize = font.MeasureString(highScore);
+        spriteBatch.DrawString(font, highScore,
+            new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, stringSize.Y), Color.White);
+        
+        
         spriteBatch.End();
         _graphics.GraphicsDevice.SetRenderTarget(null);
 
@@ -121,6 +133,7 @@ public class PlaySubPlayState : SubPlayState
                 SpriteEffects.None,
                 1f
             );
+        // Show high score
         spriteBatch.End();
     }
 
