@@ -34,6 +34,8 @@ namespace Galaga.Objects
 
         protected override void Attack()
         {
+            StartAttackPos = Position;
+
             _playerPosition = Player.Position;
             _path.AddRange(CircleCreator.CreateSinWavePath(amplitude, frequency, 0f, Position.X, 600f, Position.Y, 2f));
             float angleInRadians = CircleCreator.GetAngleRadians(new(Position.X, Position.Y), new(_playerPosition.X, _playerPosition.Y));
@@ -80,6 +82,7 @@ namespace Galaga.Objects
             {
                 VelocityY = 0;
                 Position.Y = StartAttackPos.Y;
+                Position.X = StartAttackPos.X;
                 ResetAttackTimer();
             }
         }

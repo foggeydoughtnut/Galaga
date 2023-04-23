@@ -40,6 +40,8 @@ namespace Galaga.Objects
 
         protected override void Attack()
         {
+            StartAttackPos = Position;
+
             _isStartingOnLeft = Position.X < Constants.GAMEPLAY_X / 2;
             _playerPosition = Player.Position;
 
@@ -112,6 +114,8 @@ namespace Galaga.Objects
             {
                 VelocityY = 0;
                 Position.Y = StartAttackPos.Y;
+                Position.X = StartAttackPos.X;
+
                 ResetAttackTimer();
             }
         }
