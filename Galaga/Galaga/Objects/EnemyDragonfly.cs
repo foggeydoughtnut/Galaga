@@ -14,8 +14,8 @@ namespace Galaga.Objects
     public class EnemyDragonfly : Enemy
     {
 
-        public EnemyDragonfly(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack)
-        : base(position, dimensions, textures, 2, animationTimeMilliseconds, debugTexture, player, bulletSystem, canAttack)
+        public EnemyDragonfly(Point position, Point dimensions, Texture2D textures, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack, AudioSystem audioSystem)
+        : base(position, dimensions, textures, 2, animationTimeMilliseconds, debugTexture, player, bulletSystem, canAttack, audioSystem)
         {
             health = 1;
         }
