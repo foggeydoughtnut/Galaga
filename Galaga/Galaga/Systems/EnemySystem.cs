@@ -53,13 +53,14 @@ public class EnemySystem : ObjectSystem
     private int _createdEnemies;
     private int _destroyedEnemiesThisStage;
 
-
+    #region bonus round enemies
     private readonly Texture2D _dragonflyTexture;
     private List<Vector2> _dragonflyPathOdd;
     private List<Vector2> _dragonflyPathEven;
 
     private readonly Texture2D _satelliteTexture;
     private List<Vector2> _satellitePath;
+    #endregion
 
     #region Rounds
     private bool _isBonusRound;
@@ -90,6 +91,13 @@ public class EnemySystem : ObjectSystem
     private float _breathDelay;
     public static bool Breathing;
     public static int BreathingDirection;
+    #endregion
+
+    #region In between stages variables
+    public static bool DisplayStageNumber = false;
+    public static int StageNumber = 2;
+    private bool _playedBonusJingle = false;
+    private bool _playedStageJingle = false;
     #endregion
 
     public static int HorizontalDirection;
@@ -197,8 +205,7 @@ public class EnemySystem : ObjectSystem
                             new(Constants.GAMEPLAY_X / 2 + 48, Constants.GAMEPLAY_Y / 3)
                         };
                         path.AddRange(CircleCreator.CreateClockwiseSemiCircle(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2, 48));
-                        //enemy = new("butterfly", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
-                        enemy = new("bossGalaga", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
+                        enemy = new("butterfly", path, new(Constants.GAMEPLAY_X / 2 - 48, 0));
 
                         enemies.Add(enemy);
                     }
@@ -583,6 +590,28 @@ public class EnemySystem : ObjectSystem
                 
             }
         }
+        if (_roundTimerActive && _roundTimer > 1.5f)
+        {
+            DisplayStageNumber = true;
+            if (StageNumber % 3 == 0)
+            {
+                if (!_playedBonusJingle)
+                {
+                    _audioSystem.PlaySoundEffect("bonus");
+                    _playedBonusJingle = true;
+                }
+            }
+            else
+            {
+                if (!_playedStageJingle)
+                {
+                    _audioSystem.PlaySoundEffect("stage");
+                    _playedStageJingle = true;
+                }
+            }
+            
+
+        }
         if (_roundTimerActive)
         {
             if (!_stoppedRoundSoundEffects)
@@ -599,8 +628,9 @@ public class EnemySystem : ObjectSystem
                 _roundTimerActive = false;
                 _roundTimer = 0;
                 _enemyIndex = 0;
-
+                DisplayStageNumber = false;
                 _roundIndex++;
+                StageNumber++;
                 _groupIndex = 0;
                 _groupTimerActive = false;
                 _enemyIndex = 0;
@@ -608,11 +638,12 @@ public class EnemySystem : ObjectSystem
                 _createdEnemies = 0;
                 Breathing = false;
                 _stoppedRoundSoundEffects = false;
+                _playedBonusJingle = false;
+                _playedStageJingle = false;
 
                 if (_roundIndex % 2 == 0) // bonus round
                 {
                     _isBonusRound = true;
-                    _audioSystem.PlaySoundEffect("bonus");
                 }
                 else
                 {
@@ -677,7 +708,7 @@ public class EnemySystem : ObjectSystem
                         {
                             // Spawn bee
                             EnemyBee newBee = new(enemy.StartPos, new Point(Constants.CHARACTER_DIMENSIONS),
-                                _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem, !_isBonusRound)
+                                _beeTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem, !_isBonusRound, _audioSystem)
                                 {
                                     EntrancePath = enemy.Path.ToList(),
                                     Destination = !_isBonusRound ? _beeNextPos : enemy.Destination
@@ -695,7 +726,7 @@ public class EnemySystem : ObjectSystem
                         {
                             // Spawn butterfly
                             EnemyButterfly newButterfly = new(enemy.StartPos, new Point(Constants.CHARACTER_DIMENSIONS),
-                                _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem, !_isBonusRound)
+                                _butterflyTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem, !_isBonusRound, _audioSystem)
                                 {
                                     EntrancePath = enemy.Path.ToList(),
                                     Destination = !_isBonusRound ? _butterflyNextPos : enemy.Destination
@@ -714,7 +745,7 @@ public class EnemySystem : ObjectSystem
                         {
                             // Spawn boss galaga
                             EnemyBossGalaga newBossGalaga = new(enemy.StartPos, new Point(Constants.CHARACTER_DIMENSIONS),
-                                _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem, !_isBonusRound)
+                                _bossGalagaTextures, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem, !_isBonusRound, _audioSystem)
                                 {
                                     EntrancePath = enemy.Path.ToList(),
                                     Destination = !_isBonusRound ? _bossGalagaNextPos : enemy.Destination

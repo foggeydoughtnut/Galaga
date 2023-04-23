@@ -117,6 +117,21 @@ public class PlaySubPlayState : SubPlayState
         spriteBatch.DrawString(font, highScore,
             new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, stringSize.Y), Color.White);
         
+        if (EnemySystem.DisplayStageNumber)
+        {
+            if (EnemySystem.StageNumber % 3 == 0)
+            {
+                stringSize = font.MeasureString("Challenging Stage");
+                spriteBatch.DrawString(font, "Challenging Stage",
+                    new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, Constants.GAMEPLAY_Y / 2 - stringSize.Y / 2), Color.Blue);
+            }
+            else
+            {
+                stringSize = font.MeasureString($"Stage {EnemySystem.StageNumber}");
+                spriteBatch.DrawString(font, $"Stage {EnemySystem.StageNumber}",
+                    new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, Constants.GAMEPLAY_Y/2 - stringSize.Y/2), Color.Blue);
+            }
+        }
         
         spriteBatch.End();
         _graphics.GraphicsDevice.SetRenderTarget(null);

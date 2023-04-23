@@ -42,9 +42,11 @@ public abstract class Enemy : Object
     private Vector2 _breathingMovement;
     public Point StartAttackPos;
 
+    private AudioSystem _audioSystem;
 
 
-    public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
+
+    public Enemy(Point position, Point dimensions, Texture2D texture, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack, AudioSystem audioSystem) : base(position, dimensions, texture, animationTimeMilliseconds, debugTexture, numAnimations)
     {
         EntrancePath = new List<Vector2>();
         ReachedEndOfEntrancePath = false;
@@ -56,10 +58,11 @@ public abstract class Enemy : Object
         attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
         _breathingMovement = new();
         StartAttackPos = new();
+        _audioSystem = audioSystem;
     }
 
     // This one is for boss Galaga since it has more than 1 texture
-    public Enemy(Point position, Point dimensions, List<Texture2D> textures, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack) : base(position, dimensions, textures[0], animationTimeMilliseconds, debugTexture, numAnimations)
+    public Enemy(Point position, Point dimensions, List<Texture2D> textures, int numAnimations, int animationTimeMilliseconds, Texture2D debugTexture, PlayerShip player, BulletSystem bulletSystem, bool canAttack, AudioSystem audioSystem) : base(position, dimensions, textures[0], animationTimeMilliseconds, debugTexture, numAnimations)
     {
         EntrancePath = new List<Vector2>();
         ReachedEndOfEntrancePath = false;
@@ -71,6 +74,7 @@ public abstract class Enemy : Object
         StartAttackPos = new();
         attackDelay = (float)(rnd.NextDouble() * 10f) + 5f; // Generates a random float between 5 and 15 to be used as the delay for attacking
         _elapsedTimeTotal = 0;
+        _audioSystem = audioSystem;
 
     }
 
@@ -227,7 +231,7 @@ public abstract class Enemy : Object
     {
         attack = true;
         StartAttackPos = Position;
-
+        _audioSystem.PlaySoundEffect("enemyFly");
     }
 
     public virtual void CalculateAttackPath()
