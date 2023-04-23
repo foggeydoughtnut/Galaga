@@ -23,7 +23,7 @@ public class AudioSystem
         _soundEffectInstances = new();
     }
 
-    public void PlaySoundEffect(string name, float volume=-1)
+    public void PlaySoundEffect(string name, float volume = -1)
     {
         if (volume == -1)
         {
@@ -45,6 +45,11 @@ public class AudioSystem
         {
             instance.Stop();
         }
+    }
+
+    public bool IsPlayingMusic()
+    {
+        return MediaPlayer.State == MediaState.Playing;
     }
 
     public void PlayStartup()

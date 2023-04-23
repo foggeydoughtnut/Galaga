@@ -19,11 +19,12 @@ public class PlaySubPlayState : SubPlayState
     private KeyboardState _previousKeyboardState;
     private MouseState _previousMouseState;
     public bool UseAi;
+    private AudioSystem _audioSystem;
 
     public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures, AudioSystem audioSystem)
     {
         _tracker = HighScoreTracker.GetTracker();
-        
+        _audioSystem = audioSystem;
         _systems = new List<Systems.System>();
         ParticleSystem particleSystem = new(textures["particle"]);
         GameStatsSystem gameStats = GameStatsSystem.GetSystem();
@@ -69,12 +70,15 @@ public class PlaySubPlayState : SubPlayState
             if(buttonPressed || mouseMoved)
                 return PlayStates.Loser;
         }
-            
-        foreach (Systems.System system in _systems)
+        
+        if (!_audioSystem.IsPlayingMusic())
         {
-            system.Update(gameTime);
-            if (system is PlayerSystem { PlayerKilled: true })
-                return PlayStates.Loser;
+            foreach (Systems.System system in _systems)
+            {
+                system.Update(gameTime);
+                if (system is PlayerSystem { PlayerKilled: true })
+                    return PlayStates.Loser;
+            }
         }
         if (currentKeyboardState.IsKeyUp(Keys.Escape) && _previousKeyboardState.IsKeyDown(Keys.Escape))
         {
