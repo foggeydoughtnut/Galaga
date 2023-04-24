@@ -277,6 +277,12 @@
 /processorParam:Quality=Best
 /build:Sound/EnemyFlying.mp3
 
+#begin Sound/MenuSelect.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/MenuSelect.wav
+
 #begin Sound/Shooting.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
