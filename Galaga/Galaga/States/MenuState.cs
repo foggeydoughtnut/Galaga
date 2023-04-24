@@ -63,6 +63,8 @@ public class MenuState : GameState
         Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
         SoundEffects.Add("butterfly", contentManager.Load<SoundEffect>("Sound/Enemy2Death"));
         SoundEffects.Add("boss.1", contentManager.Load<SoundEffect>("Sound/Enemy3DeathPart1"));
+        SoundEffects.Add("menuSelect", contentManager.Load<SoundEffect>("Sound/MenuSelect"));
+
         _audioSystem = new  AudioSystem(contentManager.Load<Song>("Sound/Startup"), SoundEffects);
     }
 
@@ -121,7 +123,7 @@ public class MenuState : GameState
         if (initialIndex != _indexOfChoice)
         {
             _inactivityTimer = TimeSpan.Zero;
-            _audioSystem.PlaySoundEffect("boss.1");
+            _audioSystem.PlaySoundEffect("menuSelect", 0.5f);
         }
     }
 
