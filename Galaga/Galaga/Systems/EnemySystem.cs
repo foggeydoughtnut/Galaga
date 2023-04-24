@@ -94,8 +94,8 @@ public class EnemySystem : ObjectSystem
     #endregion
 
     #region In between stages variables
-    public static bool DisplayStageNumber = false;
-    public static int StageNumber = 2;
+    public static bool DisplayStageNumber;
+    public static int StageNumber;
     private bool _playedBonusJingle = false;
     private bool _playedStageJingle = false;
     #endregion
@@ -107,7 +107,6 @@ public class EnemySystem : ObjectSystem
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
 
-    private int test = 0;
     public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures, Texture2D dragonflyTexture, Texture2D satelliteTexture, AudioSystem audioSystem)
     {
         _playerSystem = playerSystem;
@@ -125,7 +124,8 @@ public class EnemySystem : ObjectSystem
         _satellitePath = new();
         _audioSystem = audioSystem;
         _idleMovementOffset = new();
-
+        StageNumber = 2;
+        DisplayStageNumber = false;
 
         _enemies = new List<Enemy>();
         _window = window;
