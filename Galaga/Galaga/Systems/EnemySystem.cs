@@ -106,6 +106,8 @@ public class EnemySystem : ObjectSystem
     private double _totalElapsedTimeBreathing;
     public IEnumerable<Enemy> GetEnemies() => _enemies.ToList();
 
+
+    private int test = 0;
     public EnemySystem(PlayerSystem playerSystem, BulletSystem bulletSystem, ParticleSystem particleSystem, GameWindow window, Texture2D beeTexture, Texture2D debugTexture, Texture2D butterflyTexture, List<Texture2D> bossGalagaTextures, Texture2D dragonflyTexture, Texture2D satelliteTexture, AudioSystem audioSystem)
     {
         _playerSystem = playerSystem;
@@ -681,6 +683,26 @@ public class EnemySystem : ObjectSystem
             _breathDelayTimerActive = false;
             _breathDelayTimer = 0f;
         }
+
+        #region Remove any enemies that are off the screen during bonus round
+        if (_isBonusRound)
+        {
+            List<Enemy> enemiesToRemove = new();
+            foreach (Enemy enemy in _enemies)
+            {
+                if (enemy.Position.X > Constants.GAMEPLAY_X || enemy.Position.X < 0)
+                {
+                    enemiesToRemove.Add(enemy);
+                }
+            }
+            foreach (Enemy enemy in enemiesToRemove)
+            {
+                _enemies.Remove(enemy);
+                _destroyedEnemiesThisStage++;
+            }
+        }
+        #endregion
+
         if (!_roundFinished && !_groupTimerActive && _groupIndex < _numOfGroupsPerStage) // Spawn enemies in the group
         {
             _elapsedTime += gameTime.ElapsedGameTime;
@@ -773,12 +795,7 @@ public class EnemySystem : ObjectSystem
                 _groupTimerActive = true;
                 _groupIndex++;
             }
-            if (_groupIndex >= _numOfGroupsPerStage && _isBonusRound)
-            {
-                _roundFinished = true;
-                _roundTimerActive = true;
-                _audioSystem.PlaySoundEffect("stage");
-            }
+            
 
             if (_createdEnemies == _maxEnemiesPerRound && !_breathDelayTimerActive)
             {
