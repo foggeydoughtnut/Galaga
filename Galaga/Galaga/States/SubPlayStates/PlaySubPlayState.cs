@@ -21,8 +21,21 @@ public class PlaySubPlayState : SubPlayState
     public bool UseAi;
     private AudioSystem _audioSystem;
 
+    private bool _showIntroText;
+    private bool _showIntroStageText;
+    private float _introStageTextTimer;
+    private bool _introStageTextTimerActive;
+    private float _introStageTextDelay;
+
+
     public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures, AudioSystem audioSystem)
     {
+        _showIntroText = false;
+        _showIntroStageText = false;
+        _introStageTextTimer = 0f;
+        _introStageTextDelay = 5f;
+        _introStageTextTimerActive = false;
+
         _tracker = HighScoreTracker.GetTracker();
         _audioSystem = audioSystem;
         _systems = new List<Systems.System>();
@@ -59,6 +72,28 @@ public class PlaySubPlayState : SubPlayState
 
     public override PlayStates Update(GameTime gameTime)
     {
+        if (_audioSystem.IsPlayingMusic())
+            _showIntroText = true;
+        else
+        {
+            _showIntroText = false;
+            _showIntroStageText = false;
+        }
+        if (_showIntroText)
+        {
+            _introStageTextTimerActive = true;
+        }
+        if (_introStageTextTimerActive)
+        {
+            _introStageTextTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (_introStageTextTimer > _introStageTextDelay)
+            {
+                _showIntroStageText = true;
+                _introStageTextTimer = 0f;
+                _introStageTextTimerActive = false;
+            }
+        }
+
         if (UseAi)
             SetupAi();
         KeyboardState currentKeyboardState = Keyboard.GetState();
@@ -136,6 +171,23 @@ public class PlaySubPlayState : SubPlayState
                     new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, Constants.GAMEPLAY_Y/2 - stringSize.Y/2), Color.Blue);
             }
         }
+        if (_showIntroText)
+        {
+            if (!_showIntroStageText)
+            {
+                stringSize = font.MeasureString("Player 1");
+                spriteBatch.DrawString(font, "Player 1",
+                    new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, Constants.GAMEPLAY_Y / 2 - stringSize.Y / 2), Color.Blue);
+            }
+            else
+            {
+                stringSize = font.MeasureString("Stage 1");
+                spriteBatch.DrawString(font, "Stage 1",
+                    new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, Constants.GAMEPLAY_Y / 2 - stringSize.Y / 2), Color.Blue);
+            }
+        }
+
+        
         
         spriteBatch.End();
         _graphics.GraphicsDevice.SetRenderTarget(null);
