@@ -231,7 +231,8 @@ public abstract class Enemy : Object
     {
         attack = true;
         StartAttackPos = Position;
-        _audioSystem.PlaySoundEffect("enemyFly");
+        if (_canAttack)
+            _audioSystem.PlaySoundEffect("enemyFly");
     }
 
     public virtual void CalculateAttackPath()
