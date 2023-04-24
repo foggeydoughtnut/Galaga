@@ -614,10 +614,13 @@ public class EnemySystem : ObjectSystem
         }
         if (_roundTimerActive)
         {
-            if (!_stoppedRoundSoundEffects)
+            if (_roundTimer > 1f)
             {
-                _audioSystem.StopSoundEffects();
-                _stoppedRoundSoundEffects = true;
+                if (!_stoppedRoundSoundEffects)
+                {
+                    _audioSystem.StopSoundEffects();
+                    _stoppedRoundSoundEffects = true;
+                }
             }
             if (_isBonusRound) _roundDelay = 10f;
             else _roundDelay = 5f;
