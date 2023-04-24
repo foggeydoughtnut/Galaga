@@ -77,6 +77,8 @@ namespace Galaga.States
             Fonts.Add("galagaBig", contentManager.Load<SpriteFont>("Fonts/File2"));
             Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
             SoundEffects.Add("menuSelect", contentManager.Load<SoundEffect>("Sound/MenuSelect"));
+            SoundEffects.Add("controlChange", contentManager.Load<SoundEffect>("Sound/ControlChange"));
+
             _audioSystem = new AudioSystem(contentManager.Load<Song>("Sound/Startup"), SoundEffects);
 
         }
@@ -142,6 +144,7 @@ namespace Galaga.States
                     }
                     pressedKey = Keys.None;
                     _listening = false;
+                    _audioSystem.PlaySoundEffect("controlChange");
 
                     // Write that value to be the new input for the specific command
                     string json = JsonConvert.SerializeObject(controls);
