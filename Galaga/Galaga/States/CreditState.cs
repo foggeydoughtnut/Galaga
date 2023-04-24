@@ -55,8 +55,8 @@ public class CreditState : GameState
             new Vector2(Convert.ToInt32(renderTarget.Width / 2) - titleSize.X / 2, Convert.ToInt32(renderTarget.Height / 4)));
 
         SpriteFont font = Fonts["galaga"];
-        Vector2 stringSize = font.MeasureString("We Did This. Trey Crowther and Jeff Anderson.");
-        RenderUtilities.CreateBorderOnWord(SpriteBatch, font, "We Did This. Trey Crowther and Jeff Anderson.", new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2)));
+        Vector2 stringSize = font.MeasureString("Trey Crowther and Jeff Anderson");
+        RenderUtilities.CreateBorderOnWord(SpriteBatch, font, "Trey Crowther and Jeff Anderson", new Vector2(Convert.ToInt32(renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(renderTarget.Height / 2)));
 
         SpriteBatch.End();
         Graphics.GraphicsDevice.SetRenderTarget(null);
