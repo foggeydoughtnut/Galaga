@@ -11,6 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Microsoft.Xna.Framework.Audio;
+using Galaga.Systems;
+using Microsoft.Xna.Framework.Media;
 
 namespace Galaga.States
 {
@@ -27,6 +30,7 @@ namespace Galaga.States
         private Dictionary<int, Tuple<int, int>> _optionPositions;
         Keys pressedKey;
         Controls controls;
+        private AudioSystem _audioSystem;
 
 
 
@@ -72,11 +76,16 @@ namespace Galaga.States
             Fonts.Add("galaga", contentManager.Load<SpriteFont>("Fonts/File"));
             Fonts.Add("galagaBig", contentManager.Load<SpriteFont>("Fonts/File2"));
             Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
+            SoundEffects.Add("menuSelect", contentManager.Load<SoundEffect>("Sound/MenuSelect"));
+            _audioSystem = new AudioSystem(contentManager.Load<Song>("Sound/Startup"), SoundEffects);
+
         }
 
 
         protected override void ProcessInput()
         {
+            int initialIndex = _indexOfChoice;
+
             KeyboardState currentKeyboardState = Keyboard.GetState();
             var currentMouseState = Mouse.GetState();
             if (!_listening)
@@ -143,6 +152,10 @@ namespace Galaga.States
             previousKeyboardState = currentKeyboardState;
             _previousMouseState = currentMouseState;
             base.ProcessInput();
+            if (initialIndex != _indexOfChoice)
+            {
+                _audioSystem.PlaySoundEffect("menuSelect", 0.5f);
+            }
 
         }
 
