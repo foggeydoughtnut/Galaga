@@ -24,7 +24,7 @@ public class PlayState : GameState
         _playStates.Clear();
         _playStates.Add(PlayStates.Loser, new LoserState(Graphics, Window, Textures));
         _playStates.Add(PlayStates.Play, new PlaySubPlayState(Graphics, Window, Textures, _audioSystem));
-        _playStates.Add(PlayStates.Pause, new PauseSubPlayState(Graphics, Window, Textures));
+        _playStates.Add(PlayStates.Pause, new PauseSubPlayState(Graphics, Window, Textures, _audioSystem));
        
         _currentPlayState = PlayStates.Play;
         _nextPlayState = PlayStates.Play;
@@ -63,6 +63,8 @@ public class PlayState : GameState
         SoundEffects.Add("bonus", contentManager.Load<SoundEffect>("Sound/ChallengingStageStart"));
         SoundEffects.Add("bonusEnd", contentManager.Load<SoundEffect>("Sound/ChallengingStageResults"));
         SoundEffects.Add("enemyBreathing", contentManager.Load<SoundEffect>("Sound/EnemyBreathing"));
+        SoundEffects.Add("menuSelect", contentManager.Load<SoundEffect>("Sound/MenuSelect"));
+
         _audioSystem = new AudioSystem(contentManager.Load<Song>("Sound/Startup"), SoundEffects);
 
         InitializeState();
