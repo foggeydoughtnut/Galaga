@@ -49,7 +49,7 @@ public class LoserState : SubPlayState
             return PlayStates.Finish;
         }
         var currentKeyboardState = Keyboard.GetState();
-        if (currentKeyboardState.IsKeyUp(Keys.Enter) && _previousKeyboardState.IsKeyDown(Keys.Enter))
+        if (currentKeyboardState.GetPressedKeyCount() == 0 && _previousKeyboardState.GetPressedKeyCount() > 0)
         {
             _tracker.FinishGame();
             return PlayStates.Finish;
@@ -82,6 +82,14 @@ public class LoserState : SubPlayState
         var accuracyDisplay = "Accuracy: " + (float)accuracy / 100 + "%";
         stringSize = fonts["galaga"].MeasureString(accuracyDisplay);
         RenderUtilities.CreateBorderOnWord(spriteBatch, fonts["galaga"], accuracyDisplay , new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(6 * _renderTarget.Height / 10)));
+        
+        var keyToEscape = "Press any key to return to";
+        stringSize = fonts["galaga"].MeasureString(keyToEscape);
+        RenderUtilities.CreateBorderOnWord(spriteBatch, fonts["galaga"],keyToEscape , new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(7 * _renderTarget.Height / 10)));
+
+        var main = "Main Menu";
+        stringSize = fonts["galaga"].MeasureString(main);
+        RenderUtilities.CreateBorderOnWord(spriteBatch, fonts["galaga"], main, new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(8 * _renderTarget.Height / 10)));
         
         spriteBatch.End();
         _graphics.GraphicsDevice.SetRenderTarget(null);
