@@ -62,7 +62,11 @@ namespace Galaga
             }
             
             if (_nextState == GameStates.Exit)
+            {
                 Exit();
+                return;
+            }
+            
             base.Update(gameTime);
             _currentState = _states[_nextState];
         }
