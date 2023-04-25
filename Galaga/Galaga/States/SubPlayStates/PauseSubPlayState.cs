@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Galaga.Systems;
 using Galaga.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -22,8 +23,9 @@ public class PauseSubPlayState : SubPlayState
     private MouseState _previousMouseState;
     private readonly IReadOnlyDictionary<string, Texture2D> _textures;
 
+    private AudioSystem _audioSystem;
 
-    public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures)
+    public PauseSubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures, AudioSystem audioSystem)
     {
         _options = new List<string>
         {
@@ -47,11 +49,13 @@ public class PauseSubPlayState : SubPlayState
         );
         _textures = textures;
         _previousKeyboardState = Keyboard.GetState();
+        _audioSystem = audioSystem;
     }
 
     public override PlayStates Update(GameTime gameTime)
     {
         KeyboardState currentKeyboardState = Keyboard.GetState();
+        int initialIndex = _indexOfChoice;
 
         if (currentKeyboardState.IsKeyUp(Keys.Up) && _previousKeyboardState.IsKeyDown(Keys.Up) && _indexOfChoice - 1 >= 0)
             _indexOfChoice -= 1;
@@ -72,6 +76,7 @@ public class PauseSubPlayState : SubPlayState
             {
                 _previousKeyboardState = currentKeyboardState;
                 _previousMouseState = currentMouseState;
+                _audioSystem.ResumeSounds();
                 return PlayStates.Play;
             }
             else
@@ -85,6 +90,10 @@ public class PauseSubPlayState : SubPlayState
         _previousKeyboardState = currentKeyboardState;
         _previousMouseState = currentMouseState;
 
+        if (initialIndex != _indexOfChoice)
+        {
+            _audioSystem.PlaySoundEffect("menuSelect", 0.5f);
+        }
         return PlayStates.Pause;
     }
 

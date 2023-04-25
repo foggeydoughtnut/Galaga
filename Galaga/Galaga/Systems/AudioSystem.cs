@@ -39,6 +39,28 @@ public class AudioSystem
         _soundEffectInstances.Add(_instance);
     }
 
+    public void PauseSounds()
+    {
+        foreach (SoundEffectInstance instance in _soundEffectInstances)
+        {
+            if (instance.State == SoundState.Playing)
+                instance.Pause();
+        }
+        if (MediaPlayer.State == MediaState.Playing)
+            MediaPlayer.Pause();
+    }
+
+    public void ResumeSounds()
+    {
+        foreach (SoundEffectInstance instance in _soundEffectInstances)
+        {
+            if (instance.State == SoundState.Paused)
+                instance.Resume();
+        }
+        if (MediaPlayer.State == MediaState.Paused)
+            MediaPlayer.Resume();
+    }
+
     public void StopSoundEffects()
     {
         foreach (SoundEffectInstance instance in _soundEffectInstances)

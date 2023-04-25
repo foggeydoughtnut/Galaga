@@ -157,6 +157,7 @@ public class PlaySubPlayState : SubPlayState
         {
             _previousKeyboardState = currentKeyboardState;
             _previousMouseState = currentMouseState;
+            _audioSystem.PauseSounds();
             return PlayStates.Pause;
         }
 
