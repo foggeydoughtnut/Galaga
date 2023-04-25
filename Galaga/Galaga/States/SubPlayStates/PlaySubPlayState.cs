@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Galaga.Systems;
@@ -26,6 +27,11 @@ public class PlaySubPlayState : SubPlayState
     private float _introStageTextTimer;
     private bool _introStageTextTimerActive;
     private float _introStageTextDelay;
+    private bool _showBonusRoundText;
+    private TimeSpan _bonusRoundTextTimer;
+    private int _splitBonusRoundCount;
+    private TimeSpan _currentBonusRoundTextSplit;
+    private bool _addedBonus;
 
 
     public PlaySubPlayState(GraphicsDeviceManager graphics, GameWindow window, IReadOnlyDictionary<string, Texture2D> textures, AudioSystem audioSystem)
@@ -34,7 +40,10 @@ public class PlaySubPlayState : SubPlayState
         _showIntroStageText = false;
         _introStageTextTimer = 0f;
         _introStageTextDelay = 5f;
+        _bonusRoundTextTimer = new TimeSpan(0,0,0,6, 500);
+        _splitBonusRoundCount = 0;
         _introStageTextTimerActive = false;
+        _showBonusRoundText = false;
 
         _tracker = HighScoreTracker.GetTracker();
         _audioSystem = audioSystem;
@@ -92,6 +101,35 @@ public class PlaySubPlayState : SubPlayState
                 _introStageTextTimer = 0f;
                 _introStageTextTimerActive = false;
             }
+        }
+
+        if (EnemySystem.DisplayStageNumber)
+        {
+            _showBonusRoundText = EnemySystem.StageNumber % 3 == 1 && EnemySystem.StageNumber != 1;
+            if (_showBonusRoundText)
+            {
+                _currentBonusRoundTextSplit += gameTime.ElapsedGameTime;
+                if (_currentBonusRoundTextSplit > _bonusRoundTextTimer / 4)
+                {
+                    _currentBonusRoundTextSplit = TimeSpan.Zero;
+                    _splitBonusRoundCount += 1;
+                }
+            }
+
+            if (_splitBonusRoundCount >= 4)
+            {
+                _showBonusRoundText = false;
+                if (!_addedBonus)
+                {
+                    _addedBonus = true;
+                    _tracker.CurrentGameScore += EnemySystem.BonusRoundEnemiesDestroyed * 100;
+                }
+            }
+        }
+        else if (_splitBonusRoundCount >= 4)
+        {
+            _splitBonusRoundCount = 0;
+            _addedBonus = false;
         }
 
         if (UseAi)
@@ -163,6 +201,25 @@ public class PlaySubPlayState : SubPlayState
                 stringSize = font.MeasureString("Challenging Stage");
                 spriteBatch.DrawString(font, "Challenging Stage",
                     new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, Constants.GAMEPLAY_Y / 2 - stringSize.Y / 2), Color.Blue);
+            }
+            else if (_showBonusRoundText)
+            {
+                var text = "Number of hits ";
+                if (_splitBonusRoundCount > 0)
+                    text += EnemySystem.BonusRoundEnemiesDestroyed;
+                stringSize = font.MeasureString("Number of hits 23");
+                spriteBatch.DrawString(font, text,
+                    new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, Constants.GAMEPLAY_Y / 2 - 10 - stringSize.Y / 2), Color.Blue);
+
+                if (_splitBonusRoundCount > 1)
+                {
+                    text = "Bonus ";
+                    if (_splitBonusRoundCount > 2)
+                        text += EnemySystem.BonusRoundEnemiesDestroyed * 100;
+                    stringSize = font.MeasureString("Bonus 2300");
+                    spriteBatch.DrawString(font, text,
+                        new Vector2(Constants.GAMEPLAY_X / 2 - stringSize.X / 2, Constants.GAMEPLAY_Y / 2 + 10 - stringSize.Y / 2), Color.Blue);
+                }
             }
             else
             {

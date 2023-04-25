@@ -64,13 +64,13 @@ namespace Galaga
             if (_nextState == GameStates.Exit)
                 Exit();
             base.Update(gameTime);
+            _currentState = _states[_nextState];
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _currentState.Render();
-            _currentState = _states[_nextState];
             base.Draw(gameTime);
         }
     }

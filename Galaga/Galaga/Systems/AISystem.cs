@@ -17,7 +17,7 @@ public class AiSystem : System
     private readonly TimeSpan _bulletLimiter = new(0, 0, 0, 0, 300);
     private TimeSpan _timeSinceFire = TimeSpan.Zero;
     private Enemy _lastFiredEnemy;
-
+    
     public AiSystem(EnemySystem enemySystem, PlayerSystem playerSystem, BulletSystem bulletSystem)
     {
         _enemySystem = enemySystem;
@@ -60,7 +60,18 @@ public class AiSystem : System
                 enemies.Remove(_lastFiredEnemy);
             var closestEnemy = FindClosestXDirectionEnemy(enemies);
             if (closestEnemy is null) return;
-            var distToEnemy = _player.Position.X - closestEnemy.Position.X;
+
+            int offset;
+            if (Math.Abs(closestEnemy.VelocityX) > 1)
+                offset = 0;
+            else
+                offset = EnemySystem.HorizontalDirection switch
+                {
+                    1 => -8,
+                    -1 => 8,
+                    _ => 0
+                };
+            var distToEnemy = _player.Position.X + _player.Dimensions.X / 2 - (closestEnemy.Position.X + closestEnemy.Dimensions.X / 2 + offset);
             switch (distToEnemy)
             {
                 case > 2:
@@ -87,9 +98,7 @@ public class AiSystem : System
     }
 
     public override void Render(SpriteBatch spriteBatch)
-    {
-        
-    }
+    { }
 
     private void MoveTowardsCenter(TimeSpan elapsedTime)
     {

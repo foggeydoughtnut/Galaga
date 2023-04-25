@@ -52,6 +52,7 @@ public class EnemySystem : ObjectSystem
 
     private int _createdEnemies;
     private int _destroyedEnemiesThisStage;
+    public static int BonusRoundEnemiesDestroyed;
 
     #region bonus round enemies
     private readonly Texture2D _dragonflyTexture;
@@ -98,6 +99,7 @@ public class EnemySystem : ObjectSystem
     public static int StageNumber;
     private bool _playedBonusJingle = false;
     private bool _playedStageJingle = false;
+    private bool _playedBonusEndJingle = false;
     #endregion
 
     public static int HorizontalDirection;
@@ -605,7 +607,13 @@ public class EnemySystem : ObjectSystem
             }
             else
             {
-                if (!_playedStageJingle)
+                if (!_playedBonusEndJingle && _isBonusRound)
+                {
+                    _audioSystem.PlaySoundEffect("bonusEnd");
+                    _playedBonusEndJingle = true;
+                }
+                
+                if (!_playedStageJingle && _roundDelay - _roundTimer < 2.5f)
                 {
                     _audioSystem.PlaySoundEffect("stage");
                     _playedStageJingle = true;
@@ -645,6 +653,7 @@ public class EnemySystem : ObjectSystem
                 _stoppedRoundSoundEffects = false;
                 _playedBonusJingle = false;
                 _playedStageJingle = false;
+                _playedBonusEndJingle = false;
 
                 if (_roundIndex % 2 == 0) // bonus round
                 {
@@ -881,6 +890,10 @@ public class EnemySystem : ObjectSystem
         }
 
         _destroyedEnemiesThisStage++;
+        if (_isBonusRound)
+            BonusRoundEnemiesDestroyed++;
+        else
+            BonusRoundEnemiesDestroyed = 0;
         _particleSystem.EnemyDeath(hitEnemy.Position);
         _enemies.Remove(hitEnemy);
         ScoreDestroyedEnemy(hitEnemy);
