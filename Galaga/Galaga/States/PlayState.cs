@@ -39,8 +39,8 @@ public class PlayState : GameState
         Fonts.Add("galagaSmall", contentManager.Load<SpriteFont>("Fonts/File3"));
         //Song song = contentManager.Load<Song>("Audio/Take Me Out to the Ball Game");
         Textures.Add("ship", contentManager.Load<Texture2D>("Images/PlayerShip"));
-        Textures.Add("playerBullet", contentManager.Load<Texture2D>("Images/PlayerBullet"));
-        Textures.Add("enemyBullet", contentManager.Load<Texture2D>("Images/EnemyBullet"));
+        Textures.Add("enemyBullet", contentManager.Load<Texture2D>("Images/PlayerBullet"));
+        Textures.Add("playerBullet", contentManager.Load<Texture2D>("Images/EnemyBullet"));
         Textures.Add("debug", contentManager.Load<Texture2D>("Images/Debug"));
         Textures.Add("particle", contentManager.Load<Texture2D>("Images/Particle"));
         Textures.Add("bee", contentManager.Load<Texture2D>("Images/Bee"));

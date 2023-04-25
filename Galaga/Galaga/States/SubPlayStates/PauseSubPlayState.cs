@@ -83,6 +83,7 @@ public class PauseSubPlayState : SubPlayState
             {
                 _previousKeyboardState = currentKeyboardState;
                 _previousMouseState = currentMouseState;
+                _tracker.CurrentGameScore = 0;
                 return PlayStates.Finish;
             }
 

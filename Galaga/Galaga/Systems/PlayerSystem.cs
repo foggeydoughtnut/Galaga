@@ -67,7 +67,7 @@ public class PlayerSystem : ObjectSystem
             debugTexture,
             numberOfSubImages: 1
         );
-        for (var i = 0; i < 3; i++)
+        for (var i = 0; i < 2; i++)
             _liveShips.Add(new PlayerShip(
                 position: new Point(i * Constants.CHARACTER_DIMENSIONS, Constants.RENDER_TARGET_Y - Constants.CHARACTER_DIMENSIONS),
                 bounds: new Point(Constants.GAMEPLAY_X, Constants.GAMEPLAY_Y),
@@ -126,12 +126,13 @@ public class PlayerSystem : ObjectSystem
     {
         _particleSystem.PlayerDeath(_playerShip.Position);
         _audioSystem.PlaySoundEffect("death");
-        _liveShips.RemoveAt(_liveShips.Count - 1);
+        if (_liveShips.Count > 0)
+            _liveShips.RemoveAt(_liveShips.Count - 1);
+        else
+            PlayerKilled = true;
         _timeLeftInvincible = _invincibilityTime;
         _playerShip.IsObstacle = false;
         _renderShip = false;
-        if(_liveShips.Count <= 0)
-            PlayerKilled = true;
         //Debug.WriteLine("Player was hit");
     }
 }

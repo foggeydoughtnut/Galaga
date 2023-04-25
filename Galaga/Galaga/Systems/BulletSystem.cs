@@ -102,7 +102,7 @@ public class BulletSystem : ObjectSystem
         _bullets.Add(new Bullet(
             position,
             dimensions: new Point(_enemyBulletTexture.Width, _enemyBulletTexture.Height),
-            _playerBulletTexture,
+            _enemyBulletTexture,
             velocity: velocity * 200,
             _debugTexture,
             numberOfSubImages: 1,

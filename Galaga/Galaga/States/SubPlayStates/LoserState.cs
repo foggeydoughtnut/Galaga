@@ -18,6 +18,8 @@ public class LoserState : SubPlayState
     private KeyboardState _previousKeyboardState;
     public bool UsedAi;
     private readonly Dictionary<string, Texture2D> _textures;
+    private readonly int _minSeconds = 2;
+    private TimeSpan _elapsedTimeInLoser;
 
     public LoserState(GraphicsDeviceManager graphics, GameWindow window, Dictionary<string, Texture2D> textures)
     {
@@ -42,6 +44,10 @@ public class LoserState : SubPlayState
 
     public override PlayStates Update(GameTime gameTime)
     {
+        _elapsedTimeInLoser += gameTime.ElapsedGameTime;
+        if (_elapsedTimeInLoser.TotalSeconds < _minSeconds)
+            return PlayStates.Loser;
+        
         if (UsedAi)
         {
             _gameStatsSystem.FinishGame();
@@ -49,7 +55,7 @@ public class LoserState : SubPlayState
             return PlayStates.Finish;
         }
         var currentKeyboardState = Keyboard.GetState();
-        if (currentKeyboardState.IsKeyUp(Keys.Enter) && _previousKeyboardState.IsKeyDown(Keys.Enter))
+        if (currentKeyboardState.GetPressedKeyCount() == 0 && _previousKeyboardState.GetPressedKeyCount() > 0)
         {
             _tracker.FinishGame();
             return PlayStates.Finish;
@@ -82,6 +88,17 @@ public class LoserState : SubPlayState
         var accuracyDisplay = "Accuracy: " + (float)accuracy / 100 + "%";
         stringSize = fonts["galaga"].MeasureString(accuracyDisplay);
         RenderUtilities.CreateBorderOnWord(spriteBatch, fonts["galaga"], accuracyDisplay , new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(6 * _renderTarget.Height / 10)));
+
+        if (_elapsedTimeInLoser.TotalSeconds > _minSeconds)
+        {
+            var keyToEscape = "Press any key to return to";
+            stringSize = fonts["galaga"].MeasureString(keyToEscape);
+            RenderUtilities.CreateBorderOnWord(spriteBatch, fonts["galaga"],keyToEscape , new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(7 * _renderTarget.Height / 10)));
+
+            var main = "Main Menu";
+            stringSize = fonts["galaga"].MeasureString(main);
+            RenderUtilities.CreateBorderOnWord(spriteBatch, fonts["galaga"], main, new Vector2(Convert.ToInt32(_renderTarget.Width / 2) - stringSize.X / 2, Convert.ToInt32(8 * _renderTarget.Height / 10)));
+        }
         
         spriteBatch.End();
         _graphics.GraphicsDevice.SetRenderTarget(null);
