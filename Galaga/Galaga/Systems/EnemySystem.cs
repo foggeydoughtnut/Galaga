@@ -54,14 +54,6 @@ public class EnemySystem : ObjectSystem
     private int _destroyedEnemiesThisStage;
     public static int BonusRoundEnemiesDestroyed;
 
-    #region bonus round enemies
-    private readonly Texture2D _dragonflyTexture;
-    private List<Vector2> _dragonflyPathOdd;
-    private List<Vector2> _dragonflyPathEven;
-
-    private readonly Texture2D _satelliteTexture;
-    private List<Vector2> _satellitePath;
-    #endregion
 
     #region Rounds
     private bool _isBonusRound;
@@ -119,11 +111,6 @@ public class EnemySystem : ObjectSystem
         _debugTexture = debugTexture;
         _butterflyTexture = butterflyTexture;
         _bossGalagaTextures = bossGalagaTextures;
-        _dragonflyTexture = dragonflyTexture;
-        _satelliteTexture = satelliteTexture;
-        _dragonflyPathOdd = new();
-        _dragonflyPathEven = new();
-        _satellitePath = new();
         _audioSystem = audioSystem;
         _idleMovementOffset = new();
         StageNumber = 2;
@@ -519,36 +506,6 @@ public class EnemySystem : ObjectSystem
     }
     #endregion
 
-    #region Bonus Round Paths NOT NEEDED ENEMIES
-    private void GenerateDragonflyPath(bool oddEnemy)
-    {
-        if (oddEnemy)
-        {
-            _dragonflyPathOdd.Add(new(Constants.GAMEPLAY_X/2, Constants.GAMEPLAY_Y/2));
-            _dragonflyPathOdd.Add(new(Constants.GAMEPLAY_X / 5, 3 * Constants.GAMEPLAY_Y / 5));
-            _dragonflyPathOdd.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2));
-            _dragonflyPathOdd.Add(new(Constants.GAMEPLAY_X / 2, 0));
-        }
-        else
-        {
-            _dragonflyPathEven.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2));
-            _dragonflyPathEven.Add(new(4 * Constants.GAMEPLAY_X / 5, 3 * Constants.GAMEPLAY_Y / 5));
-            _dragonflyPathEven.Add(new(Constants.GAMEPLAY_X / 2, Constants.GAMEPLAY_Y / 2));
-            _dragonflyPathEven.Add(new(Constants.GAMEPLAY_X / 2, 0));
-        }
-    }
-
-    private void GenerateSatellitePath()
-    {
-        _satellitePath.Add(new(Constants.GAMEPLAY_X / 4 - 48, Constants.GAMEPLAY_Y / 2));
-        _satellitePath.AddRange(CircleCreator.CreateCounterClockwiseSemiCircle(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2, 48));
-        _satellitePath.AddRange(CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X/4, Constants.GAMEPLAY_Y/2, 48));
-        _satellitePath.AddRange(CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2, 32));
-        _satellitePath.AddRange(CircleCreator.CreateCounterClockwiseCircle(Constants.GAMEPLAY_X / 4, Constants.GAMEPLAY_Y / 2, 16));
-        _satellitePath.Add(new(-50, Constants.GAMEPLAY_Y/2));
-    }
-    #endregion
-
     public override void Update(GameTime gameTime)
     {
         if (Math.Sin(0.5 * Math.PI * gameTime.TotalGameTime.TotalSeconds) >= 0)
@@ -811,60 +768,6 @@ public class EnemySystem : ObjectSystem
                 _breathDelayTimerActive = true;
             }
         }
-
-/*            if (_isBonusRound)
-            {
-                #region Dragonfly
-                _createdEnemies++;
-                *//*if (_dragonflyPathOdd.Count > 0 && _dragonflyPathEven.Count > 0) // Potentially alternate the ways by checking if the dragonfly count is odd or even
-                {
-                    if (_createdEnemies % 2 == 0)
-                    {
-                        EnemyDragonfly newDragonfly = new(new Point(Constants.GAMEPLAY_X / 2, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                            _dragonflyTexture, 99999, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
-                        {
-                            EntrancePath = _dragonflyPathEven.ToList(), // If it is odd it should have different path then when its even
-                            Destination = new Vector2(_dragonflyPathEven[_dragonflyPathEven.Count - 1].X, _dragonflyPathEven[_dragonflyPathEven.Count - 1].Y - Constants.GAMEPLAY_Y)
-                        };
-                        _enemies.Add(newDragonfly);
-                    }
-                    else
-                    {
-                        EnemyDragonfly newDragonfly = new(new Point(Constants.GAMEPLAY_X/2, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                            _dragonflyTexture, 99999, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
-                        {
-                            EntrancePath = _dragonflyPathOdd.ToList(), // If it is odd it should have different path then when its even
-                            Destination = new Vector2(_dragonflyPathOdd[_dragonflyPathOdd.Count-1].X, _dragonflyPathOdd[_dragonflyPathOdd.Count - 1].Y - Constants.GAMEPLAY_Y)
-                        };
-                        _enemies.Add(newDragonfly);
-                    }
-                }
-                else
-                {
-                    GenerateDragonflyPath(false);
-                    GenerateDragonflyPath(true);
-                }*//*
-                #endregion
-
-                #region Satellite
-
-                if (_satellitePath.Count > 0)
-                {
-                    EnemySatellite newSatellite = new(new Point(Constants.GAMEPLAY_X / 2, 0), new Point(Constants.CHARACTER_DIMENSIONS),
-                        _satelliteTexture, 1000, _debugTexture, _playerSystem.GetPlayer(), _bulletSystem)
-                        {
-                            EntrancePath = _satellitePath.ToList(),
-                            Destination = new Vector2(_satellitePath[^1].X, _satellitePath[^1].Y - Constants.GAMEPLAY_Y)
-                        };
-                    _enemies.Add(newSatellite);
-                }
-                else
-                {
-                    GenerateSatellitePath();
-                }
-                #endregion
-            }*/
-        
 
         foreach (Enemy enemy in _enemies)
         {
